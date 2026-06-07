@@ -1,0 +1,21 @@
+{
+  "name": "DespensaIA",
+  "short_name": "DespensaIA",
+  "description": "Tu despensa inteligente con IA — recetas, alertas y lista de compras",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "background_color": "#f5f4f0",
+  "theme_color": "#2d5a1b",
+  "orientation": "portrait-primary",
+  "categories": ["food","lifestyle","utilities"],
+  "lang": "es-CO",
+  "icons": [
+    {"src":"icons/icon-192.png","sizes":"192x192","type":"image/png","purpose":"any maskable"},
+    {"src":"icons/icon-512.png","sizes":"512x512","type":"image/png","purpose":"any maskable"}
+  ],
+  "shortcuts": [
+    {"name":"Agregar alimento","url":"/index.html","description":"Agregar a la despensa"},
+    {"name":"Generar receta","url":"/index.html","description":"Ver recetas con IA"}
+  ],
+  "screenshots": []
+}
