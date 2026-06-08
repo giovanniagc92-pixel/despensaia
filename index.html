@@ -1903,4 +1903,17 @@ function saveScannedExpiry() {
 function guessEmoji(name) {
   const n = name.toLowerCase();
   const map = [
-    [/leche|lácteo/,'🥛'],[/yogur/,
+    [/leche|lácteo/,'🥛'],[/yogur/,'🍦'],[/queso/,'🧀'],[/huevo/,'🥚'],
+    [/pollo/,'🍗'],[/carne|res|cerdo/,'🥩'],[/pescado|atún/,'🐟'],
+    [/tomate/,'🍅'],[/cebolla/,'🧅'],[/ajo/,'🧄'],[/papa|patata/,'🥔'],
+    [/arroz/,'🍚'],[/frijol|fríjol/,'🫘'],[/pan/,'🍞'],[/mantequilla/,'🧈'],
+    [/aceite/,'🫙'],[/sal|azúcar/,'🧂'],[/agua/,'💧'],[/jugo|zumo/,'🧃'],
+    [/naranja/,'🍊'],[/mango/,'🥭'],[/aguacate/,'🥑'],[/plátano|banano/,'🍌'],
+    [/limón/,'🍋'],[/manzana/,'🍎'],[/fresa/,'🍓'],[/uva/,'🍇'],
+  ];
+  for(const [r,e] of map) { if(r.test(n)) return e; }
+  return '🛒';
+}
+</script>
+</body>
+</html>
