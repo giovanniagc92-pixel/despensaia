@@ -23,7 +23,7 @@
   --am:#d97706;--aml:#fef3c7;--am2:#f59e0b;
   --rd:#dc2626;--rdl:#fee2e2;
   --tl:#0891b2;--tll:#e0f2fe;
-  --bg:#f8fffe;--card:#ffffff;--bd:rgba(22,163,74,0.12);
+  --bg:#ffffff;--card:#ffffff;--bd:rgba(22,163,74,0.12);
   --tx:#0f172a;--tx2:#475569;--tx3:#94a3b8;
   --sh:0 2px 12px rgba(22,163,74,0.08);
   --sh2:0 8px 32px rgba(22,163,74,0.15);
@@ -641,7 +641,12 @@ Cebolla x2"></textarea>
         </select>
       </div>
     </div>
-    <div class="ig"><label class="il">Fecha de vencimiento</label><input class="inp" type="date" id="m-exp"></div>
+    <div class="ig"><label class="il">Fecha de vencimiento</label>
+      <div style="display:flex;gap:8px">
+        <input class="inp" type="date" id="m-exp" style="flex:1">
+        <button class="btn btnp btni" onclick="openExpiryCamera('m-exp')" type="button" title="Escanear con cámara"><i class="ti ti-camera"></i></button>
+      </div>
+    </div>
     <div class="ir">
       <div><label class="il">Categoría</label>
         <select class="inp" id="m-cat">
@@ -675,7 +680,12 @@ Cebolla x2"></textarea>
         </select>
       </div>
     </div>
-    <div class="ig"><label class="il">Fecha de vencimiento</label><input class="inp" type="date" id="edit-exp"></div>
+    <div class="ig"><label class="il">Fecha de vencimiento</label>
+      <div style="display:flex;gap:8px">
+        <input class="inp" type="date" id="edit-exp" style="flex:1">
+        <button class="btn btnp btni" onclick="openExpiryCamera('edit-exp')" type="button" title="Escanear con cámara"><i class="ti ti-camera"></i></button>
+      </div>
+    </div>
     <div class="ir">
       <div><label class="il">Categoría</label>
         <select class="inp" id="edit-cat">
@@ -747,6 +757,28 @@ Cebolla x2"></textarea>
       <button class="btn" style="flex:1" onclick="saveRecipe()"><i class="ti ti-bookmark"></i> Guardar</button>
       <button class="btn btnp" style="flex:1" onclick="closeModal(&#39;m-recipe&#39;)"><i class="ti ti-check"></i> Listo</button>
     </div>
+  </div>
+</div>
+
+<!-- MODAL: Cámara fecha vencimiento -->
+<div class="modal-bg" id="m-exp-cam" onclick="if(event.target===this)closeExpiryCam()">
+  <div class="modal">
+    <div class="mh"></div>
+    <div class="mt">📷 Escanear fecha de vencimiento</div>
+    <div class="al agr" style="margin-bottom:10px"><i class="ti ti-info-circle"></i><div class="al-b"><div class="al-t">Apunta al empaque del producto</div><div class="al-s">La IA detectará la fecha automáticamente</div></div></div>
+    <div class="cam-wrap" id="exp-cam-wrap" style="display:none">
+      <video id="exp-cam-video" autoplay playsinline muted></video>
+      <div class="cam-overlay">
+        <div class="cam-frame"></div>
+        <div class="cam-hint">Centra la fecha de vencimiento en el marco</div>
+      </div>
+    </div>
+    <canvas id="exp-capture-canvas" style="display:none"></canvas>
+    <div style="display:flex;gap:8px;margin-top:10px">
+      <button class="btn btnp" style="flex:1" onclick="captureExpiry()" id="exp-capture-btn"><i class="ti ti-aperture"></i> Capturar</button>
+      <button class="btn" onclick="closeExpiryCam()"><i class="ti ti-x"></i> Cancelar</button>
+    </div>
+    <div id="exp-cam-result" style="margin-top:10px"></div>
   </div>
 </div>
 
@@ -1407,9 +1439,8 @@ async function callAI(targetId, prompt) {
       (data.candidates?.[0]?.output) || 
       (typeof data === 'string' ? data : JSON.stringify(data)) || 'Sin respuesta.';
     lastRecipeText = text;
-    el.innerHTML = `<div class="ai-box">
-      <div class="ai-hdr"><i class="ti ti-chef-hat"></i> Respuesta de IA</div>
-      ${text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br>')}
+    el.innerHTML = `<div>
+      ${formatRecipe(text)}
       <div style="display:flex;gap:7px;margin-top:12px;flex-wrap:wrap">
         <button class="btn" style="font-size:11px;padding:7px 12px" onclick="saveRecipe()"><i class="ti ti-bookmark"></i> Guardar receta</button>
         <button class="btn" style="font-size:11px;padding:7px 12px" onclick="shareRecipe()"><i class="ti ti-share"></i> Compartir</button>
@@ -1481,12 +1512,13 @@ function renderShopList() {
       <span class="sn2">${s.urgent&&!s.done?'🔴 ':''}${s.name}</span>
       <button class="btn btni" onclick="deleteShop(${s.id})" aria-label="Eliminar" style="color:var(--tx3);padding:7px"><i class="ti ti-x" style="font-size:14px"></i></button>
     </div>`).join('');
-  // Badge on nav
   const pending = S.shopping.filter(s=>!s.done).length;
   const nc = document.getElementById('ni-compras');
-  const existDot = nc.querySelector('.ni-dot');
-  if(pending>0&&!existDot){const d=document.createElement('div');d.className='ni-dot';nc.appendChild(d);}
-  else if(pending===0&&existDot) existDot.remove();
+  if(nc) {
+    const existDot = nc.querySelector('.ni-dot');
+    if(pending>0&&!existDot){const d=document.createElement('div');d.className='ni-dot';nc.appendChild(d);}
+    else if(pending===0&&existDot) existDot.remove();
+  }
 }
 
 function renderAutoSuggestions() {
@@ -1495,8 +1527,8 @@ function renderAutoSuggestions() {
   const low = S.pantry.filter(f=>f.min>0&&f.qty<f.min&&!S.shopping.find(s=>s.name.toLowerCase().includes(f.name.toLowerCase())));
   const exp = S.pantry.filter(f=>dU(f.exp)<=3&&!S.shopping.find(s=>s.name.toLowerCase().includes(f.name.toLowerCase())));
   let html = '';
-  if(low.length) low.forEach(f=>{html+=`<div class="remind" onclick="addShopAuto('${f.name}',true)"><i class="ti ti-package"></i><div><div>${f.em} ${f.name} — poco stock</div><div style="font-size:10px;opacity:.8">Toca para agregar a la lista</div></div></div>`;});
-  if(exp.length) exp.forEach(f=>{html+=`<div class="remind" onclick="addShopAuto('${f.name}',false)" style="background:var(--rdl);color:var(--rd);border-color:rgba(185,45,45,.15)"><i class="ti ti-alert-triangle"></i><div><div>${f.em} ${f.name} — vence pronto</div><div style="font-size:10px;opacity:.8">Toca para agregar a la lista</div></div></div>`;});
+  if(low.length) low.forEach(f=>{html+=`<div class="remind" onclick="addShopAuto('${f.name.replace(/'/g,"\'")}',true)"><i class="ti ti-package"></i><div><div>${f.em} ${f.name} — poco stock</div><div style="font-size:10px;opacity:.8">Toca para agregar a la lista</div></div></div>`;});
+  if(exp.length) exp.forEach(f=>{html+=`<div class="remind" onclick="addShopAuto('${f.name.replace(/'/g,"\'")}',false)" style="background:var(--rdl);color:var(--rd);border-color:rgba(185,45,45,.15)"><i class="ti ti-alert-triangle"></i><div><div>${f.em} ${f.name} — vence pronto</div><div style="font-size:10px;opacity:.8">Toca para agregar a la lista</div></div></div>`;});
   if(!html) html = '<div class="empty" style="padding:20px"><i class="ti ti-thumb-up"></i><p>Todo bien abastecido</p></div>';
   div.innerHTML = html;
 }
@@ -1590,7 +1622,7 @@ function checkAndNotify() {
   const urgent = S.pantry.filter(f=>dU(f.exp)<=1&&dU(f.exp)>=0);
   if(urgent.length > 0) {
     new Notification('MERI ⚠️', {
-      body: `${urgent.map(f=>f.name).join(', ')} ${urgent.length===1?'vence':'vencen'} hoy o mañana`,
+      body: urgent.map(f=>f.name).join(', ')+' '+(urgent.length===1?'vence':'vencen')+' hoy o mañana',
       icon: 'icons/icon-192.png',
       badge: 'icons/icon-192.png',
       tag: 'expiry-alert'
@@ -1608,4 +1640,80 @@ function globalSearch(q) {
     : `<div class="empty"><i class="ti ti-search"></i><p>Sin resultados para "${q}"</p></div>`;
 }
 
-// =============
+// ===================== EXPIRY DATE CAMERA =====================
+let expCamStream = null;
+let expTargetField = 'm-exp';
+
+async function openExpiryCamera(fieldId) {
+  expTargetField = fieldId;
+  openModal('m-exp-cam');
+  document.getElementById('exp-cam-result').innerHTML = '';
+  document.getElementById('exp-cam-wrap').style.display = 'none';
+  try {
+    expCamStream = await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment',width:{ideal:1920},height:{ideal:1080}}});
+    const video = document.getElementById('exp-cam-video');
+    video.srcObject = expCamStream;
+    document.getElementById('exp-cam-wrap').style.display = 'block';
+    toast('📷 Cámara lista — centra la fecha y captura');
+  } catch(e) {
+    document.getElementById('exp-cam-result').innerHTML = '<div class="al ard" style="margin-top:0"><i class="ti ti-camera-off"></i><div class="al-b"><div class="al-t">No se pudo acceder a la cámara</div><div class="al-s">Ingresa la fecha manualmente</div></div></div>';
+  }
+}
+
+function closeExpiryCam() {
+  if(expCamStream) { expCamStream.getTracks().forEach(t=>t.stop()); expCamStream=null; }
+  const w = document.getElementById('exp-cam-wrap');
+  if(w) w.style.display = 'none';
+  document.getElementById('exp-cam-result').innerHTML = '';
+  closeModal('m-exp-cam');
+}
+
+async function captureExpiry() {
+  const video = document.getElementById('exp-cam-video');
+  const canvas = document.getElementById('exp-capture-canvas');
+  canvas.width = video.videoWidth || 640;
+  canvas.height = video.videoHeight || 480;
+  canvas.getContext('2d').drawImage(video, 0, 0);
+  if(expCamStream) { expCamStream.getTracks().forEach(t=>t.stop()); expCamStream=null; }
+  const w = document.getElementById('exp-cam-wrap');
+  if(w) w.style.display = 'none';
+  const b64 = canvas.toDataURL('image/jpeg', 0.85).split(',')[1];
+  const resDiv = document.getElementById('exp-cam-result');
+  resDiv.innerHTML = '<div class="al agr" style="margin-top:0"><i class="ti ti-robot"></i><div class="al-b"><div class="al-t">Detectando fecha con IA...</div></div></div><div class="loading-bar"><div class="loading-bar-fill"></div></div>';
+  try {
+    const res = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=AQ.Ab8RN6ITvyHwKoVVktcKn0MgvxruULFreGuwbUBHwG7t3OIcpw', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({contents:[{parts:[
+        {inline_data:{mime_type:'image/jpeg',data:b64}},
+        {text:'Analiza esta imagen de un producto alimenticio. Busca la fecha de vencimiento, expiración o caducidad (VEN, EXP, CAD, VENCE, BEST BEFORE, USE BY, etc.). Responde SOLO con la fecha en formato YYYY-MM-DD. Si el año no está claro, asume el año más próximo futuro. Ejemplo de respuesta: 2026-08-15. Si no encuentras ninguna fecha, responde exactamente: NO_FECHA'}
+      ]}]})
+    });
+    const data = await res.json();
+    const text = ((data.candidates?.[0]?.content?.parts?.[0]?.text)||'').trim();
+    if(!text || text==='NO_FECHA') {
+      resDiv.innerHTML = '<div class="al aam" style="margin-top:0"><i class="ti ti-calendar-x"></i><div class="al-b"><div class="al-t">No se detectó fecha</div><div class="al-s">Intenta de nuevo o ingresa manualmente</div></div></div>';
+    } else {
+      const dateMatch = text.match(/\d{4}-\d{2}-\d{2}/);
+      if(dateMatch) {
+        document.getElementById(expTargetField).value = dateMatch[0];
+        resDiv.innerHTML = `<div class="al agr" style="margin-top:0"><i class="ti ti-check"></i><div class="al-b"><div class="al-t">✅ Fecha: ${dateMatch[0]}</div><div class="al-s">Aplicada — cerrando...</div></div></div>`;
+        vib([10,5,10]);
+        setTimeout(()=>closeExpiryCam(), 2000);
+      } else {
+        resDiv.innerHTML = `<div class="al aam" style="margin-top:0"><i class="ti ti-info-circle"></i><div class="al-b"><div class="al-t">Resultado: ${text}</div><div class="al-s">Verifica e ingresa manualmente si necesario</div></div></div>`;
+      }
+    }
+  } catch(e) {
+    resDiv.innerHTML = '<div class="al ard" style="margin-top:0"><i class="ti ti-wifi-off"></i><div class="al-b"><div class="al-t">Error de conexión</div><div class="al-s">Ingresa la fecha manualmente</div></div></div>';
+  }
+}
+
+// ===================== INIT =====================
+document.addEventListener('DOMContentLoaded', () => {
+  renderHome();
+  loadProfile();
+  if(Notification.permission === 'granted') checkAndNotify();
+});
+</script>
+</body>
+</html>
