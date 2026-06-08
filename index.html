@@ -256,6 +256,21 @@ textarea.inp{resize:none}
 .welcome-hero::before{content:'🌿';position:absolute;right:-10px;bottom:-15px;font-size:80px;opacity:.15;transform:rotate(15deg)}
 .welcome-hero h2{font-family:'Fraunces',serif;font-size:22px;font-weight:900;margin-bottom:4px}
 .welcome-hero p{font-size:12px;opacity:.88;font-weight:600}
+
+/* ── Scan mode buttons ── */
+.scan-btn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;width:100%;padding:22px 16px;border-radius:18px;border:none;cursor:pointer;font-family:inherit;transition:transform .15s,box-shadow .15s;margin-bottom:12px;text-align:center}
+.scan-btn i{font-size:28px;display:block}
+.scan-btn span{font-size:16px;font-weight:800;display:block}
+.scan-btn small{font-size:11px;opacity:.8;display:block;line-height:1.3}
+.scan-btn:active{transform:scale(.97)}
+.scan-btn-inv{background:linear-gradient(135deg,var(--g),var(--g3));color:#fff;box-shadow:0 6px 20px rgba(22,163,74,.3)}
+.scan-btn-exp{background:linear-gradient(135deg,#f59e0b,#ef4444);color:#fff;box-shadow:0 6px 20px rgba(239,68,68,.3)}
+/* ── Frequency chips ── */
+.chip-freq{padding:7px 13px;border-radius:20px;border:2px solid var(--g);background:#fff;color:var(--g);font-size:11px;font-weight:700;cursor:pointer;transition:all .15s;font-family:inherit}
+.chip-freq-on{background:var(--g);color:#fff}
+/* ── Method chips ── */
+.chip-method{padding:9px 16px;border-radius:20px;border:2px solid var(--brd);background:#fff;color:var(--t2);font-size:13px;font-weight:700;cursor:pointer;transition:all .15s;font-family:inherit}
+.chip-method-on{border-color:var(--g);background:var(--gl);color:var(--g)}
 </style>
 </head>
 <body>
@@ -287,7 +302,7 @@ textarea.inp{resize:none}
     <div class="sc"><div class="sn">10</div><div class="sl">Alimentos</div></div>
     <div class="sc"><div class="sn" style="color:var(--rd)">6</div><div class="sl">Por vencer</div></div>
     <div class="sc"><div class="sn" style="color:var(--am)">2</div><div class="sl">Por acabar</div></div></div>
-      <div id="home-alerts"><div class="sec">Alertas</div><div class="al ard" onclick="openEditModal(1)"><i class="ti ti-alert-octagon"></i><div class="al-b"><div class="al-t">🥚 Huevos venció hoy</div><div class="al-s">¡Úsalo ya o descártalo! Toca para editar</div></div></div><div class="al ard" onclick="openEditModal(3)"><i class="ti ti-alert-octagon"></i><div class="al-b"><div class="al-t">🍦 Yogur venció hoy</div><div class="al-s">¡Úsalo ya o descártalo! Toca para editar</div></div></div><div class="al ard" onclick="nav(&#39;recetas&#39;)"><i class="ti ti-alert-triangle"></i><div class="al-b"><div class="al-t">🍗 Pollo vence mañana</div><div class="al-s">Toca para ver recetas con este ingrediente</div></div></div><div class="al aam"><i class="ti ti-clock"></i><div class="al-b"><div class="al-t">🥛 Leche vence en 2 días</div><div class="al-s">Planifica recetas con este ingrediente</div></div></div><div class="al aam"><i class="ti ti-clock"></i><div class="al-b"><div class="al-t">🍅 Tomate vence en 4 días</div><div class="al-s">Planifica recetas con este ingrediente</div></div></div><div class="al aam"><i class="ti ti-clock"></i><div class="al-b"><div class="al-t">🍌 Plátano vence en 3 días</div><div class="al-s">Planifica recetas con este ingrediente</div></div></div><div class="al aam" onclick="addShopAuto(&#39;Yogur&#39;,true)" style="cursor:pointer"><i class="ti ti-package"></i><div class="al-b"><div class="al-t">🍦 Yogur está por acabar</div><div class="al-s">Toca para agregar a la lista de compras</div></div></div><div class="al aam" onclick="addShopAuto(&#39;Arroz&#39;,true)" style="cursor:pointer"><i class="ti ti-package"></i><div class="al-b"><div class="al-t">🍚 Arroz está por acabar</div><div class="al-s">Toca para agregar a la lista de compras</div></div></div></div>
+      <div id="home-alerts"></div>
       <div class="sec">Acciones rápidas</div>
       <div class="qg">
         <button class="qb qbp" onclick="nav(&#39;foto&#39;)"><i class="ti ti-camera"></i>Escanear factura</button>
@@ -298,7 +313,13 @@ textarea.inp{resize:none}
       <div class="sec">Mis favoritos</div>
       <div class="card">
         <div id="favs-row" style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:11px"><span class="badge bg" style="cursor:pointer" onclick="nav(&#39;recetas&#39;)">🥚 Huevos</span><span class="badge bg" style="cursor:pointer" onclick="nav(&#39;recetas&#39;)">🥛 Leche</span><span class="badge bg" style="cursor:pointer" onclick="nav(&#39;recetas&#39;)">🍅 Tomate</span><span class="badge bg" style="cursor:pointer" onclick="nav(&#39;recetas&#39;)">🧅 Cebolla</span><span class="badge bg" style="cursor:pointer" onclick="nav(&#39;recetas&#39;)">🍚 Arroz</span><span class="badge bg" style="cursor:pointer" onclick="nav(&#39;recetas&#39;)">🫘 Frijol</span><span class="badge bg" style="cursor:pointer" onclick="nav(&#39;recetas&#39;)">🧄 Ajo</span><span class="badge bg" style="cursor:pointer" onclick="nav(&#39;recetas&#39;)">🍌 Plátano</span></div>
-        <button class="btn btnp btnf" onclick="quickShoppingList()"><i class="ti ti-list-check"></i> Generar lista semanal ↗</button>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px">
+          <button class="chip-freq chip-freq-on" id="freq-sem" onclick="setFreq('semanal',this)">📅 Semanal</button>
+          <button class="chip-freq" id="freq-qui" onclick="setFreq('quincenal',this)">📅 Quincenal</button>
+          <button class="chip-freq" id="freq-men" onclick="setFreq('mensual',this)">📅 Mensual</button>
+          <button class="chip-freq" id="freq-mas" onclick="setFreq('mayor',this)">📅 Más de un mes</button>
+        </div>
+        <button class="btn btnp btnf" onclick="quickShoppingList()"><i class="ti ti-list-check"></i> Generar lista ↗</button>
       </div>
       <div id="home-ai-result"></div>
       <div class="sec">Cosecha ahora en Colombia 🇨🇴</div>
@@ -313,11 +334,31 @@ textarea.inp{resize:none}
 
     <!-- FACTURA -->
     <div class="pg" id="p-foto">
-      <div class="tabs" id="foto-tabs">
-        <button class="tab on" onclick="fotoTab(this,&#39;fc-cam&#39;)">Cámara</button>
-        <button class="tab" onclick="fotoTab(this,&#39;fc-gal&#39;)">Galería</button>
-        <button class="tab" onclick="fotoTab(this,&#39;fc-man&#39;)">Manual</button>
+      <!-- Selector principal -->
+      <div id="foto-mode-selector">
+        <button class="scan-btn scan-btn-inv" onclick="showFotoMode('invoice')">
+          <i class="ti ti-receipt"></i>
+          <span>Escanear factura</span>
+          <small>Detecta alimentos y agrégalos a tu despensa</small>
+        </button>
+        <button class="scan-btn scan-btn-exp" onclick="showFotoMode('expiry')">
+          <i class="ti ti-calendar-time"></i>
+          <span>Escanear fecha de vencimiento</span>
+          <small>Agrega el producto y su vencimiento a tu despensa</small>
+        </button>
       </div>
+
+      <!-- INVOICE MODE -->
+      <div id="foto-invoice" style="display:none">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+          <button class="btn" onclick="showFotoMode(null)" style="padding:6px 10px"><i class="ti ti-arrow-left"></i></button>
+          <div class="sec" style="margin:0">Escanear factura</div>
+        </div>
+        <div class="tabs" id="foto-tabs">
+          <button class="tab on" onclick="fotoTab(this,&#39;fc-cam&#39;)">Cámara</button>
+          <button class="tab" onclick="fotoTab(this,&#39;fc-gal&#39;)">Galería</button>
+          <button class="tab" onclick="fotoTab(this,&#39;fc-man&#39;)">Manual</button>
+        </div>
 
       <!-- CÁMARA EN VIVO -->
       <div id="fc-cam">
@@ -378,7 +419,34 @@ Cebolla x2"></textarea>
         </div>
         <div id="man-recipe"></div>
       </div>
-    </div>
+      </div><!-- /foto-invoice -->
+
+      <!-- EXPIRY MODE -->
+      <div id="foto-expiry" style="display:none">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+          <button class="btn" onclick="showFotoMode(null)" style="padding:6px 10px"><i class="ti ti-arrow-left"></i></button>
+          <div class="sec" style="margin:0">Escanear fecha de vencimiento</div>
+        </div>
+        <div class="card">
+          <div class="al agr" style="margin-bottom:12px"><i class="ti ti-info-circle"></i><div class="al-b"><div class="al-t">Apunta la cámara al producto o su etiqueta</div><div class="al-s">La IA detectará el nombre del producto y la fecha de vencimiento</div></div></div>
+          <div class="cam-wrap" id="exp-main-wrap" style="display:none">
+            <video id="exp-main-video" autoplay playsinline muted></video>
+            <div class="cam-overlay"><div class="cam-frame"></div><div class="cam-hint">Centra el producto en el marco</div></div>
+          </div>
+          <div id="exp-main-start">
+            <button class="btn btnp btnf" onclick="startExpiryMain()"><i class="ti ti-camera"></i> Activar cámara</button>
+          </div>
+          <div id="exp-main-controls" style="display:none;margin-top:10px">
+            <div style="display:flex;gap:8px">
+              <button class="btn btnp" style="flex:1" onclick="captureExpiryMain()"><i class="ti ti-aperture"></i> Capturar y analizar</button>
+              <button class="btn" onclick="stopExpiryMain()"><i class="ti ti-x"></i> Cancelar</button>
+            </div>
+          </div>
+          <canvas id="exp-main-canvas" style="display:none"></canvas>
+        </div>
+        <div id="exp-main-result"></div>
+      </div><!-- /foto-expiry -->
+    </div><!-- /p-foto -->
 
     <!-- DESPENSA -->
     <div class="pg" id="p-despensa">
@@ -519,11 +587,13 @@ Cebolla x2"></textarea>
           <label class="il">Preferencias (opcional)</label>
           <input class="inp" id="recipe-prefs" placeholder="vegetariano, rápido, para 4 personas, sin sal...">
         </div>
-        <div style="display:flex;gap:8px">
-          <button class="btn btnp" style="flex:1" onclick="generateRecipe()"><i class="ti ti-wand"></i> Generar ↗</button>
-          <button class="btn" onclick="recipeFromExpiring()" title="Usar lo que vence pronto"><i class="ti ti-alert-triangle"></i></button>
-          <button class="btn" onclick="clearChips()" title="Limpiar selección"><i class="ti ti-x"></i></button>
+        <div class="sec" style="margin-top:8px;margin-bottom:6px">¿Cómo vas a cocinar?</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px" id="method-chips">
+          <button class="chip-method chip-method-on" id="meth-est" onclick="setMethod('🔥 Estufa',this)">🔥 Estufa</button>
+          <button class="chip-method" id="meth-air" onclick="setMethod('💨 Air Fryer',this)">💨 Air Fryer</button>
+          <button class="chip-method" id="meth-hor" onclick="setMethod('♨️ Horno',this)">♨️ Horno</button>
         </div>
+        <button class="btn btnp btnf" onclick="generateRecipe()"><i class="ti ti-wand"></i> Generar receta ↗</button>
       </div>
       <div id="recipe-result"></div>
       <div id="saved-recipes-section">
@@ -900,7 +970,6 @@ function toast(msg, dur=2400) {
 function renderHome() {
   updateHeader();
   renderStats();
-  renderAlerts();
   renderFavs();
   renderHomeHarvest();
   renderNotifPrompt();
@@ -1230,37 +1299,52 @@ function toggleChip(id, el) {
 
 function clearChips() { selectedChips.clear(); renderRecipeChips(); }
 
+let selectedMethod = '🔥 Estufa';
+function setMethod(m, btn) {
+  selectedMethod = m;
+  document.querySelectorAll('.chip-method').forEach(c=>c.classList.remove('chip-method-on'));
+  btn.classList.add('chip-method-on');
+}
+let selectedFreq = 'semanal';
+function setFreq(f, btn) {
+  selectedFreq = f;
+  document.querySelectorAll('.chip-freq').forEach(c=>c.classList.remove('chip-freq-on'));
+  btn.classList.add('chip-freq-on');
+}
+
 function buildPrompt(ingredients) {
   const p = S.profile;
   const diet = p.diet ? `RESTRICCIÓN IMPORTANTE: ${p.diet}.` : '';
   const ppl = `Para ${p.people||2} persona(s).`;
   const prefs = document.getElementById('recipe-prefs')?.value||'';
+  const method = typeof selectedMethod !== 'undefined' ? selectedMethod : '🔥 Estufa';
   return `Eres un chef colombiano experto en cocina casera y tradicional.
 
 Ingredientes disponibles: ${ingredients}
+Método de cocción: ${method}
 ${diet}
 ${ppl}
 ${prefs ? 'Preferencias adicionales: '+prefs : ''}
 
-Crea UNA receta deliciosa, práctica y colombiana usando PRINCIPALMENTE estos ingredientes. Responde EXACTAMENTE en este formato, sin texto adicional:
+Crea UNA receta deliciosa, práctica y colombiana usando PRINCIPALMENTE estos ingredientes, preparada en ${method}. Responde EXACTAMENTE en este formato, sin texto adicional:
 
 🍽 [NOMBRE DE LA RECETA EN MAYÚSCULAS]
-⏱ Tiempo total: X minutos | 👥 Porciones: X
+⏱ Tiempo total: X minutos | 👥 Porciones: X | 🍳 Método: ${method}
 
 📋 INGREDIENTES:
 • [ingrediente] - [cantidad exacta con unidad de medida colombiana: tazas, cucharadas, gramos, etc]
 • [ingrediente] - [cantidad exacta]
 (incluir TODOS los ingredientes con cantidades precisas)
 
-👨‍🍳 PREPARACIÓN:
-1. [Paso detallado: describe la acción, el tiempo que toma ese paso, y la temperatura si aplica. Ejemplo: Lleva el aceite a fuego medio-alto (180°C) y sofríe la cebolla por 5 minutos hasta dorar.]
-2. [Siguiente paso con tiempo y temperatura si aplica]
+👨‍🍳 PREPARACIÓN (${method}):
+1. [Paso detallado adaptado al método ${method}: describe la acción, el tiempo y la temperatura. Ejemplo para estufa: Lleva el aceite a fuego medio-alto (180°C). Para horno: Precalienta a 200°C. Para air fryer: Configura a 180°C por 15 min.]
+2. [Siguiente paso con tiempo y temperatura]
 3. [Continúa con cada paso de forma clara y precisa]
 (Mínimo 5 pasos, máximo 10. Cada paso debe indicar tiempo estimado y temperatura cuando sea relevante)
 
-💡 CONSEJO DEL CHEF: [tip específico sobre técnica, temperatura exacta de cocción, o cómo saber que está listo el plato]
+💡 CONSEJO DEL CHEF: [tip específico para cocinar en ${method}, temperatura exacta, o cómo saber que está listo el plato]
 
-Sé muy específico: usa medidas exactas, tiempos en minutos, temperaturas en Celsius cuando aplique. El usuario debe poder cocinar la receta sin dudas.`;
+Sé muy específico: usa medidas exactas, tiempos en minutos, temperaturas en Celsius. El usuario debe poder cocinar la receta sin dudas.`;
 }
 
 async function generateRecipe() {
@@ -1288,9 +1372,11 @@ async function quickShoppingList() {
   const favs = S.pantry.filter(f=>f.fav).map(f=>f.name);
   const low = S.pantry.filter(f=>f.min>0&&f.qty<f.min).map(f=>f.name);
   const p = S.profile;
+  const freq = typeof selectedFreq !== 'undefined' ? selectedFreq : 'semanal';
+  const freqLabel = freq==='mayor' ? 'para más de un mes' : freq;
   const prompt = `Eres un asistente de compras para Colombia. Mis alimentos favoritos: ${favs.join(', ')||'variados'}. Alimentos que tengo pocos: ${low.join(', ')||'ninguno'}. Somos ${p.people||2} personas. ${p.diet?'Dieta: '+p.diet+'.':''}
 
-Genera una lista de compras semanal completa, organizada por secciones de supermercado colombiano:
+Genera una lista de compras ${freqLabel} completa, organizada por secciones de supermercado colombiano:
 🥦 Frutas y Verduras
 🥛 Lácteos
 🍗 Carnes y Proteínas  
@@ -1298,8 +1384,9 @@ Genera una lista de compras semanal completa, organizada por secciones de superm
 🧃 Bebidas
 🧴 Otros
 
-Incluye cantidades específicas. Prioriza los favoritos y lo que falta. Responde en español, formato claro y práctico.`;
-  const targetId = document.getElementById('sugs-ai') ? 'sugs-ai' : 'home-ai-result';
+Ajusta las cantidades para ${freqLabel}. Incluye cantidades específicas. Prioriza los favoritos y lo que falta. Responde en español, formato claro y práctico.`;
+  const comprasActive = document.getElementById('p-compras')?.classList.contains('on');
+  const targetId = comprasActive ? 'sugs-ai' : 'home-ai-result';
   await callAI(targetId, prompt);
 }
 
@@ -1713,6 +1800,121 @@ document.addEventListener('DOMContentLoaded', () => {
   loadProfile();
   if(Notification.permission === 'granted') checkAndNotify();
 });
+
+// ── Foto mode switcher ──
+function showFotoMode(mode) {
+  document.getElementById('foto-mode-selector').style.display = mode ? 'none' : 'block';
+  document.getElementById('foto-invoice').style.display = mode==='invoice' ? 'block' : 'none';
+  document.getElementById('foto-expiry').style.display = mode==='expiry' ? 'block' : 'none';
+  if(!mode) { stopCamera(); stopExpiryMain(); }
+}
+
+// ── Expiry main camera ──
+let expMainStream = null;
+async function startExpiryMain() {
+  try {
+    expMainStream = await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment',width:{ideal:1920},height:{ideal:1080}}});
+    const video = document.getElementById('exp-main-video');
+    video.srcObject = expMainStream;
+    document.getElementById('exp-main-wrap').style.display = 'block';
+    document.getElementById('exp-main-start').style.display = 'none';
+    document.getElementById('exp-main-controls').style.display = 'block';
+  } catch(e) { toast('⚠ No se pudo acceder a la cámara: '+e.message); }
+}
+function stopExpiryMain() {
+  if(expMainStream) { expMainStream.getTracks().forEach(t=>t.stop()); expMainStream=null; }
+  document.getElementById('exp-main-wrap').style.display='none';
+  document.getElementById('exp-main-start').style.display='block';
+  document.getElementById('exp-main-controls').style.display='none';
+}
+async function captureExpiryMain() {
+  const video = document.getElementById('exp-main-video');
+  const canvas = document.getElementById('exp-main-canvas');
+  canvas.width = video.videoWidth; canvas.height = video.videoHeight;
+  canvas.getContext('2d').drawImage(video,0,0);
+  stopExpiryMain();
+  const b64 = canvas.toDataURL('image/jpeg',0.85).split(',')[1];
+  const res = document.getElementById('exp-main-result');
+  res.innerHTML = '<div class="card"><div class="al agr"><i class="ti ti-loader"></i><div class="al-b"><div class="al-t">Analizando imagen...</div><div class="al-s">La IA detecta el producto y la fecha</div></div></div></div>';
+  try {
+    const GEMINI_KEY = 'AQ.Ab8RN6ITvyHwKoVVktcKn0MgvxruULFreGuwbUBHwG7t3OIcpw';
+    const body = {
+      contents:[{parts:[
+        {text:`Analiza esta imagen y extrae:
+1. Nombre del producto (máximo 3 palabras, en español)
+2. Fecha de vencimiento en formato YYYY-MM-DD
+
+Responde SOLO en JSON exactamente así, sin markdown, sin texto extra:
+{"nombre":"Nombre del producto","fecha":"YYYY-MM-DD"}
+
+Si no encuentras fecha, usa "null". Si no encuentras nombre, usa "Producto".'`},
+        {inline_data:{mime_type:'image/jpeg',data:b64}}
+      ]}]
+    };
+    const r = await fetch(\`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=\${GEMINI_KEY}\`,
+      {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+    const data = await r.json();
+    const txt = data.candidates?.[0]?.content?.parts?.[0]?.text || '{}';
+    let parsed;
+    try { parsed = JSON.parse(txt.trim()); } catch { parsed = JSON.parse(txt.match(/\{[^}]+\}/)?.[0]||'{}'); }
+    const nombre = parsed.nombre || 'Producto';
+    const fecha = parsed.fecha && parsed.fecha !== 'null' ? parsed.fecha : '';
+    res.innerHTML = \`<div class="card">
+      <div class="ct"><i class="ti ti-check"></i> Producto detectado</div>
+      <div class="ig" style="margin-bottom:10px">
+        <label class="il">Nombre del producto</label>
+        <input class="inp" id="exp-r-name" value="\${nombre}" placeholder="Nombre del producto">
+      </div>
+      <div class="ig" style="margin-bottom:14px">
+        <label class="il">Fecha de vencimiento</label>
+        <input class="inp" id="exp-r-date" type="date" value="\${fecha}">
+      </div>
+      <div style="display:flex;gap:8px">
+        <button class="btn btnp" style="flex:1" onclick="saveScannedExpiry()"><i class="ti ti-plus"></i> Agregar a despensa</button>
+        <button class="btn" onclick="startExpiryMain(); document.getElementById('exp-main-result').innerHTML=''"><i class="ti ti-refresh"></i> Volver a escanear</button>
+      </div>
+    </div>\`;
+  } catch(e) {
+    res.innerHTML = \`<div class="card"><div class="al ard"><i class="ti ti-alert-circle"></i><div class="al-b"><div class="al-t">Error al analizar</div><div class="al-s">\${e.message}</div></div></div></div>\`;
+  }
+}
+function saveScannedExpiry() {
+  const name = document.getElementById('exp-r-name')?.value?.trim();
+  const date = document.getElementById('exp-r-date')?.value;
+  if(!name) { toast('⚠ Ingresa el nombre del producto'); return; }
+  const emoji = guessEmoji(name) || '🛒';
+  const food = {
+    id: Date.now(),
+    name, em: emoji,
+    qty: 1, unit: 'unidades',
+    cat: 'Otros',
+    exp: date || '',
+    min: 0, fav: false,
+    note: ''
+  };
+  S.pantry.push(food);
+  saveState();
+  renderHome();
+  toast(\`✅ \${emoji} \${name} agregado a tu despensa\`);
+  document.getElementById('exp-main-result').innerHTML='';
+  showFotoMode(null);
+  nav('despensa');
+}
+function guessEmoji(name) {
+  const n = name.toLowerCase();
+  const map = [
+    [/leche|lácteo/,'🥛'],[/yogur/,'🍦'],[/queso/,'🧀'],[/huevo/,'🥚'],
+    [/pollo/,'🍗'],[/carne|res|cerdo/,'🥩'],[/pescado|atún/,'🐟'],
+    [/tomate/,'🍅'],[/cebolla/,'🧅'],[/ajo/,'🧄'],[/papa|patata/,'🥔'],
+    [/arroz/,'🍚'],[/frijol|fríjol/,'🫘'],[/pan/,'🍞'],[/mantequilla/,'🧈'],
+    [/aceite/,'🫙'],[/sal|azúcar/,'🧂'],[/agua/,'💧'],[/jugo|zumo/,'🧃'],
+    [/naranja/,'🍊'],[/mango/,'🥭'],[/aguacate/,'🥑'],[/plátano|banano/,'🍌'],
+    [/limón/,'🍋'],[/manzana/,'🍎'],[/fresa/,'🍓'],[/uva/,'🍇'],
+  ];
+  for(const [r,e] of map) { if(r.test(n)) return e; }
+  return '🛒';
+}
+
 </script>
 </body>
 </html>
