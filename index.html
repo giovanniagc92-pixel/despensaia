@@ -1228,7 +1228,7 @@ async function analyzeInvoiceImage(b64, resultId) {
   div.innerHTML = `<div class="al agr"><i class="ti ti-robot"></i><div class="al-b"><div class="al-t">Analizando tu factura con IA...</div><div class="al-s">Detectando alimentos automáticamente</div></div></div><div class="loading-bar"><div class="loading-bar-fill"></div></div>`;
 
   try {
-    const res = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=AQ.Ab8RN6ITvyHwKoVVktcKn0MgvxruULFreGuwbUBHwG7t3OIcpw', {
+    const res = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=AQ.Ab8RN6LRdHBzi6SIlK6OoqdDFVh9YmSqUrU8niYki5bdfSkoiw', {
       method: 'POST',
       headers: {'Content-Type':'application/json'},
       body: JSON.stringify({
@@ -1538,7 +1538,7 @@ async function callAI(targetId, prompt) {
   el.innerHTML = `<div class="ai-box"><div class="ai-hdr"><i class="ti ti-robot"></i> Generando con IA...</div><div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div></div>`;
   el.scrollIntoView({behavior:'smooth',block:'nearest'});
   try {
-    const res = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=AQ.Ab8RN6ITvyHwKoVVktcKn0MgvxruULFreGuwbUBHwG7t3OIcpw', {
+    const res = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=AQ.Ab8RN6LRdHBzi6SIlK6OoqdDFVh9YmSqUrU8niYki5bdfSkoiw', {
       method: 'POST',
       headers: {'Content-Type':'application/json'},
       body: JSON.stringify({
@@ -1795,7 +1795,7 @@ async function captureExpiry() {
   const resDiv = document.getElementById('exp-cam-result');
   resDiv.innerHTML = '<div class="al agr" style="margin-top:0"><i class="ti ti-robot"></i><div class="al-b"><div class="al-t">Detectando fecha con IA...</div></div></div><div class="loading-bar"><div class="loading-bar-fill"></div></div>';
   try {
-    const res = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=AQ.Ab8RN6ITvyHwKoVVktcKn0MgvxruULFreGuwbUBHwG7t3OIcpw', {
+    const res = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=AQ.Ab8RN6LRdHBzi6SIlK6OoqdDFVh9YmSqUrU8niYki5bdfSkoiw', {
       method:'POST', headers:{'Content-Type':'application/json'},
       body: JSON.stringify({contents:[{parts:[
         {inline_data:{mime_type:'image/jpeg',data:b64}},
@@ -1865,7 +1865,7 @@ async function captureExpiryMain() {
   const res = document.getElementById('exp-main-result');
   res.innerHTML = '<div class="card"><div class="al agr"><i class="ti ti-loader"></i><div class="al-b"><div class="al-t">Analizando imagen...</div><div class="al-s">La IA detecta el producto y la fecha</div></div></div></div>';
   try {
-    const GEMINI_KEY = 'AQ.Ab8RN6ITvyHwKoVVktcKn0MgvxruULFreGuwbUBHwG7t3OIcpw';
+    const GEMINI_KEY = 'AQ.Ab8RN6LRdHBzi6SIlK6OoqdDFVh9YmSqUrU8niYki5bdfSkoiw';
     const body = {
       contents:[{parts:[
         {text:`Analiza esta imagen y extrae:
@@ -1879,7 +1879,7 @@ Si no encuentras fecha, usa "null". Si no encuentras nombre, usa "Producto".'`},
         {inline_data:{mime_type:'image/jpeg',data:b64}}
       ]}]
     };
-    const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_KEY}`,
+    const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_KEY}`,
       {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
     const data = await r.json();
     const txt = data.candidates?.[0]?.content?.parts?.[0]?.text || '{}';
