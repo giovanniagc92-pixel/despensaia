@@ -265,12 +265,11 @@ textarea.inp{resize:none}
 .scan-btn:active{transform:scale(.97)}
 .scan-btn-inv{background:linear-gradient(135deg,var(--g),var(--g3));color:#fff;box-shadow:0 6px 20px rgba(22,163,74,.3)}
 .scan-btn-exp{background:linear-gradient(135deg,#f59e0b,#ef4444);color:#fff;box-shadow:0 6px 20px rgba(239,68,68,.3)}
-/* ── Frequency chips ── */
-.chip-freq{padding:7px 13px;border-radius:20px;border:2px solid var(--g);background:#fff;color:var(--g);font-size:11px;font-weight:700;cursor:pointer;transition:all .15s;font-family:inherit}
-.chip-freq-on{background:var(--g);color:#fff}
-/* ── Method chips ── */
-.chip-method{padding:9px 16px;border-radius:20px;border:2px solid var(--brd);background:#fff;color:var(--t2);font-size:13px;font-weight:700;cursor:pointer;transition:all .15s;font-family:inherit}
-.chip-method-on{border-color:var(--g);background:var(--gl);color:var(--g)}
+/* ── Inline selects ── */
+/* ── Inline select dropdowns ── */
+.sel-inline{appearance:none;-webkit-appearance:none;background:var(--gl) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%2316a34a'/%3E%3C/svg%3E") no-repeat right 10px center;padding:0 30px 0 12px;height:42px;border:2px solid var(--g);border-radius:12px;font-size:13px;font-weight:700;color:var(--g);cursor:pointer;font-family:inherit;min-width:130px;flex-shrink:0}
+.sel-inline:focus{outline:none;box-shadow:0 0 0 3px rgba(22,163,74,.15)}
+
 </style>
 </head>
 <body>
@@ -313,13 +312,14 @@ textarea.inp{resize:none}
       <div class="sec">Mis favoritos</div>
       <div class="card">
         <div id="favs-row" style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:11px"><span class="badge bg" style="cursor:pointer" onclick="nav(&#39;recetas&#39;)">🥚 Huevos</span><span class="badge bg" style="cursor:pointer" onclick="nav(&#39;recetas&#39;)">🥛 Leche</span><span class="badge bg" style="cursor:pointer" onclick="nav(&#39;recetas&#39;)">🍅 Tomate</span><span class="badge bg" style="cursor:pointer" onclick="nav(&#39;recetas&#39;)">🧅 Cebolla</span><span class="badge bg" style="cursor:pointer" onclick="nav(&#39;recetas&#39;)">🍚 Arroz</span><span class="badge bg" style="cursor:pointer" onclick="nav(&#39;recetas&#39;)">🫘 Frijol</span><span class="badge bg" style="cursor:pointer" onclick="nav(&#39;recetas&#39;)">🧄 Ajo</span><span class="badge bg" style="cursor:pointer" onclick="nav(&#39;recetas&#39;)">🍌 Plátano</span></div>
-        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px">
-          <button class="chip-freq chip-freq-on" id="freq-sem" onclick="setFreq('semanal',this)">📅 Semanal</button>
-          <button class="chip-freq" id="freq-qui" onclick="setFreq('quincenal',this)">📅 Quincenal</button>
-          <button class="chip-freq" id="freq-men" onclick="setFreq('mensual',this)">📅 Mensual</button>
-          <button class="chip-freq" id="freq-mas" onclick="setFreq('mayor',this)">📅 Más de un mes</button>
+        <div style="display:flex;gap:8px;align-items:center">
+          <button class="btn btnp" style="flex:1;height:42px" onclick="quickShoppingList()"><i class="ti ti-list-check"></i> Generar lista ↗</button>
+          <select id="sel-freq" class="sel-inline" onchange="saveShoppingFreq(this.value)">
+            <option value="semanal">📅 Semanal</option>
+            <option value="quincenal">📅 Quincenal</option>
+            <option value="mensual">📅 Mensual</option>
+          </select>
         </div>
-        <button class="btn btnp btnf" onclick="quickShoppingList()"><i class="ti ti-list-check"></i> Generar lista ↗</button>
       </div>
       <div id="home-ai-result"></div>
       <div class="sec">Cosecha ahora en Colombia 🇨🇴</div>
@@ -587,13 +587,14 @@ Cebolla x2"></textarea>
           <label class="il">Preferencias (opcional)</label>
           <input class="inp" id="recipe-prefs" placeholder="vegetariano, rápido, para 4 personas, sin sal...">
         </div>
-        <div class="sec" style="margin-top:8px;margin-bottom:6px">¿Cómo vas a cocinar?</div>
-        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px" id="method-chips">
-          <button class="chip-method chip-method-on" id="meth-est" onclick="setMethod('🔥 Estufa',this)">🔥 Estufa</button>
-          <button class="chip-method" id="meth-air" onclick="setMethod('💨 Air Fryer',this)">💨 Air Fryer</button>
-          <button class="chip-method" id="meth-hor" onclick="setMethod('♨️ Horno',this)">♨️ Horno</button>
+        <div style="display:flex;gap:8px;align-items:center;margin-top:10px">
+          <button class="btn btnp" style="flex:1;height:42px" onclick="generateRecipe()"><i class="ti ti-wand"></i> Generar receta ↗</button>
+          <select id="sel-method" class="sel-inline">
+            <option value="🔥 Estufa">🔥 Estufa</option>
+            <option value="💨 Air Fryer">💨 Air Fryer</option>
+            <option value="♨️ Horno">♨️ Horno</option>
+          </select>
         </div>
-        <button class="btn btnp btnf" onclick="generateRecipe()"><i class="ti ti-wand"></i> Generar receta ↗</button>
       </div>
       <div id="recipe-result"></div>
       <div id="saved-recipes-section">
@@ -974,6 +975,7 @@ function renderHome() {
   renderHomeHarvest();
   renderNotifPrompt();
   renderSavedRecipes();
+  setTimeout(initFreqSelect, 50);
 }
 
 function updateHeader() {
@@ -1299,17 +1301,19 @@ function toggleChip(id, el) {
 
 function clearChips() { selectedChips.clear(); renderRecipeChips(); }
 
-let selectedMethod = '🔥 Estufa';
-function setMethod(m, btn) {
-  selectedMethod = m;
-  document.querySelectorAll('.chip-method').forEach(c=>c.classList.remove('chip-method-on'));
-  btn.classList.add('chip-method-on');
+// ── Shopping habit tracking ──
+function saveShoppingFreq(freq) {
+  const days = {semanal:7, quincenal:15, mensual:30};
+  const prev = S.profile.shoppingFreq || 'semanal';
+  S.profile.shoppingFreq = freq;
+  S.profile.shoppingFreqDays = days[freq] || 7;
+  S.profile.prevShoppingFreq = prev;
+  S.profile.prevShoppingFreqDays = days[prev] || 7;
+  saveState();
 }
-let selectedFreq = 'semanal';
-function setFreq(f, btn) {
-  selectedFreq = f;
-  document.querySelectorAll('.chip-freq').forEach(c=>c.classList.remove('chip-freq-on'));
-  btn.classList.add('chip-freq-on');
+function initFreqSelect() {
+  const sel = document.getElementById('sel-freq');
+  if(sel && S.profile.shoppingFreq) sel.value = S.profile.shoppingFreq;
 }
 
 function buildPrompt(ingredients) {
@@ -1317,7 +1321,13 @@ function buildPrompt(ingredients) {
   const diet = p.diet ? `RESTRICCIÓN IMPORTANTE: ${p.diet}.` : '';
   const ppl = `Para ${p.people||2} persona(s).`;
   const prefs = document.getElementById('recipe-prefs')?.value||'';
-  const method = typeof selectedMethod !== 'undefined' ? selectedMethod : '🔥 Estufa';
+  const method = document.getElementById('sel-method')?.value || '🔥 Estufa';
+  const methodTips = {
+    '🔥 Estufa': 'Usa fuego medio-alto. En cada paso indica: nivel de fuego (bajo/medio/alto), tiempo en minutos, y si tapa o no la olla.',
+    '💨 Air Fryer': 'Precalienta el air fryer 3 min a 180°C antes de comenzar. En cada paso indica: temperatura en °C, tiempo en minutos, y si hay que voltear a mitad de cocción.',
+    '♨️ Horno': 'Precalienta el horno (indica temperatura y tiempo de precalentamiento). En cada paso indica: temperatura en °C, nivel de rejilla (alto/medio/bajo) y tiempo exacto en minutos.'
+  };
+  const methodGuide = methodTips[method] || methodTips['🔥 Estufa'];
   return `Eres un chef colombiano experto en cocina casera y tradicional.
 
 Ingredientes disponibles: ${ingredients}
@@ -1326,25 +1336,26 @@ ${diet}
 ${ppl}
 ${prefs ? 'Preferencias adicionales: '+prefs : ''}
 
-Crea UNA receta deliciosa, práctica y colombiana usando PRINCIPALMENTE estos ingredientes, preparada en ${method}. Responde EXACTAMENTE en este formato, sin texto adicional:
+Crea UNA receta deliciosa colombiana usando PRINCIPALMENTE estos ingredientes, preparada en ${method}. Responde EXACTAMENTE en este formato:
 
 🍽 [NOMBRE DE LA RECETA EN MAYÚSCULAS]
-⏱ Tiempo total: X minutos | 👥 Porciones: X | 🍳 Método: ${method}
+⏱ Tiempo total: X minutos | 👥 Porciones: X | 🍳 ${method}
 
 📋 INGREDIENTES:
-• [ingrediente] - [cantidad exacta con unidad de medida colombiana: tazas, cucharadas, gramos, etc]
-• [ingrediente] - [cantidad exacta]
-(incluir TODOS los ingredientes con cantidades precisas)
+• [ingrediente] - [cantidad exacta: tazas, cucharadas, gramos, unidades]
+(incluir TODOS con cantidades precisas)
 
-👨‍🍳 PREPARACIÓN (${method}):
-1. [Paso detallado adaptado al método ${method}: describe la acción, el tiempo y la temperatura. Ejemplo para estufa: Lleva el aceite a fuego medio-alto (180°C). Para horno: Precalienta a 200°C. Para air fryer: Configura a 180°C por 15 min.]
-2. [Siguiente paso con tiempo y temperatura]
-3. [Continúa con cada paso de forma clara y precisa]
-(Mínimo 5 pasos, máximo 10. Cada paso debe indicar tiempo estimado y temperatura cuando sea relevante)
+👨‍🍳 PREPARACIÓN EN ${method.replace(/[🔥💨♨️]/g,'').trim().toUpperCase()}:
+Nota: ${methodGuide}
 
-💡 CONSEJO DEL CHEF: [tip específico para cocinar en ${method}, temperatura exacta, o cómo saber que está listo el plato]
+1. [Paso detallado con tiempo y temperatura exacta para ${method}]
+2. [Siguiente paso — indica siempre tiempo en minutos y temperatura]
+3. [Continúa — mínimo 6 pasos bien detallados]
+(Cada paso DEBE incluir: acción + tiempo en minutos + temperatura cuando aplique)
 
-Sé muy específico: usa medidas exactas, tiempos en minutos, temperaturas en Celsius. El usuario debe poder cocinar la receta sin dudas.`;
+💡 TRUCO PARA ${method.replace(/[🔥💨♨️]/g,'').trim().toUpperCase()}: [consejo específico para este método]
+
+Sé preciso: medidas exactas, minutos, °C. El usuario debe poder seguir la receta sin dudas.`;
 }
 
 async function generateRecipe() {
@@ -1372,19 +1383,35 @@ async function quickShoppingList() {
   const favs = S.pantry.filter(f=>f.fav).map(f=>f.name);
   const low = S.pantry.filter(f=>f.min>0&&f.qty<f.min).map(f=>f.name);
   const p = S.profile;
-  const freq = typeof selectedFreq !== 'undefined' ? selectedFreq : 'semanal';
-  const freqLabel = freq==='mayor' ? 'para más de un mes' : freq;
-  const prompt = `Eres un asistente de compras para Colombia. Mis alimentos favoritos: ${favs.join(', ')||'variados'}. Alimentos que tengo pocos: ${low.join(', ')||'ninguno'}. Somos ${p.people||2} personas. ${p.diet?'Dieta: '+p.diet+'.':''}
+  const freq = document.getElementById('sel-freq')?.value || p.shoppingFreq || 'semanal';
+  const days = {semanal:7, quincenal:15, mensual:30};
+  const curDays = days[freq] || 7;
+  const prevDays = p.prevShoppingFreqDays || p.shoppingFreqDays || curDays;
+  // Habit context: scale quantities if frequency changed
+  let habitCtx = '';
+  if(p.shoppingFreq && p.shoppingFreq !== freq) {
+    habitCtx = `El usuario normalmente compraba ${p.shoppingFreq} (${prevDays} días). Ahora quiere comprar para ${curDays} días. Ajusta las cantidades proporcionalmente: multiplica por ${(curDays/prevDays).toFixed(2)}.`;
+  } else if(p.shoppingFreq) {
+    habitCtx = `El usuario compra habitualmente de forma ${freq} (${curDays} días). Usa cantidades coherentes con ese hábito.`;
+  }
+  // Save current selection as habit
+  saveShoppingFreq(freq);
+  const freqLabel = {semanal:'semanal (7 días)',quincenal:'quincenal (15 días)',mensual:'mensual (30 días)'}[freq] || freq;
+  const prompt = `Eres un asistente de compras experto para Colombia. 
+Datos del hogar: ${p.people||2} persona(s). ${p.diet?'Dieta: '+p.diet+'.':''}
+Favoritos: ${favs.join(', ')||'variados'}. 
+Alimentos con stock bajo: ${low.join(', ')||'ninguno'}.
+${habitCtx}
 
-Genera una lista de compras ${freqLabel} completa, organizada por secciones de supermercado colombiano:
+Genera una lista de compras para ${freqLabel}, organizada por secciones del supermercado colombiano:
 🥦 Frutas y Verduras
-🥛 Lácteos
-🍗 Carnes y Proteínas  
-🌾 Granos y Enlatados
+🥛 Lácteos y Huevos
+🍗 Carnes y Proteínas
+🌾 Granos, Harinas y Enlatados
 🧃 Bebidas
-🧴 Otros
+🧴 Aseo y Otros
 
-Ajusta las cantidades para ${freqLabel}. Incluye cantidades específicas. Prioriza los favoritos y lo que falta. Responde en español, formato claro y práctico.`;
+IMPORTANTE: Para cada alimento incluye la cantidad exacta calculada para ${curDays} días y ${p.people||2} persona(s). Prioriza los favoritos. Responde en español, formato claro.`;
   const comprasActive = document.getElementById('p-compras')?.classList.contains('on');
   const targetId = comprasActive ? 'sugs-ai' : 'home-ai-result';
   await callAI(targetId, prompt);
