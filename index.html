@@ -1851,7 +1851,7 @@ Si no encuentras fecha, usa "null". Si no encuentras nombre, usa "Producto".'`},
         {inline_data:{mime_type:'image/jpeg',data:b64}}
       ]}]
     };
-    const r = await fetch(\`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=\${GEMINI_KEY}\`,
+    const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_KEY}`,
       {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
     const data = await r.json();
     const txt = data.candidates?.[0]?.content?.parts?.[0]?.text || '{}';
@@ -1859,23 +1859,23 @@ Si no encuentras fecha, usa "null". Si no encuentras nombre, usa "Producto".'`},
     try { parsed = JSON.parse(txt.trim()); } catch { parsed = JSON.parse(txt.match(/\{[^}]+\}/)?.[0]||'{}'); }
     const nombre = parsed.nombre || 'Producto';
     const fecha = parsed.fecha && parsed.fecha !== 'null' ? parsed.fecha : '';
-    res.innerHTML = \`<div class="card">
+    res.innerHTML = `<div class="card">
       <div class="ct"><i class="ti ti-check"></i> Producto detectado</div>
       <div class="ig" style="margin-bottom:10px">
         <label class="il">Nombre del producto</label>
-        <input class="inp" id="exp-r-name" value="\${nombre}" placeholder="Nombre del producto">
+        <input class="inp" id="exp-r-name" value="${nombre}" placeholder="Nombre del producto">
       </div>
       <div class="ig" style="margin-bottom:14px">
         <label class="il">Fecha de vencimiento</label>
-        <input class="inp" id="exp-r-date" type="date" value="\${fecha}">
+        <input class="inp" id="exp-r-date" type="date" value="${fecha}">
       </div>
       <div style="display:flex;gap:8px">
         <button class="btn btnp" style="flex:1" onclick="saveScannedExpiry()"><i class="ti ti-plus"></i> Agregar a despensa</button>
         <button class="btn" onclick="startExpiryMain(); document.getElementById('exp-main-result').innerHTML=''"><i class="ti ti-refresh"></i> Volver a escanear</button>
       </div>
-    </div>\`;
+    </div>`;
   } catch(e) {
-    res.innerHTML = \`<div class="card"><div class="al ard"><i class="ti ti-alert-circle"></i><div class="al-b"><div class="al-t">Error al analizar</div><div class="al-s">\${e.message}</div></div></div></div>\`;
+    res.innerHTML = `<div class="card"><div class="al ard"><i class="ti ti-alert-circle"></i><div class="al-b"><div class="al-t">Error al analizar</div><div class="al-s">${e.message}</div></div></div></div>`;
   }
 }
 function saveScannedExpiry() {
@@ -1895,7 +1895,7 @@ function saveScannedExpiry() {
   S.pantry.push(food);
   saveState();
   renderHome();
-  toast(\`✅ \${emoji} \${name} agregado a tu despensa\`);
+  toast(`✅ ${emoji} ${name} agregado a tu despensa`);
   document.getElementById('exp-main-result').innerHTML='';
   showFotoMode(null);
   nav('despensa');
@@ -1903,18 +1903,4 @@ function saveScannedExpiry() {
 function guessEmoji(name) {
   const n = name.toLowerCase();
   const map = [
-    [/leche|lácteo/,'🥛'],[/yogur/,'🍦'],[/queso/,'🧀'],[/huevo/,'🥚'],
-    [/pollo/,'🍗'],[/carne|res|cerdo/,'🥩'],[/pescado|atún/,'🐟'],
-    [/tomate/,'🍅'],[/cebolla/,'🧅'],[/ajo/,'🧄'],[/papa|patata/,'🥔'],
-    [/arroz/,'🍚'],[/frijol|fríjol/,'🫘'],[/pan/,'🍞'],[/mantequilla/,'🧈'],
-    [/aceite/,'🫙'],[/sal|azúcar/,'🧂'],[/agua/,'💧'],[/jugo|zumo/,'🧃'],
-    [/naranja/,'🍊'],[/mango/,'🥭'],[/aguacate/,'🥑'],[/plátano|banano/,'🍌'],
-    [/limón/,'🍋'],[/manzana/,'🍎'],[/fresa/,'🍓'],[/uva/,'🍇'],
-  ];
-  for(const [r,e] of map) { if(r.test(n)) return e; }
-  return '🛒';
-}
-
-</script>
-</body>
-</html>
+    [/leche|lácteo/,'🥛'],[/yogur/,
