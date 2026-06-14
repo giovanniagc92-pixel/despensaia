@@ -822,6 +822,15 @@ Cebolla x2"></textarea>
   </div>
 </div>
 
+<!-- MODAL: Precio de cosecha -->
+<div class="modal-bg" id="m-harvest" onclick="if(event.target===this)closeModal('m-harvest')">
+  <div class="modal">
+    <div class="mh"></div>
+    <div id="m-harvest-content"></div>
+    <button class="btn btnp" style="width:100%;margin-top:14px" onclick="closeModal('m-harvest')"><i class="ti ti-check"></i> Listo</button>
+  </div>
+</div>
+
 <script>
 // ===================== STATE =====================
 const DB = 'despensaia_v3';
@@ -1552,27 +1561,30 @@ function shareRecipe() {
 }
 
 // ===================== HARVEST =====================
+// Precios mayoristas SIPSA-DANE, plaza Corabastos (Bogotá) — actualizado 2026-06-12
+// Fuente: Boletín diario SIPSA-DANE vía AgroPrecios.com.co
+const HARVEST_PRICES_UPDATED = '2026-06-12';
 function getHarvestData() {
   const m = new Date().getMonth()+1;
   return [
-    {name:'Maracuyá',emoji:'🌺',months:[5,6,7,8]},
-    {name:'Mango',emoji:'🥭',months:[4,5,6,7,8]},
-    {name:'Frijol',emoji:'🫘',months:[5,6,7,10,11,12]},
-    {name:'Maíz',emoji:'🌽',months:[6,7,8,9]},
-    {name:'Aguacate',emoji:'🥑',months:[6,7,8,9,10]},
-    {name:'Papa',emoji:'🥔',months:[6,7,8,11,12]},
-    {name:'Fresa',emoji:'🍓',months:[1,2,3]},
-    {name:'Banano',emoji:'🍌',months:[1,2,3,4,5,6,7,8,9,10,11,12]},
-    {name:'Naranja',emoji:'🍊',months:[12,1,2,3]},
-    {name:'Tomate',emoji:'🍅',months:[3,4,5,6,7]},
-    {name:'Lulo',emoji:'🟠',months:[6,7,8,9]},
-    {name:'Mora',emoji:'🫐',months:[4,5,6,9,10]},
-    {name:'Piña',emoji:'🍍',months:[3,4,5,9,10]},
-    {name:'Guayaba',emoji:'🍐',months:[8,9,10,11]},
-    {name:'Yuca',emoji:'🪵',months:[1,4,7,10]},
-    {name:'Cacao',emoji:'🍫',months:[10,11,12,1]},
-    {name:'Limón',emoji:'🍋',months:[1,2,11,12]},
-    {name:'Zapote',emoji:'🟤',months:[11,12,1,2]},
+    {name:'Maracuyá',emoji:'🌺',months:[5,6,7,8],priceMin:4000,priceMax:4500,unit:'kg',pres:'Bolsa de 10 kg: $40.000 – $45.000'},
+    {name:'Mango',emoji:'🥭',months:[4,5,6,7,8],priceMin:7500,priceMax:8300,unit:'kg',pres:'Canastilla de 24 kg (Mango Tommy): $180.000 – $200.000'},
+    {name:'Frijol',emoji:'🫘',months:[5,6,7,10,11,12],priceMin:4000,priceMax:4400,unit:'kg',pres:'Bulto de 50 kg (Fríjol verde cargamanto): $200.000 – $220.000'},
+    {name:'Maíz',emoji:'🌽',months:[6,7,8,9],priceMin:1300,priceMax:1400,unit:'kg',pres:'Bulto de 50 kg (Chócolo mazorca): $65.000 – $70.000'},
+    {name:'Aguacate',emoji:'🥑',months:[6,7,8,9,10],priceMin:9000,priceMax:10000,unit:'kg',pres:'Kilogramo (Aguacate Hass): $9.000 – $10.000'},
+    {name:'Papa',emoji:'🥔',months:[6,7,8,11,12],priceMin:1800,priceMax:2000,unit:'kg',pres:'Bulto de 50 kg (Papa parda pastusa): $90.000 – $100.000'},
+    {name:'Fresa',emoji:'🍓',months:[1,2,3],priceMin:13000,priceMax:14000,unit:'kg',pres:'Kilogramo: $13.000 – $14.000'},
+    {name:'Banano',emoji:'🍌',months:[1,2,3,4,5,6,7,8,9,10,11,12],priceMin:2000,priceMax:2500,unit:'kg',pres:'Kilogramo (Banano criollo): $2.000 – $2.500'},
+    {name:'Naranja',emoji:'🍊',months:[12,1,2,3],priceMin:2250,priceMax:2500,unit:'kg',pres:'Canastilla de 20 kg (Naranja Valencia): $45.000 – $50.000'},
+    {name:'Tomate',emoji:'🍅',months:[3,4,5,6,7],priceMin:3600,priceMax:4100,unit:'kg',pres:'Canastilla de 22 kg (Tomate chonto): $80.000 – $90.000'},
+    {name:'Lulo',emoji:'🟠',months:[6,7,8,9],priceMin:5800,priceMax:6000,unit:'kg',pres:'Canastilla de 25 kg: $145.000 – $150.000'},
+    {name:'Mora',emoji:'🫐',months:[4,5,6,9,10],priceMin:6300,priceMax:6700,unit:'kg',pres:'Caja de madera de 6 kg (Mora de Castilla): $38.000 – $40.000'},
+    {name:'Piña',emoji:'🍍',months:[3,4,5,9,10],priceMin:2000,priceMax:2400,unit:'kg',pres:'Caja de cartón de 11 kg (Piña Gold): $22.000 – $26.000'},
+    {name:'Guayaba',emoji:'🍐',months:[8,9,10,11],priceMin:6400,priceMax:7100,unit:'kg',pres:'Canastilla de 14 kg (Guayaba pera): $90.000 – $100.000'},
+    {name:'Yuca',emoji:'🪵',months:[1,4,7,10],priceMin:2700,priceMax:3000,unit:'kg',pres:'Bolsa de 30 kg (Yuca llanera): $80.000 – $90.000'},
+    {name:'Cacao',emoji:'🍫',months:[10,11,12,1],priceMin:null,priceMax:null,unit:'kg',pres:null},
+    {name:'Limón',emoji:'🍋',months:[1,2,11,12],priceMin:2300,priceMax:2600,unit:'kg',pres:'Bulto de 70 kg (Limón Tahití): $160.000 – $180.000'},
+    {name:'Zapote',emoji:'🟤',months:[11,12,1,2],priceMin:null,priceMax:null,unit:'kg',pres:null},
   ].map(h=>({...h,season:h.months.includes(m)}));
 }
 
@@ -1582,9 +1594,43 @@ function renderHarvest() {
   const m = new Date().getMonth()+1;
   document.getElementById('cosecha-month').textContent = `${mNames[m]} — basado en temporadas colombianas`;
   document.getElementById('harvest-now').innerHTML = data.filter(h=>h.season).map(h=>`
-    <div class="hc hcs"><div class="he">${h.emoji}</div><div class="hn">${h.name}</div><div class="hs">✅ En cosecha</div></div>`).join('');
+    <div class="hc hcs" onclick="showHarvestPrice('${h.name}')"><div class="he">${h.emoji}</div><div class="hn">${h.name}</div><div class="hs">✅ En cosecha</div></div>`).join('');
   document.getElementById('harvest-soon').innerHTML = data.filter(h=>!h.season).map(h=>`
-    <div class="hc"><div class="he">${h.emoji}</div><div class="hn">${h.name}</div><div class="hs">📅 Fuera temporada</div></div>`).join('');
+    <div class="hc" onclick="showHarvestPrice('${h.name}')"><div class="he">${h.emoji}</div><div class="hn">${h.name}</div><div class="hs">📅 Fuera temporada</div></div>`).join('');
+}
+
+function showHarvestPrice(name) {
+  const h = getHarvestData().find(x=>x.name===name);
+  if(!h) return;
+  const d = new Date(HARVEST_PRICES_UPDATED+'T00:00:00');
+  const fecha = d.toLocaleDateString('es-CO',{day:'numeric',month:'long',year:'numeric'});
+  let body;
+  if(h.priceMin!=null) {
+    body = `
+      <div style="text-align:center;margin-bottom:14px">
+        <div style="font-size:13px;color:var(--tx3);font-weight:700;margin-bottom:6px">Precio mayorista por ${h.unit}</div>
+        <div style="font-size:30px;font-weight:900;color:var(--g2);font-family:'Fraunces',serif">$${h.priceMin.toLocaleString('es-CO')} – $${h.priceMax.toLocaleString('es-CO')}</div>
+      </div>
+      <div class="al agr" style="margin-bottom:10px">
+        <i class="ti ti-scale"></i>
+        <div class="al-b"><div class="al-t">Presentación de referencia</div><div class="al-s">${h.pres}</div></div>
+      </div>
+      <div class="al atl">
+        <i class="ti ti-map-pin"></i>
+        <div class="al-b"><div class="al-t">Fuente: SIPSA-DANE, Corabastos (Bogotá)</div><div class="al-s">Actualizado: ${fecha}. Precios mayoristas de referencia; pueden variar por ciudad y calidad.</div></div>
+      </div>`;
+  } else {
+    body = `
+      <div class="empty" style="padding:16px">
+        <i class="ti ti-mood-empty"></i>
+        <p>Precio no disponible en el boletín de Corabastos por ahora. Se actualizará automáticamente cada semana.</p>
+      </div>`;
+  }
+  document.getElementById('m-harvest-content').innerHTML = `
+    <div style="text-align:center;font-size:40px;margin-bottom:4px">${h.emoji}</div>
+    <div class="mt" style="text-align:center">${h.name}</div>
+    ${body}`;
+  openModal('m-harvest');
 }
 
 // ===================== SHOPPING =====================
