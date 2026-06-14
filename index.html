@@ -195,11 +195,10 @@ textarea.inp{resize:none}
 
 /* QUICK ACTIONS GRID */
 .qg{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-bottom:14px}
-.qb{border-radius:16px;border:1px solid var(--bd);background:var(--card);padding:18px 10px;display:flex;flex-direction:column;align-items:center;gap:6px;font-size:11px;font-weight:800;color:var(--tx);cursor:pointer;transition:all .16s;box-shadow:var(--sh)}
+.qb{border-radius:16px;border:1px solid transparent;background:var(--g2);padding:18px 10px;display:flex;flex-direction:column;align-items:center;gap:6px;font-size:11px;font-weight:800;color:#fff;cursor:pointer;transition:all .16s;box-shadow:0 6px 20px rgba(22,163,74,0.3)}
 .qb:active{transform:scale(.94);box-shadow:none}
 .qb i{font-size:28px}
-.qbp{background:linear-gradient(135deg,var(--g) 0%,var(--g3) 100%);color:#fff;border-color:transparent;box-shadow:0 6px 20px rgba(22,163,74,0.4)}
-.qbg{background:linear-gradient(135deg,var(--gll),var(--gl));color:var(--g);border-color:rgba(22,163,74,0.2)}
+.qb-full{grid-column:1 / -1}
 
 /* RECIPE DISPLAY */
 .recipe-card{background:var(--card);border-radius:16px;padding:18px;margin-top:12px;border:1px solid var(--bd);box-shadow:var(--sh2)}
@@ -296,40 +295,18 @@ textarea.inp{resize:none}
 
     <!-- HOME -->
     <div class="pg on" id="p-home">
-      <div id="notif-prompt"><div class="notif-banner" onclick="requestNotifications()"><i class="ti ti-bell"></i><div><div style="font-weight:700;font-size:12px">Activar alertas de vencimiento</div><div style="font-size:11px;opacity:.8">Recibe notificaciones cuando tus alimentos estén por vencer</div></div><i class="ti ti-chevron-right" style="margin-left:auto"></i></div></div>
       <div class="sg" id="stats">
     <div class="sc"><div class="sn">10</div><div class="sl">Alimentos</div></div>
     <div class="sc"><div class="sn" style="color:var(--rd)">6</div><div class="sl">Por vencer</div></div>
     <div class="sc"><div class="sn" style="color:var(--am)">2</div><div class="sl">Por acabar</div></div></div>
-      <div id="home-alerts"></div>
       <div class="sec">Acciones rápidas</div>
       <div class="qg">
-        <button class="qb qbp" onclick="nav(&#39;foto&#39;)"><i class="ti ti-camera"></i>Escanear factura</button>
-        <button class="qb qbg" onclick="nav(&#39;recetas&#39;)"><i class="ti ti-chef-hat"></i>Generar receta</button>
+        <button class="qb" onclick="nav(&#39;foto&#39;)"><i class="ti ti-camera"></i>Escanear factura</button>
+        <button class="qb" onclick="nav(&#39;recetas&#39;)"><i class="ti ti-chef-hat"></i>Generar receta</button>
         <button class="qb" onclick="nav(&#39;despensa&#39;)"><i class="ti ti-fridge"></i>Mi despensa</button>
         <button class="qb" onclick="nav(&#39;compras&#39;)"><i class="ti ti-shopping-cart"></i>Lista de compras</button>
+        <button class="qb qb-full" onclick="nav(&#39;cosecha&#39;)"><i class="ti ti-plant"></i>Cosecha</button>
       </div>
-      <div class="sec">Mis favoritos</div>
-      <div class="card">
-        <div id="favs-row" style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:11px"><span class="badge bg" style="cursor:pointer" onclick="nav(&#39;recetas&#39;)">🥚 Huevos</span><span class="badge bg" style="cursor:pointer" onclick="nav(&#39;recetas&#39;)">🥛 Leche</span><span class="badge bg" style="cursor:pointer" onclick="nav(&#39;recetas&#39;)">🍅 Tomate</span><span class="badge bg" style="cursor:pointer" onclick="nav(&#39;recetas&#39;)">🧅 Cebolla</span><span class="badge bg" style="cursor:pointer" onclick="nav(&#39;recetas&#39;)">🍚 Arroz</span><span class="badge bg" style="cursor:pointer" onclick="nav(&#39;recetas&#39;)">🫘 Frijol</span><span class="badge bg" style="cursor:pointer" onclick="nav(&#39;recetas&#39;)">🧄 Ajo</span><span class="badge bg" style="cursor:pointer" onclick="nav(&#39;recetas&#39;)">🍌 Plátano</span></div>
-        <div style="display:flex;gap:8px;align-items:center">
-          <button class="btn btnp" style="flex:1;height:42px" onclick="quickShoppingList()"><i class="ti ti-list-check"></i> Generar lista ↗</button>
-          <select id="sel-freq" class="sel-inline" onchange="saveShoppingFreq(this.value)">
-            <option value="semanal">📅 Semanal</option>
-            <option value="quincenal">📅 Quincenal</option>
-            <option value="mensual">📅 Mensual</option>
-          </select>
-        </div>
-      </div>
-      <div id="home-ai-result"></div>
-      <div class="sec">Cosecha ahora en Colombia 🇨🇴</div>
-      <div class="hg" id="home-harvest">
-    <div class="hc hcs"><div class="he">🌺</div><div class="hn">Maracuyá</div><div class="hs">✅ En cosecha</div></div>
-    <div class="hc hcs"><div class="he">🥭</div><div class="hn">Mango</div><div class="hs">✅ En cosecha</div></div>
-    <div class="hc hcs"><div class="he">🫘</div><div class="hn">Frijol</div><div class="hs">✅ En cosecha</div></div>
-    <div class="hc hcs"><div class="he">🌽</div><div class="hn">Maíz</div><div class="hs">✅ En cosecha</div></div>
-    <div class="hc hcs"><div class="he">🥑</div><div class="hn">Aguacate</div><div class="hs">✅ En cosecha</div></div>
-    <div class="hc hcs"><div class="he">🥔</div><div class="hn">Papa</div><div class="hs">✅ En cosecha</div></div></div>
     </div>
 
     <!-- FACTURA -->
@@ -1002,6 +979,7 @@ function renderStats() {
 
 function renderAlerts() {
   const div = document.getElementById('home-alerts');
+  if(!div) return;
   let html = '';
   S.pantry.filter(f=>dU(f.exp)<=0).forEach(f=>{
     html += `<div class="al ard" onclick="openEditModal(${f.id})"><i class="ti ti-alert-octagon"></i><div class="al-b"><div class="al-t">${f.em} ${f.name} venció hoy</div><div class="al-s">¡Úsalo ya o descártalo! Toca para editar</div></div></div>`;
@@ -1022,19 +1000,23 @@ function renderAlerts() {
 function renderFavs() {
   const favs = S.pantry.filter(f=>f.fav);
   const div = document.getElementById('favs-row');
+  if(!div) return;
   div.innerHTML = favs.length
     ? favs.map(f=>`<span class="badge bg" style="cursor:pointer" onclick="nav('recetas')">${f.em} ${f.name}</span>`).join('')
     : '<span style="font-size:12px;color:var(--tx3)">Marca favoritos en tu despensa ⭐</span>';
 }
 
 function renderHomeHarvest() {
+  const div = document.getElementById('home-harvest');
+  if(!div) return;
   const inSeason = getHarvestData().filter(h=>h.season).slice(0,6);
-  document.getElementById('home-harvest').innerHTML = inSeason.map(h=>`
+  div.innerHTML = inSeason.map(h=>`
     <div class="hc hcs"><div class="he">${h.emoji}</div><div class="hn">${h.name}</div><div class="hs">✅ En cosecha</div></div>`).join('');
 }
 
 function renderNotifPrompt() {
   const div = document.getElementById('notif-prompt');
+  if(!div) return;
   if(!('Notification' in window) || Notification.permission !== 'default') { div.innerHTML=''; return; }
   div.innerHTML = `<div class="notif-banner" onclick="requestNotifications()"><i class="ti ti-bell"></i><div><div style="font-weight:700;font-size:12px">Activar alertas de vencimiento</div><div style="font-size:11px;opacity:.8">Recibe notificaciones cuando tus alimentos estén por vencer</div></div><i class="ti ti-chevron-right" style="margin-left:auto"></i></div>`;
 }
