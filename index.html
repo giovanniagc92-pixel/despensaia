@@ -586,22 +586,25 @@ Cebolla x2"></textarea>
       <button class="back-btn" onclick="nav('home')"><i class="ti ti-arrow-left"></i> Inicio</button>
       <div class="searchbar">
         <i class="ti ti-search" aria-hidden="true"></i>
-        <input type="text" id="harvest-search" placeholder="Buscar alimento (ej. Aguacate, Mango...)" oninput="renderHarvest()">
+        <input type="text" id="harvest-search" placeholder="Buscar cualquier alimento (ej. Arroz, Lenteja, Café...)" oninput="renderHarvest()">
       </div>
-      <div class="al agr" style="margin-bottom:14px">
-        <i class="ti ti-map-pin"></i>
-        <div class="al-b">
-          <div class="al-t">Temporada de cosecha Colombia</div>
-          <div class="al-s" id="cosecha-month">Cargando...</div>
+      <div id="harvest-search-results" style="display:none"></div>
+      <div id="harvest-default">
+        <div class="al agr" style="margin-bottom:14px">
+          <i class="ti ti-map-pin"></i>
+          <div class="al-b">
+            <div class="al-t">Temporada de cosecha Colombia</div>
+            <div class="al-s" id="cosecha-month">Cargando...</div>
+          </div>
         </div>
-      </div>
-      <div class="sec">Disponibles ahora ✅</div>
-      <div class="hg" id="harvest-now" style="margin-bottom:14px"></div>
-      <div class="sec">Próximamente</div>
-      <div class="hg" id="harvest-soon"></div>
-      <div class="al atl" style="margin-top:14px">
-        <i class="ti ti-info-circle"></i>
-        <div class="al-b"><div class="al-t">Compra en temporada</div><div class="al-s">Los alimentos en cosecha son más frescos y económicos en Colombia</div></div>
+        <div class="sec">Disponibles ahora ✅</div>
+        <div class="hg" id="harvest-now" style="margin-bottom:14px"></div>
+        <div class="sec">Próximamente</div>
+        <div class="hg" id="harvest-soon"></div>
+        <div class="al atl" style="margin-top:14px">
+          <i class="ti ti-info-circle"></i>
+          <div class="al-b"><div class="al-t">Compra en temporada</div><div class="al-s">Los alimentos en cosecha son más frescos y económicos en Colombia</div></div>
+        </div>
       </div>
     </div>
 
@@ -1568,6 +1571,163 @@ function shareRecipe() {
 // Precios mayoristas SIPSA-DANE, plaza Corabastos (Bogotá) — actualizado 2026-06-12
 // Fuente: Boletín diario SIPSA-DANE vía AgroPrecios.com.co
 const HARVEST_PRICES_UPDATED = '2026-06-12';
+// Base de precios completa (catálogo SIPSA-DANE Corabastos) para el buscador.
+// n=nombre, min/max=precio de referencia, u='kg' (precio por kilogramo) o 'presentación' (precio por unidad de venta), p=presentación de referencia
+const SIPSA_DB = [
+{n:'Aceite soya',min:96800,max:99000,u:'presentación',p:'Caja de cartón x 12 unidades de 1000 CC'},
+{n:'Acelga',min:400,max:467,u:'kg',p:'Atado/manojo de 15 kg'},
+{n:'Aguacate Hass',min:9000,max:10000,u:'kg',p:'Kilogramo'},
+{n:'Aguacate papelillo',min:12000,max:12500,u:'kg',p:'Kilogramo'},
+{n:'Ahuyama',min:1600,max:1800,u:'kg',p:'Kilogramo'},
+{n:'Ahuyamín (sakata)',min:1000,max:1200,u:'kg',p:'Bulto de 50 kg'},
+{n:'Ajo importado',min:5500,max:6000,u:'kg',p:'Caja de cartón de 10 kg'},
+{n:'Ajo',min:12000,max:13000,u:'kg',p:'Atado/manojo de 5 kg'},
+{n:'Almejas con concha',min:6000,max:8000,u:'presentación',p:'Kilogramo'},
+{n:'Almejas sin concha',min:18000,max:18000,u:'presentación',p:'Kilogramo'},
+{n:'Apio',min:320,max:400,u:'kg',p:'Atado/manojo de 25 kg'},
+{n:'Arándano',min:6000,max:6500,u:'presentación',p:'Caja PET de 125 g'},
+{n:'Arracacha amarilla',min:5333,max:5833,u:'kg',p:'Bulto de 60 kg'},
+{n:'Arroz de primera',min:3040,max:3200,u:'kg',p:'Bulto de 50 kg'},
+{n:'Arroz de segunda',min:2100,max:2400,u:'kg',p:'Bulto de 50 kg'},
+{n:'Arroz sopa cristal',min:2400,max:2960,u:'kg',p:'Arroba de 12.5 kg'},
+{n:'Arveja amarilla seca importada',min:3200,max:3680,u:'kg',p:'Arroba de 12.5 kg'},
+{n:'Arveja verde en vaina pastusa',min:5600,max:6000,u:'kg',p:'Bulto de 50 kg'},
+{n:'Arveja verde en vaina',min:7400,max:7600,u:'kg',p:'Bulto de 50 kg'},
+{n:'Arveja verde seca importada',min:3340,max:3500,u:'kg',p:'Bulto de 50 kg'},
+{n:'Avena en hojuelas',min:94800,max:97500,u:'presentación',p:'Bolsa de 54 unidades de 180 g'},
+{n:'Avena molida',min:102000,max:107750,u:'presentación',p:'Bolsa de 54 unidades de 180 g'},
+{n:'Azúcar refinada',min:3840,max:4240,u:'kg',p:'Arroba de 12.5 kg'},
+{n:'Azúcar sulfitada',min:2960,max:3320,u:'kg',p:'Bulto de 50 kg'},
+{n:'Banano bocadillo',min:2400,max:2700,u:'kg',p:'Kilogramo'},
+{n:'Banano criollo',min:2000,max:2500,u:'kg',p:'Kilogramo'},
+{n:'Banano urabá',min:2150,max:2250,u:'kg',p:'Caja de cartón de 20 kg'},
+{n:'Basa entero congelado importado',min:9000,max:12000,u:'kg',p:'Kilogramo'},
+{n:'Basa filete congelado importado',min:13000,max:15000,u:'kg',p:'Kilogramo'},
+{n:'Berenjena',min:4500,max:5000,u:'kg',p:'Kilogramo'},
+{n:'Bocadillo veleño',min:15000,max:16000,u:'presentación',p:'Caja de cartón x 36 unidades'},
+{n:'Borojó',min:5000,max:6000,u:'kg',p:'Kilogramo'},
+{n:'Brócoli',min:4000,max:4000,u:'kg',p:'Docena de 10 kg'},
+{n:'Café instantáneo',min:31150,max:33000,u:'presentación',p:'Frasco de 170 g'},
+{n:'Café molido',min:299000,max:318000,u:'presentación',p:'Bolsa x 12 unidades de 500 g'},
+{n:'Calabacín',min:750,max:1000,u:'kg',p:'Bolsa de 20 kg'},
+{n:'Calamar anillos',min:30000,max:38000,u:'kg',p:'Kilogramo'},
+{n:'Calamar blanco entero',min:15000,max:17000,u:'kg',p:'Kilogramo'},
+{n:'Cazuela de mariscos',min:18000,max:19000,u:'kg',p:'Kilogramo (paquete)'},
+{n:'Cebolla cabezona blanca',min:3200,max:3600,u:'kg',p:'Bulto de 50 kg'},
+{n:'Cebolla cabezona roja',min:3200,max:3400,u:'kg',p:'Bulto de 50 kg'},
+{n:'Cebolla junca aquitania',min:5000,max:5333,u:'kg',p:'Atado/manojo de 30 kg'},
+{n:'Cebolla puerro',min:2000,max:2500,u:'kg',p:'Atado/manojo de 20 kg'},
+{n:'Chocolate amargo',min:16000,max:16700,u:'presentación',p:'Unidad de 224 g'},
+{n:'Chocolate dulce',min:705000,max:735000,u:'presentación',p:'Caja de cartón x 48 unidades de 450 g'},
+{n:'Chócolo mazorca',min:1200,max:1400,u:'kg',p:'Bulto de 50 kg'},
+{n:'Cidra',min:2500,max:3000,u:'kg',p:'Kilogramo'},
+{n:'Cilantro',min:3500,max:4000,u:'kg',p:'Atado/manojo de 10 kg'},
+{n:'Ciruela roja',min:2800,max:3200,u:'kg',p:'Canastilla de 25 kg'},
+{n:'Coco',min:5833,max:6250,u:'kg',p:'Docena de 12 kg'},
+{n:'Coliflor',min:3000,max:4000,u:'kg',p:'Docena de 10 kg'},
+{n:'Color (bolsita)',min:1200,max:1800,u:'presentación',p:'Sobre/papeleta de 55 g'},
+{n:'Cuchuco de cebada',min:3920,max:4960,u:'kg',p:'Arroba de 12.5 kg'},
+{n:'Cuchuco de maíz',min:3600,max:4000,u:'kg',p:'Arroba de 12.5 kg'},
+{n:'Curuba',min:3636,max:3864,u:'kg',p:'Canastilla de 22 kg'},
+{n:'Durazno nacional',min:6000,max:7000,u:'kg',p:'Kilogramo'},
+{n:'Espinaca',min:1500,max:1500,u:'kg',p:'Atado/manojo de 10 kg'},
+{n:'Fécula de maíz',min:480000,max:500000,u:'presentación',p:'Caja de cartón x 40 unidades de 380 g'},
+{n:'Feijoa',min:5000,max:6000,u:'kg',p:'Kilogramo'},
+{n:'Fresa',min:13000,max:14000,u:'kg',p:'Kilogramo'},
+{n:'Fríjol bolón',min:14640,max:15000,u:'kg',p:'Bulto de 50 kg'},
+{n:'Fríjol cargamanto rojo',min:10400,max:10800,u:'kg',p:'Bulto de 50 kg'},
+{n:'Fríjol verde cargamanto',min:4000,max:4400,u:'kg',p:'Bulto de 50 kg'},
+{n:'Galletas saladas',min:127000,max:135000,u:'presentación',p:'Caja de cartón x 24 unidades de 300 g'},
+{n:'Garbanzo importado',min:8000,max:8700,u:'kg',p:'Bulto de 50 kg'},
+{n:'Gelatina',min:64450,max:68500,u:'presentación',p:'Caja de cartón x 48 unidades de 14 g'},
+{n:'Granadilla',min:9333,max:9333,u:'kg',p:'Caja de cartón de 15 kg'},
+{n:'Guanábana',min:4500,max:5000,u:'kg',p:'Kilogramo'},
+{n:'Guayaba pera',min:6429,max:7143,u:'kg',p:'Canastilla de 14 kg'},
+{n:'Gulupa',min:5000,max:5417,u:'kg',p:'Canastilla de 12 kg'},
+{n:'Habichuela',min:4667,max:5000,u:'kg',p:'Bulto de 60 kg'},
+{n:'Harina de trigo',min:2780,max:3000,u:'kg',p:'Bulto de 50 kg'},
+{n:'Harina precocida de maíz',min:50000,max:54000,u:'presentación',p:'Bolsa x 24 unidades de 500 g'},
+{n:'Higo',min:10000,max:10000,u:'kg',p:'Kilogramo'},
+{n:'Huevo rojo A',min:11000,max:12000,u:'presentación',p:'Panal x 30 unidades'},
+{n:'Huevo rojo AA',min:12000,max:13000,u:'presentación',p:'Panal x 30 unidades'},
+{n:'Huevo rojo B',min:10800,max:11000,u:'presentación',p:'Panal x 30 unidades'},
+{n:'Huevo rojo extra',min:14000,max:14500,u:'presentación',p:'Panal x 30 unidades'},
+{n:'Jugo instantáneo (sobre)',min:17000,max:18000,u:'presentación',p:'Caja de cartón x 20 unidades de 10 g'},
+{n:'Kiwi',min:12000,max:14000,u:'kg',p:'Canastilla de 10 kg'},
+{n:'Leche en polvo',min:285000,max:298000,u:'presentación',p:'Caja de cartón x 30 bolsas de 380 g'},
+{n:'Lechuga batavia',min:2000,max:2500,u:'kg',p:'Docena de 10 kg'},
+{n:'Lechuga crespa verde',min:4000,max:4000,u:'kg',p:'Bolsa de 6 kg'},
+{n:'Lenteja importada',min:4960,max:5200,u:'kg',p:'Bulto de 50 kg'},
+{n:'Limón común',min:2286,max:2571,u:'kg',p:'Bulto de 70 kg'},
+{n:'Limón Tahití',min:2286,max:2571,u:'kg',p:'Bulto de 70 kg'},
+{n:'Lomitos de atún en lata',min:257000,max:279000,u:'presentación',p:'Caja de cartón x 48 unidades de 140 g'},
+{n:'Lulo',min:5800,max:6000,u:'kg',p:'Canastilla de 25 kg'},
+{n:'Maíz amarillo cáscara',min:1750,max:1950,u:'kg',p:'Bulto de 60 kg'},
+{n:'Maíz blanco trillado',min:1980,max:2140,u:'kg',p:'Bulto de 50 kg'},
+{n:'Maíz pira',min:3300,max:3800,u:'kg',p:'Bulto de 25 kg'},
+{n:'Mandarina arrayana',min:4545,max:5000,u:'kg',p:'Canastilla de 22 kg'},
+{n:'Mango de azúcar',min:6250,max:6667,u:'kg',p:'Canastilla de 24 kg'},
+{n:'Mango Tommy',min:7500,max:8333,u:'kg',p:'Canastilla de 24 kg'},
+{n:'Manteca',min:7973,max:8133,u:'kg',p:'Caja de cartón de 15 kg'},
+{n:'Manzana nacional',min:7000,max:8000,u:'kg',p:'Canastilla de 20 kg'},
+{n:'Manzana roja importada',min:8421,max:8947,u:'kg',p:'Caja de cartón de 19 kg'},
+{n:'Manzana royal gala importada',min:7368,max:8421,u:'kg',p:'Caja de cartón de 19 kg'},
+{n:'Manzana verde importada',min:8947,max:9474,u:'kg',p:'Caja de cartón de 19 kg'},
+{n:'Maracuyá',min:4000,max:4500,u:'kg',p:'Bolsa de 10 kg'},
+{n:'Margarina',min:15555,max:16000,u:'kg',p:'Caja de cartón de 10 kg'},
+{n:'Mayonesa doy pack',min:50000,max:55000,u:'presentación',p:'Caja de cartón x 24 unidades de 120 g'},
+{n:'Melón cantalupo',min:1500,max:2000,u:'kg',p:'Kilogramo'},
+{n:'Merluza filete nacional',min:60000,max:62000,u:'kg',p:'Kilogramo'},
+{n:'Mora de Castilla',min:6333,max:6667,u:'kg',p:'Caja de madera de 6 kg'},
+{n:'Naranja sweet',min:2250,max:2500,u:'kg',p:'Canastilla de 20 kg'},
+{n:'Naranja Valencia',min:2250,max:2500,u:'kg',p:'Canastilla de 20 kg'},
+{n:'Panela cuadrada morena',min:88000,max:90000,u:'presentación',p:'Caja de cartón x 40 unidades de 500 g'},
+{n:'Panela pulverizada',min:80000,max:85000,u:'presentación',p:'Paca x 25 unidades de 500 g'},
+{n:'Papa criolla limpia',min:5778,max:6222,u:'kg',p:'Bulto de 45 kg'},
+{n:'Papa criolla sucia',min:3800,max:4000,u:'kg',p:'Bulto de 50 kg'},
+{n:'Papa parda pastusa',min:1800,max:2000,u:'kg',p:'Bulto de 50 kg'},
+{n:'Papa R-12 negra',min:1800,max:2000,u:'kg',p:'Bulto de 50 kg'},
+{n:'Papa sabanera',min:3600,max:4000,u:'kg',p:'Bulto de 50 kg'},
+{n:'Papa superior',min:1800,max:2000,u:'kg',p:'Bulto de 50 kg'},
+{n:'Papaya paulina',min:1389,max:1667,u:'kg',p:'Caja de madera de 18 kg'},
+{n:'Papaya Tainung',min:2500,max:3000,u:'kg',p:'Caja de madera de 10 kg'},
+{n:'Pastas alimenticias',min:45000,max:46200,u:'presentación',p:'Bolsa x 24 unidades de 250 g'},
+{n:'Patilla baby',min:2100,max:2700,u:'kg',p:'Kilogramo'},
+{n:'Patilla',min:2300,max:2500,u:'kg',p:'Kilogramo'},
+{n:'Pepino cohombro',min:3000,max:4000,u:'kg',p:'Kilogramo'},
+{n:'Pepino de rellenar (caja)',min:3750,max:4167,u:'kg',p:'Caja de cartón de 12 kg'},
+{n:'Pepino de rellenar (canastilla)',min:4000,max:5000,u:'kg',p:'Canastilla de 10 kg'},
+{n:'Pera importada',min:7000,max:7500,u:'kg',p:'Caja de cartón de 20 kg'},
+{n:'Pera nacional',min:1522,max:1739,u:'kg',p:'Canastilla de 23 kg'},
+{n:'Perejil',min:3333,max:3333,u:'kg',p:'Atado/manojo de 6 kg'},
+{n:'Pimentón',min:3500,max:4000,u:'kg',p:'Kilogramo'},
+{n:'Piña Gold',min:2000,max:2364,u:'kg',p:'Caja de cartón de 11 kg'},
+{n:'Pitahaya',min:8000,max:9000,u:'kg',p:'Kilogramo'},
+{n:'Plátano guineo',min:2300,max:3000,u:'kg',p:'Kilogramo'},
+{n:'Plátano hartón maduro',min:2000,max:2250,u:'kg',p:'Bolsa de 20 kg'},
+{n:'Plátano hartón verde llanero',min:3000,max:3500,u:'kg',p:'Canastilla de 20 kg'},
+{n:'Plátano hartón verde',min:2000,max:2250,u:'kg',p:'Bolsa de 20 kg'},
+{n:'Queso campesino',min:16000,max:16500,u:'kg',p:'Kilogramo'},
+{n:'Queso costeño',min:21000,max:23000,u:'kg',p:'Kilogramo'},
+{n:'Queso cuajada',min:17000,max:19000,u:'kg',p:'Kilogramo'},
+{n:'Queso doble crema',min:18000,max:20000,u:'kg',p:'Bloque de 2.5 kg'},
+{n:'Remolacha',min:1167,max:1333,u:'kg',p:'Bulto de 60 kg'},
+{n:'Repollo verde',min:1077,max:1231,u:'kg',p:'Bulto de 65 kg'},
+{n:'Sal yodada (bolsa)',min:49700,max:54000,u:'presentación',p:'Bolsa de 20 unidades de 1 kg'},
+{n:'Sal yodada (bulto)',min:1400,max:1600,u:'kg',p:'Bulto de 50 kg'},
+{n:'Salsa de tomate doy pack',min:50000,max:52000,u:'presentación',p:'Caja de cartón x 24 unidades de 120 g'},
+{n:'Sardinas en lata',min:180000,max:186200,u:'presentación',p:'Caja de cartón x 24 unidades de 425 g'},
+{n:'Sopa de pollo (caja)',min:76300,max:80000,u:'presentación',p:'Caja de cartón x 36 unidades de 85 g'},
+{n:'Tangelo',min:4400,max:4800,u:'kg',p:'Canastilla de 25 kg'},
+{n:'Tomate chonto',min:3636,max:4091,u:'kg',p:'Canastilla de 22 kg'},
+{n:'Tomate larga vida',min:5500,max:6000,u:'kg',p:'Canastilla de 20 kg'},
+{n:'Vinagre',min:5000,max:5000,u:'presentación',p:'Frasco de 3 litros'},
+{n:'Yuca llanera',min:2667,max:3000,u:'kg',p:'Bolsa de 30 kg'},
+{n:'Zanahoria',min:2667,max:3000,u:'kg',p:'Bulto de 60 kg'},
+];
+function normSearch(s) {
+  return (s||'').toString().normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().trim();
+}
 function getHarvestData() {
   const m = new Date().getMonth()+1;
   return [
@@ -1593,11 +1753,40 @@ function getHarvestData() {
 }
 
 function renderHarvest() {
-  const q = (document.getElementById('harvest-search')?.value||'').trim().toLowerCase();
-  const data = getHarvestData().filter(h=>!q || h.name.toLowerCase().includes(q));
+  const qRaw = (document.getElementById('harvest-search')?.value||'').trim();
+  const q = normSearch(qRaw);
+  const defaultBox = document.getElementById('harvest-default');
+  const resultsBox = document.getElementById('harvest-search-results');
   const mNames = ['','Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
   const m = new Date().getMonth()+1;
   document.getElementById('cosecha-month').textContent = `${mNames[m]} — basado en temporadas colombianas`;
+
+  if(q) {
+    // Búsqueda en el catálogo completo de precios SIPSA-DANE
+    defaultBox.style.display = 'none';
+    resultsBox.style.display = '';
+    const matches = SIPSA_DB.filter(d=>normSearch(d.n).includes(q));
+    if(!matches.length) {
+      resultsBox.innerHTML = `<div class="empty" style="padding:24px 16px"><i class="ti ti-search"></i><p>Sin resultados para "${qRaw}"</p></div>`;
+    } else {
+      resultsBox.innerHTML = `<div class="sec">Resultados (${matches.length})</div>` + matches.map(d=>`
+        <div class="fr" onclick="showSipsaPrice('${d.n.replace(/'/g,"\\'")}')" style="cursor:pointer">
+          <div class="fec"><i class="ti ti-tag"></i></div>
+          <div class="fi">
+            <div class="fn">${d.n}</div>
+            <div class="fm">${d.u==='kg' ? `$${d.min.toLocaleString('es-CO')} – $${d.max.toLocaleString('es-CO')} / kg` : d.p}</div>
+          </div>
+          <i class="ti ti-chevron-right" style="color:var(--tx3)"></i>
+        </div>`).join('');
+    }
+    return;
+  }
+
+  // Sin búsqueda: vista por defecto con los productos en temporada
+  resultsBox.style.display = 'none';
+  resultsBox.innerHTML = '';
+  defaultBox.style.display = '';
+  const data = getHarvestData();
   const now = data.filter(h=>h.season);
   const soon = data.filter(h=>!h.season);
   document.getElementById('harvest-now').innerHTML = now.map(h=>`
@@ -1609,17 +1798,30 @@ function renderHarvest() {
   document.getElementById('harvest-now').style.display = now.length ? '' : 'none';
   secs[1].style.display = soon.length ? '' : 'none';
   document.getElementById('harvest-soon').style.display = soon.length ? '' : 'none';
-  let empty = document.getElementById('harvest-empty');
-  if(q && !now.length && !soon.length) {
-    if(!empty) {
-      empty = document.createElement('div');
-      empty.id = 'harvest-empty';
-      empty.className = 'empty';
-      empty.innerHTML = `<i class="ti ti-search"></i><p>Sin resultados para "${q}"</p>`;
-      document.getElementById('harvest-soon').insertAdjacentElement('afterend', empty);
-    } else empty.querySelector('p').textContent = `Sin resultados para "${q}"`;
-    empty.style.display = '';
-  } else if(empty) empty.style.display = 'none';
+}
+
+function showSipsaPrice(name) {
+  const d = SIPSA_DB.find(x=>x.n===name);
+  if(!d) return;
+  const dt = new Date(HARVEST_PRICES_UPDATED+'T00:00:00');
+  const fecha = dt.toLocaleDateString('es-CO',{day:'numeric',month:'long',year:'numeric'});
+  const priceLabel = d.u==='kg' ? 'Precio mayorista por kilogramo' : 'Precio mayorista por presentación';
+  document.getElementById('m-harvest-content').innerHTML = `
+    <div style="text-align:center;font-size:36px;margin-bottom:4px"><i class="ti ti-tag" style="color:var(--g2)"></i></div>
+    <div class="mt" style="text-align:center">${d.n}</div>
+    <div style="text-align:center;margin-bottom:14px">
+      <div style="font-size:13px;color:var(--tx3);font-weight:700;margin-bottom:6px">${priceLabel}</div>
+      <div style="font-size:30px;font-weight:900;color:var(--g2);font-family:'Fraunces',serif">$${d.min.toLocaleString('es-CO')} – $${d.max.toLocaleString('es-CO')}</div>
+    </div>
+    <div class="al agr" style="margin-bottom:10px">
+      <i class="ti ti-scale"></i>
+      <div class="al-b"><div class="al-t">Presentación de referencia</div><div class="al-s">${d.p}</div></div>
+    </div>
+    <div class="al atl">
+      <i class="ti ti-map-pin"></i>
+      <div class="al-b"><div class="al-t">Fuente: SIPSA-DANE, Corabastos (Bogotá)</div><div class="al-s">Actualizado: ${fecha}. Precios mayoristas de referencia; pueden variar por ciudad y calidad.</div></div>
+    </div>`;
+  openModal('m-harvest');
 }
 
 function showHarvestPrice(name) {
