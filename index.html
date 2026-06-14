@@ -584,6 +584,10 @@ Cebolla x2"></textarea>
     <!-- COSECHA -->
     <div class="pg" id="p-cosecha">
       <button class="back-btn" onclick="nav('home')"><i class="ti ti-arrow-left"></i> Inicio</button>
+      <div class="searchbar">
+        <i class="ti ti-search" aria-hidden="true"></i>
+        <input type="text" id="harvest-search" placeholder="Buscar alimento (ej. Aguacate, Mango...)" oninput="renderHarvest()">
+      </div>
       <div class="al agr" style="margin-bottom:14px">
         <i class="ti ti-map-pin"></i>
         <div class="al-b">
@@ -1589,14 +1593,33 @@ function getHarvestData() {
 }
 
 function renderHarvest() {
-  const data = getHarvestData();
+  const q = (document.getElementById('harvest-search')?.value||'').trim().toLowerCase();
+  const data = getHarvestData().filter(h=>!q || h.name.toLowerCase().includes(q));
   const mNames = ['','Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
   const m = new Date().getMonth()+1;
   document.getElementById('cosecha-month').textContent = `${mNames[m]} — basado en temporadas colombianas`;
-  document.getElementById('harvest-now').innerHTML = data.filter(h=>h.season).map(h=>`
+  const now = data.filter(h=>h.season);
+  const soon = data.filter(h=>!h.season);
+  document.getElementById('harvest-now').innerHTML = now.map(h=>`
     <div class="hc hcs" onclick="showHarvestPrice('${h.name}')"><div class="he">${h.emoji}</div><div class="hn">${h.name}</div><div class="hs">✅ En cosecha</div></div>`).join('');
-  document.getElementById('harvest-soon').innerHTML = data.filter(h=>!h.season).map(h=>`
+  document.getElementById('harvest-soon').innerHTML = soon.map(h=>`
     <div class="hc" onclick="showHarvestPrice('${h.name}')"><div class="he">${h.emoji}</div><div class="hn">${h.name}</div><div class="hs">📅 Fuera temporada</div></div>`).join('');
+  const secs = document.querySelectorAll('#p-cosecha .sec');
+  secs[0].style.display = now.length ? '' : 'none';
+  document.getElementById('harvest-now').style.display = now.length ? '' : 'none';
+  secs[1].style.display = soon.length ? '' : 'none';
+  document.getElementById('harvest-soon').style.display = soon.length ? '' : 'none';
+  let empty = document.getElementById('harvest-empty');
+  if(q && !now.length && !soon.length) {
+    if(!empty) {
+      empty = document.createElement('div');
+      empty.id = 'harvest-empty';
+      empty.className = 'empty';
+      empty.innerHTML = `<i class="ti ti-search"></i><p>Sin resultados para "${q}"</p>`;
+      document.getElementById('harvest-soon').insertAdjacentElement('afterend', empty);
+    } else empty.querySelector('p').textContent = `Sin resultados para "${q}"`;
+    empty.style.display = '';
+  } else if(empty) empty.style.display = 'none';
 }
 
 function showHarvestPrice(name) {
