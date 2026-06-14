@@ -51,16 +51,14 @@ html,body{height:100%;overflow:hidden;background:var(--bg);font-family:'Nunito',
 
 /* PAGES */
 .pages{flex:1;overflow:hidden;position:relative}
-.pg{position:absolute;inset:0;overflow-y:auto;-webkit-overflow-scrolling:touch;display:none;padding:14px 14px calc(var(--nh)+var(--nb)+20px)}
+.pg{position:absolute;inset:0;overflow-y:auto;-webkit-overflow-scrolling:touch;display:none;padding:14px 14px calc(var(--nb)+20px)}
 .pg.on{display:block}
 .pg::-webkit-scrollbar{display:none}
 
 /* NAV */
-.bnav{display:flex;background:var(--card);border-top:1px solid var(--bd);padding-bottom:var(--nb);flex-shrink:0;height:calc(var(--nh)+var(--nb));box-shadow:0 -4px 20px rgba(22,163,74,0.08)}
-.ni{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;border:none;background:none;color:var(--tx3);font-size:9px;font-weight:700;font-family:inherit;cursor:pointer;padding:6px 0;transition:all .2s;position:relative}
-.ni.on{color:var(--g)}
-.ni i{font-size:24px;transition:transform .2s}
-.ni.on i{transform:scale(1.15)}
+.back-btn{display:flex;align-items:center;gap:6px;border:none;background:none;color:var(--g2);font-size:13px;font-weight:800;font-family:inherit;cursor:pointer;padding:2px 0 14px;margin:0}
+.back-btn i{font-size:18px}
+.back-btn:active{opacity:.6}
 .ni-dot{position:absolute;top:5px;right:calc(50% - 14px);width:7px;height:7px;background:var(--rd);border-radius:50%;border:2px solid var(--card)}
 
 /* CARDS */
@@ -311,6 +309,7 @@ textarea.inp{resize:none}
 
     <!-- FACTURA -->
     <div class="pg" id="p-foto">
+      <button class="back-btn" onclick="nav('home')"><i class="ti ti-arrow-left"></i> Inicio</button>
       <!-- Selector principal -->
       <div id="foto-mode-selector">
         <button class="scan-btn scan-btn-inv" onclick="showFotoMode('invoice')">
@@ -427,6 +426,7 @@ Cebolla x2"></textarea>
 
     <!-- DESPENSA -->
     <div class="pg" id="p-despensa">
+      <button class="back-btn" onclick="nav('home')"><i class="ti ti-arrow-left"></i> Inicio</button>
       <div class="searchbar">
         <i class="ti ti-search" aria-hidden="true"></i>
         <input type="text" id="pantry-search" placeholder="Buscar en tu despensa..." oninput="renderPantry()">
@@ -556,6 +556,7 @@ Cebolla x2"></textarea>
 
     <!-- RECETAS -->
     <div class="pg" id="p-recetas">
+      <button class="back-btn" onclick="nav('home')"><i class="ti ti-arrow-left"></i> Inicio</button>
       <div class="card">
         <div class="ct"><i class="ti ti-chef-hat"></i> Generar receta con IA</div>
         <label class="il">Selecciona ingredientes de tu despensa</label>
@@ -582,6 +583,7 @@ Cebolla x2"></textarea>
 
     <!-- COSECHA -->
     <div class="pg" id="p-cosecha">
+      <button class="back-btn" onclick="nav('home')"><i class="ti ti-arrow-left"></i> Inicio</button>
       <div class="al agr" style="margin-bottom:14px">
         <i class="ti ti-map-pin"></i>
         <div class="al-b">
@@ -601,6 +603,7 @@ Cebolla x2"></textarea>
 
     <!-- COMPRAS -->
     <div class="pg" id="p-compras">
+      <button class="back-btn" onclick="nav('home')"><i class="ti ti-arrow-left"></i> Inicio</button>
       <div class="tabs" id="compras-tabs">
         <button class="tab on" onclick="comprasTab(this,&#39;ct-lista&#39;)">Mi lista</button>
         <button class="tab" onclick="comprasTab(this,&#39;ct-sugs&#39;)">Sugerencias</button>
@@ -657,16 +660,6 @@ Cebolla x2"></textarea>
     </div>
 
   </div><!-- /pages -->
-
-  <!-- BOTTOM NAV -->
-  <nav class="bnav" role="navigation" aria-label="Navegación principal">
-    <button class="ni on" id="ni-home" onclick="nav(&#39;home&#39;)"><i class="ti ti-home"></i><span>Inicio</span></button>
-    <button class="ni" id="ni-foto" onclick="nav(&#39;foto&#39;)"><i class="ti ti-camera"></i><span>Factura</span></button>
-    <button class="ni" id="ni-despensa" onclick="nav(&#39;despensa&#39;)" style="position:relative"><i class="ti ti-fridge"></i><span>Despensa</span><div class="ni-dot"></div></button>
-    <button class="ni" id="ni-recetas" onclick="nav(&#39;recetas&#39;)"><i class="ti ti-chef-hat"></i><span>Recetas</span></button>
-    <button class="ni" id="ni-cosecha" onclick="nav(&#39;cosecha&#39;)"><i class="ti ti-plant"></i><span>Cosecha</span></button>
-    <button class="ni" id="ni-compras" onclick="nav(&#39;compras&#39;)" style="position:relative"><i class="ti ti-shopping-cart"></i><span>Compras</span><div class="ni-dot"></div></button>
-  </nav>
 
 </div><!-- /app -->
 
@@ -972,9 +965,11 @@ function renderStats() {
     <div class="sc"><div class="sn" style="color:var(--am)">${low}</div><div class="sl">Por acabar</div></div>`;
   // Alert dot on nav
   const nd = document.getElementById('ni-despensa');
-  if(exp+low>0) {
-    if(!nd.querySelector('.ni-dot')) { const dot=document.createElement('div'); dot.className='ni-dot'; nd.appendChild(dot); }
-  } else { nd.querySelector('.ni-dot')?.remove(); }
+  if(nd) {
+    if(exp+low>0) {
+      if(!nd.querySelector('.ni-dot')) { const dot=document.createElement('div'); dot.className='ni-dot'; nd.appendChild(dot); }
+    } else { nd.querySelector('.ni-dot')?.remove(); }
+  }
 }
 
 function renderAlerts() {
