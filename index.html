@@ -267,6 +267,47 @@ textarea.inp{resize:none}
 .sel-inline{appearance:none;-webkit-appearance:none;background:var(--gl) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%2316a34a'/%3E%3C/svg%3E") no-repeat right 10px center;padding:0 30px 0 12px;height:42px;border:2px solid var(--g);border-radius:12px;font-size:13px;font-weight:700;color:var(--g);cursor:pointer;font-family:inherit;min-width:130px;flex-shrink:0}
 .sel-inline:focus{outline:none;box-shadow:0 0 0 3px rgba(22,163,74,.15)}
 
+/* ── SPLASH ── */
+#p-splash{background:linear-gradient(150deg,#14532d 0%,#16a34a 55%,#22c55e 100%);padding:0!important;overflow:hidden!important}
+#p-splash.on{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0}
+.splash-logo-wrap{margin-bottom:28px;filter:drop-shadow(0 8px 32px rgba(0,0,0,.25));animation:splashIn .7s cubic-bezier(.34,1.56,.64,1) both}
+.splash-brand{font-size:52px;font-weight:900;color:#fff;font-family:'Fraunces',serif;letter-spacing:-1px;line-height:1;animation:splashIn .7s .15s cubic-bezier(.34,1.56,.64,1) both}
+.splash-tag{font-size:15px;color:rgba(255,255,255,.8);font-weight:600;margin-top:10px;animation:splashIn .7s .25s both}
+.splash-dots{display:flex;gap:7px;margin-top:56px;animation:fadeIn 1s .6s both}
+.splash-dots span{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.4)}
+.splash-dots span:nth-child(1){animation:dotPulse 1.2s .0s ease-in-out infinite}
+.splash-dots span:nth-child(2){animation:dotPulse 1.2s .2s ease-in-out infinite}
+.splash-dots span:nth-child(3){animation:dotPulse 1.2s .4s ease-in-out infinite}
+@keyframes splashIn{from{opacity:0;transform:translateY(22px) scale(.9)}to{opacity:1;transform:none}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes dotPulse{0%,100%{background:rgba(255,255,255,.3)}50%{background:rgba(255,255,255,.9)}}
+
+/* ── AUTH ── */
+#p-auth{background:var(--bg);padding:0!important;overflow:hidden!important}
+#p-auth.on{display:flex;flex-direction:column}
+.auth-top{background:linear-gradient(150deg,#14532d 0%,#16a34a 60%,#22c55e 100%);padding:calc(var(--nt)+28px) 24px 32px;display:flex;flex-direction:column;align-items:center;gap:12px;flex-shrink:0}
+.auth-logo-sm{filter:drop-shadow(0 4px 12px rgba(0,0,0,.2))}
+.auth-brand{font-size:30px;font-weight:900;color:#fff;font-family:'Fraunces',serif;letter-spacing:-0.5px}
+.auth-sub{font-size:13px;color:rgba(255,255,255,.8);font-weight:600}
+.auth-body{flex:1;overflow-y:auto;padding:24px 20px 40px;display:flex;flex-direction:column;gap:16px}
+.auth-tabs{display:flex;background:var(--gl);border-radius:14px;padding:3px;gap:3px}
+.auth-tab{flex:1;padding:9px;border:none;background:transparent;border-radius:11px;font-size:13px;font-weight:800;font-family:inherit;color:var(--tx2);cursor:pointer;transition:all .18s}
+.auth-tab.on{background:#fff;color:var(--g);box-shadow:0 2px 8px rgba(22,163,74,.15)}
+.auth-form{display:flex;flex-direction:column;gap:12px}
+.auth-inp{width:100%;padding:14px 16px;border:1.5px solid var(--bd);border-radius:13px;font-size:15px;font-family:inherit;background:var(--card);color:var(--tx);outline:none;transition:border-color .18s}
+.auth-inp:focus{border-color:var(--g);box-shadow:0 0 0 3px rgba(22,163,74,.12)}
+.auth-inp::placeholder{color:var(--tx3)}
+.auth-btn-main{width:100%;padding:15px;border:none;border-radius:13px;background:linear-gradient(135deg,#16a34a,#22c55e);color:#fff;font-size:16px;font-weight:800;font-family:inherit;cursor:pointer;box-shadow:0 4px 16px rgba(22,163,74,.35);transition:all .18s;margin-top:4px}
+.auth-btn-main:active{transform:scale(.97);box-shadow:0 2px 8px rgba(22,163,74,.2)}
+.auth-divider{display:flex;align-items:center;gap:12px;color:var(--tx3);font-size:12px;font-weight:700}
+.auth-divider::before,.auth-divider::after{content:'';flex:1;height:1px;background:var(--bd)}
+.auth-google{width:100%;padding:13px 16px;border:1.5px solid var(--bd);border-radius:13px;background:var(--card);color:var(--tx);font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;transition:all .18s;box-shadow:var(--sh)}
+.auth-google:active{transform:scale(.97)}
+.auth-guest{background:none;border:none;color:var(--tx3);font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;padding:6px;text-align:center;width:100%;margin-top:-4px}
+.auth-guest:active{color:var(--tx2)}
+.auth-err{color:#dc2626;font-size:12px;font-weight:700;min-height:18px;text-align:center;display:none}
+.auth-err.on{display:block}
+
 </style>
 </head>
 <body>
@@ -276,7 +317,14 @@ textarea.inp{resize:none}
   <!-- HEADER -->
   <div class="hdr">
     <div class="hdr-l">
-      <div class="hdr-logo">🌿</div>
+      <div class="hdr-logo">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="26" height="26">
+          <rect x="37" y="39" width="6" height="26" rx="3" fill="white"/>
+          <path d="M40 47 C49 41 58 28 53 18 C44 17 34 30 38 45" fill="white"/>
+          <path d="M40 55 C31 49 22 37 27 26 C36 25 46 38 42 52" fill="rgba(255,255,255,0.85)"/>
+          <circle cx="40" cy="37" r="5" fill="white"/>
+        </svg>
+      </div>
       <div>
         <div class="hdr-title">MERI</div>
         <div class="hdr-sub" id="hdr-sub">Tu asistente de cocina inteligente</div>
@@ -291,8 +339,93 @@ textarea.inp{resize:none}
   <!-- PAGES -->
   <div class="pages">
 
+    <!-- SPLASH -->
+    <div class="pg" id="p-splash">
+      <div class="splash-logo-wrap">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 110 110" width="110" height="110">
+          <defs>
+            <linearGradient id="sl" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="rgba(255,255,255,0.28)"/>
+              <stop offset="100%" stop-color="rgba(255,255,255,0.06)"/>
+            </linearGradient>
+          </defs>
+          <rect width="110" height="110" rx="26" fill="rgba(255,255,255,0.18)"/>
+          <rect width="110" height="110" rx="26" fill="url(#sl)"/>
+          <!-- Stem -->
+          <rect x="51" y="54" width="8" height="36" rx="4" fill="white"/>
+          <!-- Right leaf -->
+          <path d="M55 65 C68 56 80 38 73 25 C60 24 47 42 53 62" fill="white"/>
+          <!-- Left leaf -->
+          <path d="M55 75 C42 66 30 50 36 36 C49 34 62 52 56 72" fill="rgba(255,255,255,0.85)"/>
+          <!-- Bud -->
+          <circle cx="55" cy="52" r="7" fill="white"/>
+          <!-- Base plate -->
+          <ellipse cx="55" cy="90" rx="24" ry="6" fill="rgba(255,255,255,0.25)"/>
+          <path d="M31 90 Q55 103 79 90 Q79 98 55 104 Q31 98 31 90Z" fill="rgba(255,255,255,0.18)"/>
+        </svg>
+      </div>
+      <div class="splash-brand">MERI</div>
+      <div class="splash-tag">Tu despensa inteligente</div>
+      <div class="splash-dots"><span></span><span></span><span></span></div>
+    </div>
+
+    <!-- AUTH -->
+    <div class="pg" id="p-auth">
+      <div class="auth-top">
+        <div class="auth-logo-sm">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="68" height="68">
+            <rect width="80" height="80" rx="19" fill="rgba(255,255,255,0.2)"/>
+            <!-- Stem -->
+            <rect x="37" y="39" width="6" height="26" rx="3" fill="white"/>
+            <!-- Right leaf -->
+            <path d="M40 47 C49 41 58 28 53 18 C44 17 34 30 38 45" fill="white"/>
+            <!-- Left leaf -->
+            <path d="M40 55 C31 49 22 37 27 26 C36 25 46 38 42 52" fill="rgba(255,255,255,0.85)"/>
+            <circle cx="40" cy="37" r="5" fill="white"/>
+            <ellipse cx="40" cy="65" rx="17" ry="4" fill="rgba(255,255,255,0.25)"/>
+          </svg>
+        </div>
+        <div class="auth-brand">MERI</div>
+        <div class="auth-sub">Tu despensa inteligente</div>
+      </div>
+      <div class="auth-body">
+        <div class="auth-tabs">
+          <button class="auth-tab on" id="tab-login" onclick="authTab('login')">Iniciar sesión</button>
+          <button class="auth-tab" id="tab-register" onclick="authTab('register')">Registrarse</button>
+        </div>
+
+        <!-- LOGIN -->
+        <div id="auth-form-login" class="auth-form">
+          <input class="auth-inp" id="auth-email" type="email" placeholder="Correo electrónico" autocomplete="email">
+          <input class="auth-inp" id="auth-pw" type="password" placeholder="Contraseña" autocomplete="current-password">
+          <div class="auth-err" id="auth-err-login"></div>
+          <button class="auth-btn-main" onclick="doLogin()"><i class="ti ti-login"></i> Iniciar sesión</button>
+          <div class="auth-divider">o</div>
+          <button class="auth-google" onclick="doGoogleLogin()">
+            <svg width="20" height="20" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+            Continuar con Google
+          </button>
+          <button class="auth-guest" onclick="authGuest()">Continuar como invitado →</button>
+        </div>
+
+        <!-- REGISTER -->
+        <div id="auth-form-register" class="auth-form" style="display:none">
+          <input class="auth-inp" id="auth-reg-name" type="text" placeholder="Tu nombre" autocomplete="name">
+          <input class="auth-inp" id="auth-reg-email" type="email" placeholder="Correo electrónico" autocomplete="email">
+          <input class="auth-inp" id="auth-reg-pw" type="password" placeholder="Contraseña (mín. 6 caracteres)" autocomplete="new-password">
+          <div class="auth-err" id="auth-err-register"></div>
+          <button class="auth-btn-main" onclick="doRegister()"><i class="ti ti-user-plus"></i> Crear cuenta</button>
+          <div class="auth-divider">o</div>
+          <button class="auth-google" onclick="doGoogleLogin()">
+            <svg width="20" height="20" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+            Continuar con Google
+          </button>
+        </div>
+      </div>
+    </div>
+
     <!-- HOME -->
-    <div class="pg on" id="p-home">
+    <div class="pg" id="p-home">
       <div class="sg" id="stats">
     <div class="sc"><div class="sn">10</div><div class="sl">Alimentos</div></div>
     <div class="sc"><div class="sn" style="color:var(--rd)">6</div><div class="sl">Por vencer</div></div>
@@ -780,6 +913,7 @@ Cebolla x2"></textarea>
     </div>
     <button class="btn btnp btnf" onclick="saveProfile()"><i class="ti ti-check"></i> Guardar perfil</button>
     <button class="btn btnf" style="margin-top:8px;color:var(--rd)" onclick="confirmClearData()"><i class="ti ti-trash"></i> Borrar todos mis datos</button>
+    <button class="btn btnf" style="margin-top:8px;color:var(--tx2);border-top:1px solid var(--bd);padding-top:14px" onclick="closeModal('m-profile');logout()"><i class="ti ti-logout"></i> Cerrar sesión</button>
   </div>
 </div>
 
@@ -907,12 +1041,15 @@ function nav(page) {
   const nb = document.getElementById('ni-'+page);
   if(nb) nb.classList.add('on');
   document.getElementById('p-'+page).scrollTop = 0;
+  // Ocultar header en splash/auth
+  const noHeader = ['splash','auth'].includes(page);
+  document.querySelector('.hdr').style.display = noHeader ? 'none' : '';
   if(page==='home') renderHome();
   else if(page==='despensa') renderPantry();
   else if(page==='recetas') renderRecipeChips();
   else if(page==='cosecha') renderHarvest();
   else if(page==='compras') renderShopList();
-  vib([8]);
+  if(!noHeader) vib([8]);
 }
 
 function fotoTab(btn, id) {
@@ -2070,9 +2207,122 @@ async function captureExpiry() {
   }
 }
 
+// ===================== AUTH =====================
+// Auth: email/password almacenado localmente (cifrado básico para uso personal).
+// Para producción con Google OAuth, configura GOOGLE_CLIENT_ID en authGoogleClientId.
+const AUTH_GOOGLE_CLIENT_ID = ''; // Pega aquí tu Google OAuth client ID para activar Google login
+
+function _hash(s) {
+  let h = 5381;
+  for(let i = 0; i < s.length; i++) h = Math.imul(31, h) + s.charCodeAt(i) | 0;
+  return (h >>> 0).toString(36);
+}
+function getUser() { try { return JSON.parse(localStorage.getItem('meri_user')); } catch { return null; } }
+function setUser(u) { localStorage.setItem('meri_user', JSON.stringify({...u, ts: Date.now()})); }
+function clearUser() { localStorage.removeItem('meri_user'); }
+function getUsers() { try { return JSON.parse(localStorage.getItem('meri_users')) || {}; } catch { return {}; } }
+function saveUsers(u) { localStorage.setItem('meri_users', JSON.stringify(u)); }
+
+function authTab(tab) {
+  ['login','register'].forEach(t => {
+    document.getElementById('tab-'+t).classList.toggle('on', t===tab);
+    document.getElementById('auth-form-'+t).style.display = t===tab ? 'flex' : 'none';
+  });
+  document.getElementById('auth-err-login').classList.remove('on');
+  document.getElementById('auth-err-register').classList.remove('on');
+}
+
+function showAuthErr(id, msg) {
+  const el = document.getElementById(id);
+  el.textContent = msg;
+  el.classList.add('on');
+}
+
+function doLogin() {
+  const email = (document.getElementById('auth-email').value||'').trim().toLowerCase();
+  const pw = document.getElementById('auth-pw').value||'';
+  if(!email || !pw) return showAuthErr('auth-err-login','Completa todos los campos');
+  const users = getUsers();
+  const u = users[email];
+  if(!u) return showAuthErr('auth-err-login','No existe una cuenta con este correo');
+  if(u.ph !== _hash(pw + email)) return showAuthErr('auth-err-login','Contraseña incorrecta');
+  setUser({email, name: u.name});
+  afterLogin(u.name);
+}
+
+function doRegister() {
+  const name = (document.getElementById('auth-reg-name').value||'').trim();
+  const email = (document.getElementById('auth-reg-email').value||'').trim().toLowerCase();
+  const pw = document.getElementById('auth-reg-pw').value||'';
+  if(!name || !email || !pw) return showAuthErr('auth-err-register','Completa todos los campos');
+  if(pw.length < 6) return showAuthErr('auth-err-register','La contraseña debe tener mínimo 6 caracteres');
+  const users = getUsers();
+  if(users[email]) return showAuthErr('auth-err-register','Ya existe una cuenta con este correo');
+  users[email] = { name, ph: _hash(pw + email), createdAt: Date.now() };
+  saveUsers(users);
+  setUser({email, name});
+  afterLogin(name);
+}
+
+function doGoogleLogin() {
+  if(!AUTH_GOOGLE_CLIENT_ID) {
+    toast('🔑 Google login requiere configurar el OAuth Client ID en el código');
+    return;
+  }
+  // Google Identity Services
+  google.accounts.id.initialize({ client_id: AUTH_GOOGLE_CLIENT_ID, callback: (res) => {
+    const payload = JSON.parse(atob(res.credential.split('.')[1]));
+    setUser({email: payload.email, name: payload.given_name || payload.name, google: true});
+    afterLogin(payload.given_name || payload.name);
+  }});
+  google.accounts.id.prompt();
+}
+
+function authGuest() {
+  setUser({email: null, name: 'Invitado', guest: true});
+  afterLogin('Invitado');
+}
+
+function afterLogin(name) {
+  // Sync name to profile
+  if(name && name !== 'Invitado') {
+    S.profile.name = name;
+    saveState();
+    loadProfile();
+  }
+  updateHeaderUser();
+  nav('home');
+}
+
+function logout() {
+  clearUser();
+  nav('splash');
+  setTimeout(() => nav('auth'), 100);
+}
+
+function updateHeaderUser() {
+  const u = getUser();
+  const sub = document.getElementById('hdr-sub');
+  if(sub && u && u.name) sub.textContent = u.name === 'Invitado' ? 'Modo invitado' : 'Hola, ' + u.name + ' 👋';
+}
+
 // ===================== INIT =====================
 document.addEventListener('DOMContentLoaded', () => {
-  renderHome();
+  // Mostrar splash primero
+  document.querySelector('.hdr').style.display = 'none';
+  document.getElementById('p-splash').classList.add('on');
+
+  setTimeout(() => {
+    document.getElementById('p-splash').classList.remove('on');
+    const user = getUser();
+    if(user) {
+      updateHeaderUser();
+      nav('home');
+    } else {
+      nav('auth');
+    }
+  }, 2600);
+
   loadProfile();
   if(Notification.permission === 'granted') checkAndNotify();
 });
