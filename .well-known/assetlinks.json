@@ -1,0 +1,8 @@
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "io.github.giovanniagc92_pixel.twa",
+    "sha256_cert_fingerprints": ["07:11:89:91:5F:90:18:E0:5A:78:56:9F:6C:F1:8B:B0:E4:8F:50:7F:DF:FB:4B:E5:BC:AE:89:D1:A2:70:78:A3"]
+  }
+}]
