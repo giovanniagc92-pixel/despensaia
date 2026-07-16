@@ -1705,9 +1705,9 @@ function shareRecipe() {
 }
 
 // ===================== HARVEST =====================
-// Precios mayoristas SIPSA-DANE, plaza Corabastos (Bogotá) — actualizado 2026-06-12
+// Precios mayoristas SIPSA-DANE, plaza Corabastos (Bogotá) — actualizado 2026-07-16
 // Fuente: Boletín diario SIPSA-DANE vía AgroPrecios.com.co
-const HARVEST_PRICES_UPDATED = '2026-06-12';
+const HARVEST_PRICES_UPDATED = '2026-07-16';
 // Base de precios completa (catálogo SIPSA-DANE Corabastos) para el buscador.
 // n=nombre, min/max=precio de referencia, u='kg' (precio por kilogramo) o 'presentación' (precio por unidad de venta), p=presentación de referencia
 const SIPSA_DB = [
@@ -1868,23 +1868,23 @@ function normSearch(s) {
 function getHarvestData() {
   const m = new Date().getMonth()+1;
   return [
-    {name:'Maracuyá',emoji:'🌺',months:[5,6,7,8],priceMin:4000,priceMax:4500,unit:'kg',pres:'Bolsa de 10 kg: $40.000 – $45.000'},
-    {name:'Mango',emoji:'🥭',months:[4,5,6,7,8],priceMin:7500,priceMax:8300,unit:'kg',pres:'Canastilla de 24 kg (Mango Tommy): $180.000 – $200.000'},
-    {name:'Frijol',emoji:'🫘',months:[5,6,7,10,11,12],priceMin:4000,priceMax:4400,unit:'kg',pres:'Bulto de 50 kg (Fríjol verde cargamanto): $200.000 – $220.000'},
-    {name:'Maíz',emoji:'🌽',months:[6,7,8,9],priceMin:1300,priceMax:1400,unit:'kg',pres:'Bulto de 50 kg (Chócolo mazorca): $65.000 – $70.000'},
+    {name:'Maracuyá',emoji:'🌺',months:[5,6,7,8],priceMin:4500,priceMax:5000,unit:'kg',pres:'Bolsa de 10 kg: $45.000 – $50.000'},
+    {name:'Mango',emoji:'🥭',months:[4,5,6,7,8],priceMin:8300,priceMax:9200,unit:'kg',pres:'Canastilla de 24 kg (Mango Tommy): $200.000 – $220.000'},
+    {name:'Frijol',emoji:'🫘',months:[5,6,7,10,11,12],priceMin:6000,priceMax:6400,unit:'kg',pres:'Bulto de 50 kg (Fríjol verde cargamanto): $300.000 – $320.000'},
+    {name:'Maíz',emoji:'🌽',months:[6,7,8,9],priceMin:1200,priceMax:1400,unit:'kg',pres:'Bulto de 50 kg (Chócolo mazorca): $60.000 – $70.000'},
     {name:'Aguacate',emoji:'🥑',months:[6,7,8,9,10],priceMin:9000,priceMax:10000,unit:'kg',pres:'Kilogramo (Aguacate Hass): $9.000 – $10.000'},
-    {name:'Papa',emoji:'🥔',months:[6,7,8,11,12],priceMin:1800,priceMax:2000,unit:'kg',pres:'Bulto de 50 kg (Papa parda pastusa): $90.000 – $100.000'},
-    {name:'Fresa',emoji:'🍓',months:[1,2,3],priceMin:13000,priceMax:14000,unit:'kg',pres:'Kilogramo: $13.000 – $14.000'},
+    {name:'Papa',emoji:'🥔',months:[6,7,8,11,12],priceMin:1700,priceMax:1800,unit:'kg',pres:'Bulto de 50 kg (Papa parda pastusa): $85.000 – $90.000'},
+    {name:'Fresa',emoji:'🍓',months:[1,2,3],priceMin:12000,priceMax:13000,unit:'kg',pres:'Kilogramo: $12.000 – $13.000'},
     {name:'Banano',emoji:'🍌',months:[1,2,3,4,5,6,7,8,9,10,11,12],priceMin:2000,priceMax:2500,unit:'kg',pres:'Kilogramo (Banano criollo): $2.000 – $2.500'},
-    {name:'Naranja',emoji:'🍊',months:[12,1,2,3],priceMin:2250,priceMax:2500,unit:'kg',pres:'Canastilla de 20 kg (Naranja Valencia): $45.000 – $50.000'},
-    {name:'Tomate',emoji:'🍅',months:[3,4,5,6,7],priceMin:3600,priceMax:4100,unit:'kg',pres:'Canastilla de 22 kg (Tomate chonto): $80.000 – $90.000'},
-    {name:'Lulo',emoji:'🟠',months:[6,7,8,9],priceMin:5800,priceMax:6000,unit:'kg',pres:'Canastilla de 25 kg: $145.000 – $150.000'},
-    {name:'Mora',emoji:'🫐',months:[4,5,6,9,10],priceMin:6300,priceMax:6700,unit:'kg',pres:'Caja de madera de 6 kg (Mora de Castilla): $38.000 – $40.000'},
-    {name:'Piña',emoji:'🍍',months:[3,4,5,9,10],priceMin:2000,priceMax:2400,unit:'kg',pres:'Caja de cartón de 11 kg (Piña Gold): $22.000 – $26.000'},
-    {name:'Guayaba',emoji:'🍐',months:[8,9,10,11],priceMin:6400,priceMax:7100,unit:'kg',pres:'Canastilla de 14 kg (Guayaba pera): $90.000 – $100.000'},
-    {name:'Yuca',emoji:'🪵',months:[1,4,7,10],priceMin:2700,priceMax:3000,unit:'kg',pres:'Bolsa de 30 kg (Yuca llanera): $80.000 – $90.000'},
+    {name:'Naranja',emoji:'🍊',months:[12,1,2,3],priceMin:2500,priceMax:2750,unit:'kg',pres:'Canastilla de 20 kg (Naranja Valencia): $50.000 – $55.000'},
+    {name:'Tomate',emoji:'🍅',months:[3,4,5,6,7],priceMin:3200,priceMax:3600,unit:'kg',pres:'Canastilla de 22 kg (Tomate chonto): $70.000 – $80.000'},
+    {name:'Lulo',emoji:'🟠',months:[6,7,8,9],priceMin:5200,priceMax:5600,unit:'kg',pres:'Canastilla de 25 kg: $130.000 – $140.000'},
+    {name:'Mora',emoji:'🫐',months:[4,5,6,9,10],priceMin:5000,priceMax:5800,unit:'kg',pres:'Caja de madera de 6 kg (Mora de Castilla): $30.000 – $35.000'},
+    {name:'Piña',emoji:'🍍',months:[3,4,5,9,10],priceMin:null,priceMax:null,unit:'kg',pres:null},
+    {name:'Guayaba',emoji:'🍐',months:[8,9,10,11],priceMin:4300,priceMax:5000,unit:'kg',pres:'Canastilla de 14 kg (Guayaba pera): $60.000 – $70.000'},
+    {name:'Yuca',emoji:'🪵',months:[1,4,7,10],priceMin:2300,priceMax:2700,unit:'kg',pres:'Bolsa de 30 kg (Yuca llanera): $70.000 – $80.000'},
     {name:'Cacao',emoji:'🍫',months:[10,11,12,1],priceMin:null,priceMax:null,unit:'kg',pres:null},
-    {name:'Limón',emoji:'🍋',months:[1,2,11,12],priceMin:2300,priceMax:2600,unit:'kg',pres:'Bulto de 70 kg (Limón Tahití): $160.000 – $180.000'},
+    {name:'Limón',emoji:'🍋',months:[1,2,11,12],priceMin:1900,priceMax:2000,unit:'kg',pres:'Bulto de 70 kg (Limón Tahití): $130.000 – $140.000'},
     {name:'Zapote',emoji:'🟤',months:[11,12,1,2],priceMin:null,priceMax:null,unit:'kg',pres:null},
   ].map(h=>({...h,season:h.months.includes(m)}));
 }
