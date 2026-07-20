@@ -1705,9 +1705,9 @@ function shareRecipe() {
 }
 
 // ===================== HARVEST =====================
-// Precios mayoristas SIPSA-DANE, plaza Corabastos (Bogotá) — actualizado 2026-07-16
+// Precios mayoristas SIPSA-DANE, plaza Corabastos (Bogotá) — actualizado 2026-07-17
 // Fuente: Boletín diario SIPSA-DANE vía AgroPrecios.com.co
-const HARVEST_PRICES_UPDATED = '2026-07-16';
+const HARVEST_PRICES_UPDATED = '2026-07-17';
 // Base de precios completa (catálogo SIPSA-DANE Corabastos) para el buscador.
 // n=nombre, min/max=precio de referencia, u='kg' (precio por kilogramo) o 'presentación' (precio por unidad de venta), p=presentación de referencia
 const SIPSA_DB = [
@@ -1871,13 +1871,13 @@ function getHarvestData() {
     {name:'Maracuyá',emoji:'🌺',months:[5,6,7,8],priceMin:4500,priceMax:5000,unit:'kg',pres:'Bolsa de 10 kg: $45.000 – $50.000'},
     {name:'Mango',emoji:'🥭',months:[4,5,6,7,8],priceMin:8300,priceMax:9200,unit:'kg',pres:'Canastilla de 24 kg (Mango Tommy): $200.000 – $220.000'},
     {name:'Frijol',emoji:'🫘',months:[5,6,7,10,11,12],priceMin:6000,priceMax:6400,unit:'kg',pres:'Bulto de 50 kg (Fríjol verde cargamanto): $300.000 – $320.000'},
-    {name:'Maíz',emoji:'🌽',months:[6,7,8,9],priceMin:1200,priceMax:1400,unit:'kg',pres:'Bulto de 50 kg (Chócolo mazorca): $60.000 – $70.000'},
-    {name:'Aguacate',emoji:'🥑',months:[6,7,8,9,10],priceMin:9000,priceMax:10000,unit:'kg',pres:'Kilogramo (Aguacate Hass): $9.000 – $10.000'},
-    {name:'Papa',emoji:'🥔',months:[6,7,8,11,12],priceMin:1700,priceMax:1800,unit:'kg',pres:'Bulto de 50 kg (Papa parda pastusa): $85.000 – $90.000'},
+    {name:'Maíz',emoji:'🌽',months:[6,7,8,9],priceMin:1300,priceMax:1500,unit:'kg',pres:'Bulto de 50 kg (Chócolo mazorca): $65.000 – $75.000'},
+    {name:'Aguacate',emoji:'🥑',months:[6,7,8,9,10],priceMin:9000,priceMax:10500,unit:'kg',pres:'Kilogramo (Aguacate hass): $9.000 – $10.500'},
+    {name:'Papa',emoji:'🥔',months:[6,7,8,11,12],priceMin:1600,priceMax:1800,unit:'kg',pres:'Bulto de 50 kg (Papa parda pastusa): $80.000 – $90.000'},
     {name:'Fresa',emoji:'🍓',months:[1,2,3],priceMin:12000,priceMax:13000,unit:'kg',pres:'Kilogramo: $12.000 – $13.000'},
     {name:'Banano',emoji:'🍌',months:[1,2,3,4,5,6,7,8,9,10,11,12],priceMin:2000,priceMax:2500,unit:'kg',pres:'Kilogramo (Banano criollo): $2.000 – $2.500'},
-    {name:'Naranja',emoji:'🍊',months:[12,1,2,3],priceMin:2500,priceMax:2750,unit:'kg',pres:'Canastilla de 20 kg (Naranja Valencia): $50.000 – $55.000'},
-    {name:'Tomate',emoji:'🍅',months:[3,4,5,6,7],priceMin:3200,priceMax:3600,unit:'kg',pres:'Canastilla de 22 kg (Tomate chonto): $70.000 – $80.000'},
+    {name:'Naranja',emoji:'🍊',months:[12,1,2,3],priceMin:2750,priceMax:3000,unit:'kg',pres:'Canastilla de 20 kg (Naranja valencia): $55.000 – $60.000'},
+    {name:'Tomate',emoji:'🍅',months:[3,4,5,6,7],priceMin:3000,priceMax:3600,unit:'kg',pres:'Canastilla de 22 kg (Tomate chonto): $65.000 – $80.000'},
     {name:'Lulo',emoji:'🟠',months:[6,7,8,9],priceMin:5200,priceMax:5600,unit:'kg',pres:'Canastilla de 25 kg: $130.000 – $140.000'},
     {name:'Mora',emoji:'🫐',months:[4,5,6,9,10],priceMin:5000,priceMax:5800,unit:'kg',pres:'Caja de madera de 6 kg (Mora de Castilla): $30.000 – $35.000'},
     {name:'Piña',emoji:'🍍',months:[3,4,5,9,10],priceMin:null,priceMax:null,unit:'kg',pres:null},
