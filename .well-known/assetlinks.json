@@ -1,8 +1,8 @@
 [{
-  "relation": ["delegate_permission/common.handle_all_urls"],
-  "target": {
-    "namespace": "android_app",
-    "package_name": "io.github.giovanniagc92_pixel.twa",
-    "sha256_cert_fingerprints": ["07:11:89:91:5F:90:18:E0:5A:78:56:9F:6C:F1:8B:B0:E4:8F:50:7F:DF:FB:4B:E5:BC:AE:89:D1:A2:70:78:A3"]
-  }
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+          "namespace": "android_app",
+          "package_name": "com.meri.app",
+          "sha256_cert_fingerprints": ["7E:7A:93:6D:63:FF:D9:D7:B5:3B:B9:9C:42:0A:CA:C9:A4:2A:41:33:17:9A:90:64:6B:68:98:C9:C9:11:FD:7B"]
+    }
 }]
