@@ -1,47 +1,76 @@
-const CACHE = 'despensaia-v3';
-const URLS = ['/', '/index.html', '/manifest.json', '/icons/icon-192.png', '/icons/icon-512.png'];
+// MERI Service Worker — Push Notifications + Offline Cache
+const CACHE = 'meri-v1';
 
+// ── Install & Cache ──────────────────────────────────────────
 self.addEventListener('install', e => {
-  e.waitUntil(caches.open(CACHE).then(c => c.addAll(URLS).catch(()=>{})));
   self.skipWaiting();
 });
 
 self.addEventListener('activate', e => {
-  e.waitUntil(caches.keys().then(keys =>
-    Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))
-  ));
-  self.clients.claim();
+  e.waitUntil(clients.claim());
 });
 
-self.addEventListener('fetch', e => {
-  if(e.request.method !== 'GET') return;
-  // Don't cache API calls
-  if(e.request.url.includes('anthropic.com')) return;
-  e.respondWith(
-    caches.match(e.request).then(cached => {
-      const fresh = fetch(e.request).then(res => {
-        if(res.ok && res.type === 'basic') {
-          caches.open(CACHE).then(c => c.put(e.request, res.clone()));
-        }
-        return res;
-      }).catch(() => cached);
-      return cached || fresh;
+// ── Push: recibir notificación del servidor ──────────────────
+self.addEventListener('push', event => {
+  let data = { title: 'MERI ⚠️', body: 'Tienes alimentos por vencer pronto' };
+  if (event.data) {
+    try { data = { ...data, ...event.data.json() }; } catch(e) {}
+  }
+  event.waitUntil(
+    self.registration.showNotification(data.title, {
+      body: data.body,
+      icon: '/despensaia/icons/icon-192.png',
+      badge: '/despensaia/icons/icon-192.png',
+      tag: 'meri-expiry',
+      requireInteraction: false,
+      vibrate: [200, 100, 200],
+      data: { url: '/despensaia/' }
     })
   );
 });
 
-self.addEventListener('push', e => {
-  const data = e.data?.json() || {title:'DespensaIA',body:'Tienes alertas pendientes'};
-  e.waitUntil(self.registration.showNotification(data.title, {
-    body: data.body,
-    icon: '/icons/icon-192.png',
-    badge: '/icons/icon-192.png',
-    vibrate: [200,100,200],
-    tag: 'despensaia'
-  }));
+// ── Periodic Sync: revisar vencimientos sin push del servidor ─
+self.addEventListener('periodicsync', event => {
+  if (event.tag === 'check-expiry') {
+    event.waitUntil(checkExpiryBackground());
+  }
 });
 
-self.addEventListener('notificationclick', e => {
-  e.notification.close();
-  e.waitUntil(clients.openWindow('/'));
+async function checkExpiryBackground() {
+  try {
+    const cache = await caches.open(CACHE);
+    const resp = await cache.match('meri-pantry');
+    if (!resp) return;
+    const pantry = await resp.json();
+    const today = Date.now();
+    const expiring = pantry.filter(item => {
+      if (!item.exp) return false;
+      const days = Math.round((new Date(item.exp) - today) / 86400000);
+      return days >= 0 && days <= 2;
+    });
+    if (!expiring.length) return;
+    const names = expiring.map(i => i.name).join(', ');
+    const plural = expiring.length === 1;
+    await self.registration.showNotification('MERI ⚠️ Alimentos por vencer', {
+      body: `${names} ${plural ? 'vence' : 'vencen'} hoy o mañana. Úsalos pronto.`,
+      icon: '/despensaia/icons/icon-192.png',
+      badge: '/despensaia/icons/icon-192.png',
+      tag: 'meri-expiry',
+      vibrate: [200, 100, 200],
+      data: { url: '/despensaia/' }
+    });
+  } catch(e) {}
+}
+
+// ── Clic en notificación ─────────────────────────────────────
+self.addEventListener('notificationclick', event => {
+  event.notification.close();
+  const url = event.notification.data?.url || '/despensaia/';
+  event.waitUntil(
+    clients.matchAll({ type: 'window', includeUncontrolled: true }).then(list => {
+      const win = list.find(w => w.url.includes('despensaia'));
+      if (win) { win.focus(); return; }
+      return clients.openWindow(url);
+    })
+  );
 });

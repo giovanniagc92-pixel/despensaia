@@ -1048,6 +1048,32 @@ async function _saveToFirestore(uid) {
   try {
     await db.collection('users').doc(uid).collection('data').doc('state').set(S);
   } catch(e) { console.warn('Error guardando estado:', e); }
+  // Actualizar cache de pantry para Service Worker (Periodic Sync)
+  updatePantryCache();
+  // Sincronizar despensa con Cloudflare Worker (para push del servidor)
+  syncPantryToWorker(uid);
+}
+
+// ── Actualizar Cache API para acceso desde Service Worker ──
+async function updatePantryCache() {
+  if (!('caches' in window)) return;
+  try {
+    const cache = await caches.open('meri-v1');
+    const resp = new Response(JSON.stringify(S.pantry), { headers: { 'Content-Type': 'application/json' } });
+    await cache.put('meri-pantry', resp);
+  } catch(e) {}
+}
+
+// ── Sincronizar pantry con Cloudflare Worker ──
+async function syncPantryToWorker(uid) {
+  if (!uid) return;
+  try {
+    await fetch('https://meri-proxy.giovanniagc92.workers.dev/push-data', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ uid, pantry: S.pantry })
+    });
+  } catch(e) {}
 }
 
 function saveState() {
@@ -2175,6 +2201,10 @@ async function requestNotifications() {
     renderNotifPrompt();
     checkAndNotify();
     toast('🔔 Notificaciones activadas');
+    // Suscribir a Web Push real
+    const user = auth.currentUser;
+    if (user && !user.isAnonymous) await subscribePush(user.uid);
+    else if (user) await subscribePush(null); // invitado: suscripción sin uid
   }
 }
 
@@ -2371,9 +2401,72 @@ function updateHeaderUser() {
 }
 
 // ===================== INIT =====================
+// ── VAPID Public Key ──
+const VAPID_PUBLIC_KEY = 'BHgUq1jUdI01hBUrAhuPs6FHSx_dxUcPQg3Ur3i5OpuFqNbwf3qPJaHFiXupfLzcSYoTQJ664CNyPn3mHsu2jlA';
+let _swRegistration = null;
+
+function urlBase64ToUint8Array(base64String) {
+  const padding = '='.repeat((4 - base64String.length % 4) % 4);
+  const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+  const raw = atob(base64);
+  return new Uint8Array([...raw].map(c => c.charCodeAt(0)));
+}
+
+// ── Registrar Service Worker ──
+async function registerSW() {
+  if (!('serviceWorker' in navigator)) return;
+  try {
+    _swRegistration = await navigator.serviceWorker.register('/despensaia/sw.js');
+    console.log('SW registrado:', _swRegistration.scope);
+    // Registrar Periodic Background Sync (Chrome Android)
+    if ('periodicSync' in _swRegistration) {
+      try {
+        await _swRegistration.periodicSync.register('check-expiry', { minInterval: 24 * 60 * 60 * 1000 });
+      } catch(e) { /* periódico sync no disponible */ }
+    }
+  } catch(e) { console.warn('SW registration failed:', e); }
+}
+
+// ── Solicitar permiso y suscribir a Web Push ──
+async function subscribePush(uid) {
+  if (!_swRegistration) return;
+  if (!('PushManager' in window)) return;
+  try {
+    let sub = await _swRegistration.pushManager.getSubscription();
+    if (!sub) {
+      sub = await _swRegistration.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
+      });
+    }
+    // Enviar suscripción + pantry al Worker
+    await fetch('https://meri-proxy.giovanniagc92.workers.dev/push-subscribe', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ subscription: sub.toJSON(), uid, pantry: S.pantry })
+    });
+  } catch(e) { console.warn('Push subscribe error:', e); }
+}
+
+// ── Pedir permiso de notificaciones ──
+async function requestNotificationPermission(uid) {
+  if (!('Notification' in window)) return;
+  if (Notification.permission === 'granted') {
+    await subscribePush(uid);
+    return;
+  }
+  if (Notification.permission === 'default') {
+    const perm = await Notification.requestPermission();
+    if (perm === 'granted') await subscribePush(uid);
+  }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   document.querySelector('.hdr').style.display = 'none';
   document.getElementById('p-splash').classList.add('on');
+
+  // Registrar SW inmediatamente
+  registerSW();
 
   auth.onAuthStateChanged(async (user) => {
     if (user) {
@@ -2388,7 +2481,16 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       updateHeaderUser();
       loadProfile();
-      if(Notification.permission === 'granted') checkAndNotify();
+      if(Notification.permission === 'granted') {
+        checkAndNotify();
+        // Re-suscribir si ya tenía permiso
+        if (!user.isAnonymous) subscribePush(user.uid);
+      } else if (!user.isAnonymous) {
+        // Pedir permiso a usuarios registrados después de 3 seg
+        setTimeout(() => requestNotificationPermission(user.uid), 3000);
+      }
+      // Actualizar cache para SW
+      updatePantryCache();
       document.getElementById('p-splash').classList.remove('on');
       nav('home');
     } else {
