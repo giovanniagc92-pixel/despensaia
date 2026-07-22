@@ -444,6 +444,11 @@ textarea.inp{resize:none}
       <button class="back-btn" onclick="nav('home')"><i class="ti ti-arrow-left"></i> Inicio</button>
       <!-- Selector principal -->
       <div id="foto-mode-selector">
+        <button class="scan-btn" style="background:linear-gradient(135deg,#15803d,#22c55e);color:#fff;border:none" onclick="showFotoMode('barcode')">
+          <i class="ti ti-barcode"></i>
+          <span>Escanear código de barras</span>
+          <small>Identifica el producto automáticamente — rápido y preciso</small>
+        </button>
         <button class="scan-btn scan-btn-inv" onclick="showFotoMode('invoice')">
           <i class="ti ti-receipt"></i>
           <span>Escanear factura</span>
@@ -454,6 +459,22 @@ textarea.inp{resize:none}
           <span>Escanear fecha de vencimiento</span>
           <small>Agrega el producto y su vencimiento a tu despensa</small>
         </button>
+      </div>
+
+      <!-- BARCODE MODE -->
+      <div id="foto-barcode" style="display:none">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+          <button class="btn" onclick="showFotoMode(null);stopBarcodeScanner()" style="padding:6px 10px"><i class="ti ti-arrow-left"></i></button>
+          <div class="sec" style="margin:0">Código de barras</div>
+        </div>
+        <div class="card" style="text-align:center;padding:16px">
+          <div id="barcode-video-wrap" style="position:relative;border-radius:12px;overflow:hidden;background:#000;margin-bottom:12px">
+            <video id="barcode-video" style="width:100%;max-height:260px;object-fit:cover;display:block"></video>
+            <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:80%;height:2px;background:rgba(22,163,74,0.8);box-shadow:0 0 8px rgba(22,163,74,0.8)"></div>
+          </div>
+          <div id="barcode-status" style="font-size:13px;color:var(--tx2);font-weight:600">Apunta la cámara al código de barras</div>
+          <div id="barcode-result" style="margin-top:12px"></div>
+        </div>
       </div>
 
       <!-- INVOICE MODE -->
@@ -975,6 +996,8 @@ Cebolla x2"></textarea>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<!-- ZXing barcode scanner -->
+<script src="https://unpkg.com/@zxing/library@latest/umd/index.min.js"></script>
 
 <script>
 // ===================== FIREBASE CONFIG =====================
@@ -1040,30 +1063,12 @@ function saveState() {
 
 function defaultState() {
   return {
-    pantry: [
-      {id:1,name:'Huevos',qty:8,unit:'unidades',exp:dF(1),cat:'Otros',fav:true,min:6,em:'🥚'},
-      {id:2,name:'Leche',qty:1,unit:'litros',exp:dF(3),cat:'Lácteos',fav:true,min:1,em:'🥛'},
-      {id:3,name:'Yogur',qty:1,unit:'unidades',exp:dF(1),cat:'Lácteos',fav:false,min:2,em:'🍦'},
-      {id:4,name:'Tomate',qty:4,unit:'unidades',exp:dF(5),cat:'Verduras',fav:true,min:3,em:'🍅'},
-      {id:5,name:'Cebolla',qty:3,unit:'unidades',exp:dF(10),cat:'Verduras',fav:true,min:2,em:'🧅'},
-      {id:6,name:'Pollo',qty:500,unit:'gramos',exp:dF(2),cat:'Carnes',fav:false,min:0,em:'🍗'},
-      {id:7,name:'Arroz',qty:300,unit:'gramos',exp:dF(120),cat:'Granos',fav:true,min:500,em:'🍚'},
-      {id:8,name:'Frijol',qty:400,unit:'gramos',exp:dF(90),cat:'Granos',fav:true,min:300,em:'🫘'},
-      {id:9,name:'Ajo',qty:5,unit:'unidades',exp:dF(20),cat:'Condimentos',fav:true,min:3,em:'🧄'},
-      {id:10,name:'Plátano',qty:5,unit:'unidades',exp:dF(4),cat:'Frutas',fav:true,min:3,em:'🍌'},
-    ],
-    shopping: [
-      {id:1,name:'Arroz (bulto)',done:false,urgent:true},
-      {id:2,name:'Leche x2',done:false,urgent:false},
-      {id:3,name:'Café',done:false,urgent:false},
-    ],
-    history: [
-      {id:1,store:'Supermercado Éxito',date:dF(-5),items:8,total:45000},
-      {id:2,store:'Tienda del barrio',date:dF(-12),items:4,total:18500},
-    ],
+    pantry: [],
+    shopping: [],
+    history: [],
     savedRecipes: [],
     profile: {name:'',city:'Bogotá',people:2,diet:''},
-    idc: 100
+    idc: 0
   };
 }
 
@@ -2370,12 +2375,7 @@ document.addEventListener('DOMContentLoaded', () => {
   document.querySelector('.hdr').style.display = 'none';
   document.getElementById('p-splash').classList.add('on');
 
-  let authResolved = false;
-
   auth.onAuthStateChanged(async (user) => {
-    if (authResolved) return; // Evitar doble ejecución
-    authResolved = true;
-
     if (user) {
       if (!user.isAnonymous) {
         await loadUserState(user.uid);
@@ -2392,11 +2392,11 @@ document.addEventListener('DOMContentLoaded', () => {
       document.getElementById('p-splash').classList.remove('on');
       nav('home');
     } else {
-      // Sin sesión: mostrar splash y luego auth
-      setTimeout(() => {
+      // Sin sesión: login anónimo automático — sin pantalla de login
+      auth.signInAnonymously().catch(() => {
         document.getElementById('p-splash').classList.remove('on');
-        nav('auth');
-      }, 2600);
+        nav('home');
+      });
     }
   });
 });
@@ -2406,7 +2406,97 @@ function showFotoMode(mode) {
   document.getElementById('foto-mode-selector').style.display = mode ? 'none' : 'block';
   document.getElementById('foto-invoice').style.display = mode==='invoice' ? 'block' : 'none';
   document.getElementById('foto-expiry').style.display = mode==='expiry' ? 'block' : 'none';
-  if(!mode) { stopCamera(); stopExpiryMain(); }
+  document.getElementById('foto-barcode').style.display = mode==='barcode' ? 'block' : 'none';
+  if(!mode) { stopCamera(); stopExpiryMain(); stopBarcodeScanner(); }
+  if(mode==='barcode') startBarcodeScanner();
+}
+
+// ── Barcode Scanner (ZXing) ──
+let _barcodeReader = null;
+let _barcodeActive = false;
+
+async function startBarcodeScanner() {
+  if (_barcodeActive) return;
+  _barcodeActive = true;
+  document.getElementById('barcode-status').textContent = 'Iniciando cámara...';
+  document.getElementById('barcode-result').innerHTML = '';
+  try {
+    const hints = new Map();
+    const formats = [
+      ZXing.BarcodeFormat.EAN_13, ZXing.BarcodeFormat.EAN_8,
+      ZXing.BarcodeFormat.UPC_A, ZXing.BarcodeFormat.UPC_E,
+      ZXing.BarcodeFormat.CODE_128, ZXing.BarcodeFormat.CODE_39,
+      ZXing.BarcodeFormat.QR_CODE
+    ];
+    hints.set(ZXing.DecodeHintType.POSSIBLE_FORMATS, formats);
+    _barcodeReader = new ZXing.BrowserMultiFormatReader(hints);
+    await _barcodeReader.decodeFromVideoDevice(null, 'barcode-video', (result, err) => {
+      if (result && _barcodeActive) {
+        _barcodeActive = false;
+        _barcodeReader.reset();
+        vib([50,30,50]);
+        handleBarcodeResult(result.getText());
+      }
+    });
+    document.getElementById('barcode-status').textContent = 'Apunta al código de barras del producto';
+  } catch(e) {
+    document.getElementById('barcode-status').textContent = 'No se pudo acceder a la cámara';
+    _barcodeActive = false;
+  }
+}
+
+function stopBarcodeScanner() {
+  _barcodeActive = false;
+  if (_barcodeReader) { _barcodeReader.reset(); _barcodeReader = null; }
+}
+
+async function handleBarcodeResult(barcode) {
+  const statusEl = document.getElementById('barcode-status');
+  const resultEl = document.getElementById('barcode-result');
+  statusEl.textContent = `Código: ${barcode} — Buscando producto...`;
+  resultEl.innerHTML = '<div style="text-align:center;padding:8px;color:var(--tx2)"><i class="ti ti-loader" style="animation:spin 1s linear infinite"></i> Consultando...</div>';
+  try {
+    const res = await fetch(`https://world.openfoodfacts.org/api/v0/product/${barcode}.json`);
+    const data = await res.json();
+    if (data.status === 1 && data.product) {
+      const p = data.product;
+      const name = p.product_name_es || p.product_name || p.generic_name || '';
+      const brand = p.brands || '';
+      const displayName = name ? (brand ? `${name} (${brand})` : name) : `Producto ${barcode}`;
+      statusEl.textContent = '✅ Producto encontrado';
+      resultEl.innerHTML = `
+        <div class="card" style="padding:14px;margin-top:8px">
+          <div style="font-size:15px;font-weight:800;color:var(--g);margin-bottom:4px">${displayName}</div>
+          ${brand ? `<div style="font-size:12px;color:var(--tx2);margin-bottom:12px">${brand}</div>` : ''}
+          <button class="btn btnp btnf" onclick="addBarcodeProduct('${displayName.replace(/'/g,'').replace(/"/g,'')}')">
+            <i class="ti ti-plus"></i> Agregar a mi despensa
+          </button>
+        </div>`;
+    } else {
+      statusEl.textContent = 'Producto no encontrado en la base de datos';
+      resultEl.innerHTML = `
+        <div class="card" style="padding:14px;margin-top:8px;text-align:center">
+          <div style="font-size:13px;color:var(--tx2);margin-bottom:10px">Código: <strong>${barcode}</strong><br>Agrégalo manualmente:</div>
+          <button class="btn btnp btnf" onclick="addBarcodeProduct('')">
+            <i class="ti ti-pencil"></i> Ingresar nombre manualmente
+          </button>
+        </div>`;
+    }
+  } catch(e) {
+    statusEl.textContent = 'Error al consultar. Agrega manualmente.';
+    resultEl.innerHTML = `<button class="btn btnp btnf" style="margin-top:8px" onclick="addBarcodeProduct('')"><i class="ti ti-pencil"></i> Agregar manualmente</button>`;
+  }
+}
+
+function addBarcodeProduct(name) {
+  stopBarcodeScanner();
+  showFotoMode(null);
+  // Pre-llenar modal de agregar
+  openModal('m-add');
+  if (name) setTimeout(() => {
+    const inp = document.getElementById('m-name');
+    if (inp) { inp.value = name; inp.focus(); }
+  }, 100);
 }
 
 // ── Expiry main camera ──
