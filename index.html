@@ -972,20 +972,72 @@ Cebolla x2"></textarea>
   </div>
 </div>
 
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
 <script>
+// ===================== FIREBASE CONFIG =====================
+// 👇 Pega aquí tu configuración de Firebase (Firebase Console → Project Settings → Your apps)
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyDTeO920axcnp5xtv12x5ALowq0sNgvA-o",
+  authDomain: "meri-app-71b0d.firebaseapp.com",
+  projectId: "meri-app-71b0d",
+  storageBucket: "meri-app-71b0d.firebasestorage.app",
+  messagingSenderId: "57456414739",
+  appId: "1:57456414739:web:c30c30b4904b1587452fe6"
+};
+firebase.initializeApp(FIREBASE_CONFIG);
+const auth = firebase.auth();
+const db = firebase.firestore();
+
 // ===================== STATE =====================
 const DB = 'despensaia_v3';
-let S = loadState();
+let S = defaultState(); // Inicia con defaults; se reemplaza al cargar desde Firestore
+let _saveTimer = null;
 let selectedChips = new Set();
 let camStream = null;
 let lastRecipeText = '';
 let currentPantryFilter = 'all';
 
-function loadState() {
-  try { return JSON.parse(localStorage.getItem(DB)) || defaultState(); }
-  catch(e) { return defaultState(); }
+async function loadUserState(uid) {
+  try {
+    const doc = await db.collection('users').doc(uid).collection('data').doc('state').get();
+    if (doc.exists) {
+      S = { ...defaultState(), ...doc.data() };
+    } else {
+      // Migrar datos locales si existen (primera vez con Firebase)
+      const local = localStorage.getItem(DB);
+      if (local) {
+        S = { ...defaultState(), ...JSON.parse(local) };
+        await _saveToFirestore(uid);
+        localStorage.removeItem(DB);
+        toast('✅ Datos migrados a la nube');
+      }
+    }
+  } catch(e) {
+    console.warn('Error cargando estado:', e);
+  }
 }
-function saveState() { localStorage.setItem(DB, JSON.stringify(S)); }
+
+async function _saveToFirestore(uid) {
+  if (!uid) return;
+  try {
+    await db.collection('users').doc(uid).collection('data').doc('state').set(S);
+  } catch(e) { console.warn('Error guardando estado:', e); }
+}
+
+function saveState() {
+  const user = auth.currentUser;
+  if (!user || user.isAnonymous) {
+    // Invitados: usar localStorage temporal
+    try { localStorage.setItem('meri_guest_state', JSON.stringify(S)); } catch(e) {}
+    return;
+  }
+  if (_saveTimer) clearTimeout(_saveTimer);
+  _saveTimer = setTimeout(() => _saveToFirestore(user.uid), 1000);
+}
 
 function defaultState() {
   return {
@@ -2099,7 +2151,13 @@ function loadProfile() {
 
 function confirmClearData() {
   if(confirm('¿Seguro que quieres borrar TODOS tus datos de MERI? Esta acción no se puede deshacer.')) {
+    const user = auth.currentUser;
+    if (user && !user.isAnonymous) {
+      db.collection('users').doc(user.uid).collection('data').doc('state').delete().catch(()=>{});
+    }
+    localStorage.removeItem('meri_guest_state');
     localStorage.removeItem(DB);
+    S = defaultState();
     toast('🗑 Datos eliminados — recargando...');
     setTimeout(()=>location.reload(), 1500);
   }
@@ -2207,21 +2265,14 @@ async function captureExpiry() {
   }
 }
 
-// ===================== AUTH =====================
-// Auth: email/password almacenado localmente (cifrado básico para uso personal).
-// Para producción con Google OAuth, configura GOOGLE_CLIENT_ID en authGoogleClientId.
-const AUTH_GOOGLE_CLIENT_ID = ''; // Pega aquí tu Google OAuth client ID para activar Google login
-
-function _hash(s) {
-  let h = 5381;
-  for(let i = 0; i < s.length; i++) h = Math.imul(31, h) + s.charCodeAt(i) | 0;
-  return (h >>> 0).toString(36);
+// ===================== AUTH (Firebase) =====================
+function getUser() {
+  const u = auth.currentUser;
+  if (!u) return null;
+  return { email: u.email||null, name: u.displayName||(u.isAnonymous?'Invitado':u.email), guest: u.isAnonymous, uid: u.uid };
 }
-function getUser() { try { return JSON.parse(localStorage.getItem('meri_user')); } catch { return null; } }
-function setUser(u) { localStorage.setItem('meri_user', JSON.stringify({...u, ts: Date.now()})); }
-function clearUser() { localStorage.removeItem('meri_user'); }
-function getUsers() { try { return JSON.parse(localStorage.getItem('meri_users')) || {}; } catch { return {}; } }
-function saveUsers(u) { localStorage.setItem('meri_users', JSON.stringify(u)); }
+function setUser() {} // no-op: Firebase maneja la sesión
+function clearUser() {} // no-op: usa logout()
 
 function authTab(tab) {
   ['login','register'].forEach(t => {
@@ -2238,53 +2289,61 @@ function showAuthErr(id, msg) {
   el.classList.add('on');
 }
 
-function doLogin() {
+async function doLogin() {
   const email = (document.getElementById('auth-email').value||'').trim().toLowerCase();
   const pw = document.getElementById('auth-pw').value||'';
   if(!email || !pw) return showAuthErr('auth-err-login','Completa todos los campos');
-  const users = getUsers();
-  const u = users[email];
-  if(!u) return showAuthErr('auth-err-login','No existe una cuenta con este correo');
-  if(u.ph !== _hash(pw + email)) return showAuthErr('auth-err-login','Contraseña incorrecta');
-  setUser({email, name: u.name});
-  afterLogin(u.name);
+  try {
+    await auth.signInWithEmailAndPassword(email, pw);
+    // onAuthStateChanged maneja el resto
+  } catch(e) {
+    const msg = e.code==='auth/user-not-found'||e.code==='auth/invalid-credential' ? 'Correo o contraseña incorrectos' :
+                e.code==='auth/wrong-password' ? 'Contraseña incorrecta' :
+                e.code==='auth/too-many-requests' ? 'Demasiados intentos. Espera un momento.' :
+                'Error al iniciar sesión';
+    showAuthErr('auth-err-login', msg);
+  }
 }
 
-function doRegister() {
+async function doRegister() {
   const name = (document.getElementById('auth-reg-name').value||'').trim();
   const email = (document.getElementById('auth-reg-email').value||'').trim().toLowerCase();
   const pw = document.getElementById('auth-reg-pw').value||'';
   if(!name || !email || !pw) return showAuthErr('auth-err-register','Completa todos los campos');
   if(pw.length < 6) return showAuthErr('auth-err-register','La contraseña debe tener mínimo 6 caracteres');
-  const users = getUsers();
-  if(users[email]) return showAuthErr('auth-err-register','Ya existe una cuenta con este correo');
-  users[email] = { name, ph: _hash(pw + email), createdAt: Date.now() };
-  saveUsers(users);
-  setUser({email, name});
-  afterLogin(name);
-}
-
-function doGoogleLogin() {
-  if(!AUTH_GOOGLE_CLIENT_ID) {
-    toast('🔑 Google login requiere configurar el OAuth Client ID en el código');
-    return;
+  try {
+    const cred = await auth.createUserWithEmailAndPassword(email, pw);
+    await cred.user.updateProfile({ displayName: name });
+    // onAuthStateChanged maneja el resto
+  } catch(e) {
+    const msg = e.code==='auth/email-already-in-use' ? 'Ya existe una cuenta con este correo' :
+                e.code==='auth/invalid-email' ? 'Correo inválido' :
+                'Error al registrarse';
+    showAuthErr('auth-err-register', msg);
   }
-  // Google Identity Services
-  google.accounts.id.initialize({ client_id: AUTH_GOOGLE_CLIENT_ID, callback: (res) => {
-    const payload = JSON.parse(atob(res.credential.split('.')[1]));
-    setUser({email: payload.email, name: payload.given_name || payload.name, google: true});
-    afterLogin(payload.given_name || payload.name);
-  }});
-  google.accounts.id.prompt();
 }
 
-function authGuest() {
-  setUser({email: null, name: 'Invitado', guest: true});
-  afterLogin('Invitado');
+async function doGoogleLogin() {
+  try {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    await auth.signInWithPopup(provider);
+    // onAuthStateChanged maneja el resto
+  } catch(e) {
+    toast('Error al iniciar con Google: ' + (e.message||''));
+  }
+}
+
+async function authGuest() {
+  try {
+    await auth.signInAnonymously();
+  } catch(e) {
+    // Fallback si anónimo falla
+    updateHeaderUser();
+    nav('home');
+  }
 }
 
 function afterLogin(name) {
-  // Sync name to profile
   if(name && name !== 'Invitado') {
     S.profile.name = name;
     saveState();
@@ -2294,8 +2353,9 @@ function afterLogin(name) {
   nav('home');
 }
 
-function logout() {
-  clearUser();
+async function logout() {
+  await auth.signOut();
+  S = defaultState();
   nav('splash');
   setTimeout(() => nav('auth'), 100);
 }
@@ -2308,23 +2368,38 @@ function updateHeaderUser() {
 
 // ===================== INIT =====================
 document.addEventListener('DOMContentLoaded', () => {
-  // Mostrar splash primero
   document.querySelector('.hdr').style.display = 'none';
   document.getElementById('p-splash').classList.add('on');
 
-  setTimeout(() => {
-    document.getElementById('p-splash').classList.remove('on');
-    const user = getUser();
-    if(user) {
+  let authResolved = false;
+
+  auth.onAuthStateChanged(async (user) => {
+    if (authResolved) return; // Evitar doble ejecución
+    authResolved = true;
+
+    if (user) {
+      if (!user.isAnonymous) {
+        await loadUserState(user.uid);
+      } else {
+        // Invitado: cargar estado local temporal
+        try {
+          const gs = localStorage.getItem('meri_guest_state');
+          if (gs) S = { ...defaultState(), ...JSON.parse(gs) };
+        } catch(e) {}
+      }
       updateHeaderUser();
+      loadProfile();
+      if(Notification.permission === 'granted') checkAndNotify();
+      document.getElementById('p-splash').classList.remove('on');
       nav('home');
     } else {
-      nav('auth');
+      // Sin sesión: mostrar splash y luego auth
+      setTimeout(() => {
+        document.getElementById('p-splash').classList.remove('on');
+        nav('auth');
+      }, 2600);
     }
-  }, 2600);
-
-  loadProfile();
-  if(Notification.permission === 'granted') checkAndNotify();
+  });
 });
 
 // ── Foto mode switcher ──
