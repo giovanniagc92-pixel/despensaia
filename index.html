@@ -444,11 +444,6 @@ textarea.inp{resize:none}
       <button class="back-btn" onclick="nav('home')"><i class="ti ti-arrow-left"></i> Inicio</button>
       <!-- Selector principal -->
       <div id="foto-mode-selector">
-        <button class="scan-btn" style="background:linear-gradient(135deg,#15803d,#22c55e);color:#fff;border:none" onclick="showFotoMode('barcode')">
-          <i class="ti ti-barcode"></i>
-          <span>Escanear código de barras</span>
-          <small>Identifica el producto automáticamente — rápido y preciso</small>
-        </button>
         <button class="scan-btn scan-btn-inv" onclick="showFotoMode('invoice')">
           <i class="ti ti-receipt"></i>
           <span>Escanear factura</span>
@@ -459,22 +454,6 @@ textarea.inp{resize:none}
           <span>Escanear fecha de vencimiento</span>
           <small>Agrega el producto y su vencimiento a tu despensa</small>
         </button>
-      </div>
-
-      <!-- BARCODE MODE -->
-      <div id="foto-barcode" style="display:none">
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
-          <button class="btn" onclick="showFotoMode(null);stopBarcodeScanner()" style="padding:6px 10px"><i class="ti ti-arrow-left"></i></button>
-          <div class="sec" style="margin:0">Código de barras</div>
-        </div>
-        <div class="card" style="text-align:center;padding:16px">
-          <div id="barcode-video-wrap" style="position:relative;border-radius:12px;overflow:hidden;background:#000;margin-bottom:12px">
-            <video id="barcode-video" style="width:100%;max-height:260px;object-fit:cover;display:block"></video>
-            <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:80%;height:2px;background:rgba(22,163,74,0.8);box-shadow:0 0 8px rgba(22,163,74,0.8)"></div>
-          </div>
-          <div id="barcode-status" style="font-size:13px;color:var(--tx2);font-weight:600">Apunta la cámara al código de barras</div>
-          <div id="barcode-result" style="margin-top:12px"></div>
-        </div>
       </div>
 
       <!-- INVOICE MODE -->
@@ -553,26 +532,45 @@ Cebolla x2"></textarea>
       <!-- EXPIRY MODE -->
       <div id="foto-expiry" style="display:none">
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
-          <button class="btn" onclick="showFotoMode(null)" style="padding:6px 10px"><i class="ti ti-arrow-left"></i></button>
+          <button class="btn" onclick="showFotoMode(null);stopExpiryMain()" style="padding:6px 10px"><i class="ti ti-arrow-left"></i></button>
           <div class="sec" style="margin:0">Escanear fecha de vencimiento</div>
         </div>
-        <div class="card">
-          <div class="al agr" style="margin-bottom:12px"><i class="ti ti-info-circle"></i><div class="al-b"><div class="al-t">Apunta la cámara al producto o su etiqueta</div><div class="al-s">La IA detectará el nombre del producto y la fecha de vencimiento</div></div></div>
-          <div class="cam-wrap" id="exp-main-wrap" style="display:none">
-            <video id="exp-main-video" autoplay playsinline muted></video>
-            <div class="cam-overlay"><div class="cam-frame"></div><div class="cam-hint">Centra el producto en el marco</div></div>
-          </div>
-          <div id="exp-main-start">
-            <button class="btn btnp btnf" onclick="startExpiryMain()"><i class="ti ti-camera"></i> Activar cámara</button>
-          </div>
-          <div id="exp-main-controls" style="display:none;margin-top:10px">
-            <div style="display:flex;gap:8px">
-              <button class="btn btnp" style="flex:1" onclick="captureExpiryMain()"><i class="ti ti-aperture"></i> Capturar y analizar</button>
-              <button class="btn" onclick="stopExpiryMain()"><i class="ti ti-x"></i> Cancelar</button>
-            </div>
-          </div>
-          <canvas id="exp-main-canvas" style="display:none"></canvas>
+        <div class="tabs" id="exp-tabs">
+          <button class="tab on" onclick="expTab(this,'exp-tab-cam')"><i class="ti ti-camera"></i> Cámara</button>
+          <button class="tab" onclick="expTab(this,'exp-tab-gal')"><i class="ti ti-photo"></i> Galería</button>
         </div>
+
+        <!-- CÁMARA -->
+        <div id="exp-tab-cam">
+          <div class="card">
+            <div class="al agr" style="margin-bottom:12px"><i class="ti ti-info-circle"></i><div class="al-b"><div class="al-t">Apunta al empaque donde dice VENCE / EXP / CAD</div><div class="al-s">La IA detectará el nombre y la fecha automáticamente</div></div></div>
+            <div class="cam-wrap" id="exp-main-wrap" style="display:none">
+              <video id="exp-main-video" autoplay playsinline muted></video>
+              <div class="cam-overlay"><div class="cam-frame"></div><div class="cam-hint">Centra la fecha en el marco</div></div>
+            </div>
+            <div id="exp-main-start">
+              <button class="btn btnp btnf" onclick="startExpiryMain()"><i class="ti ti-camera"></i> Activar cámara</button>
+            </div>
+            <div id="exp-main-controls" style="display:none;margin-top:10px">
+              <div style="display:flex;gap:8px">
+                <button class="btn btnp" style="flex:1" onclick="captureExpiryMain()"><i class="ti ti-aperture"></i> Capturar y analizar</button>
+                <button class="btn" onclick="stopExpiryMain()"><i class="ti ti-x"></i> Cancelar</button>
+              </div>
+            </div>
+            <canvas id="exp-main-canvas" style="display:none"></canvas>
+          </div>
+        </div>
+
+        <!-- GALERÍA -->
+        <div id="exp-tab-gal" style="display:none">
+          <div class="card">
+            <div class="al agr" style="margin-bottom:12px"><i class="ti ti-info-circle"></i><div class="al-b"><div class="al-t">Sube una foto del producto o su etiqueta</div><div class="al-s">La IA detectará el nombre y la fecha de vencimiento</div></div></div>
+            <input type="file" id="exp-gal-input" accept="image/*" style="display:none" onchange="handleExpiryGallery(event)">
+            <img id="exp-gal-preview" style="display:none;width:100%;border-radius:10px;margin-bottom:10px;max-height:240px;object-fit:cover">
+            <button class="btn btnp btnf" onclick="document.getElementById('exp-gal-input').click()"><i class="ti ti-photo"></i> Elegir foto</button>
+          </div>
+        </div>
+
         <div id="exp-main-result"></div>
       </div><!-- /foto-expiry -->
     </div><!-- /p-foto -->
@@ -996,8 +994,6 @@ Cebolla x2"></textarea>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-<!-- ZXing barcode scanner -->
-<script src="https://unpkg.com/@zxing/library@latest/umd/index.min.js"></script>
 
 <script>
 // ===================== FIREBASE CONFIG =====================
@@ -2508,165 +2504,152 @@ function showFotoMode(mode) {
   document.getElementById('foto-mode-selector').style.display = mode ? 'none' : 'block';
   document.getElementById('foto-invoice').style.display = mode==='invoice' ? 'block' : 'none';
   document.getElementById('foto-expiry').style.display = mode==='expiry' ? 'block' : 'none';
-  document.getElementById('foto-barcode').style.display = mode==='barcode' ? 'block' : 'none';
-  if(!mode) { stopCamera(); stopExpiryMain(); stopBarcodeScanner(); }
-  if(mode==='barcode') startBarcodeScanner();
+  if(!mode) { stopCamera(); stopExpiryMain(); }
 }
 
-// ── Barcode Scanner (ZXing) ──
-let _barcodeReader = null;
-let _barcodeActive = false;
-
-async function startBarcodeScanner() {
-  if (_barcodeActive) return;
-  _barcodeActive = true;
-  document.getElementById('barcode-status').textContent = 'Iniciando cámara...';
-  document.getElementById('barcode-result').innerHTML = '';
-  try {
-    const hints = new Map();
-    const formats = [
-      ZXing.BarcodeFormat.EAN_13, ZXing.BarcodeFormat.EAN_8,
-      ZXing.BarcodeFormat.UPC_A, ZXing.BarcodeFormat.UPC_E,
-      ZXing.BarcodeFormat.CODE_128, ZXing.BarcodeFormat.CODE_39,
-      ZXing.BarcodeFormat.QR_CODE
-    ];
-    hints.set(ZXing.DecodeHintType.POSSIBLE_FORMATS, formats);
-    _barcodeReader = new ZXing.BrowserMultiFormatReader(hints);
-    await _barcodeReader.decodeFromVideoDevice(null, 'barcode-video', (result, err) => {
-      if (result && _barcodeActive) {
-        _barcodeActive = false;
-        _barcodeReader.reset();
-        vib([50,30,50]);
-        handleBarcodeResult(result.getText());
-      }
-    });
-    document.getElementById('barcode-status').textContent = 'Apunta al código de barras del producto';
-  } catch(e) {
-    document.getElementById('barcode-status').textContent = 'No se pudo acceder a la cámara';
-    _barcodeActive = false;
-  }
-}
-
-function stopBarcodeScanner() {
-  _barcodeActive = false;
-  if (_barcodeReader) { _barcodeReader.reset(); _barcodeReader = null; }
-}
-
-async function handleBarcodeResult(barcode) {
-  const statusEl = document.getElementById('barcode-status');
-  const resultEl = document.getElementById('barcode-result');
-  statusEl.textContent = `Código: ${barcode} — Buscando producto...`;
-  resultEl.innerHTML = '<div style="text-align:center;padding:8px;color:var(--tx2)"><i class="ti ti-loader" style="animation:spin 1s linear infinite"></i> Consultando...</div>';
-  try {
-    const res = await fetch(`https://world.openfoodfacts.org/api/v0/product/${barcode}.json`);
-    const data = await res.json();
-    if (data.status === 1 && data.product) {
-      const p = data.product;
-      const name = p.product_name_es || p.product_name || p.generic_name || '';
-      const brand = p.brands || '';
-      const displayName = name ? (brand ? `${name} (${brand})` : name) : `Producto ${barcode}`;
-      statusEl.textContent = '✅ Producto encontrado';
-      resultEl.innerHTML = `
-        <div class="card" style="padding:14px;margin-top:8px">
-          <div style="font-size:15px;font-weight:800;color:var(--g);margin-bottom:4px">${displayName}</div>
-          ${brand ? `<div style="font-size:12px;color:var(--tx2);margin-bottom:12px">${brand}</div>` : ''}
-          <button class="btn btnp btnf" onclick="addBarcodeProduct('${displayName.replace(/'/g,'').replace(/"/g,'')}')">
-            <i class="ti ti-plus"></i> Agregar a mi despensa
-          </button>
-        </div>`;
-    } else {
-      statusEl.textContent = 'Producto no encontrado en la base de datos';
-      resultEl.innerHTML = `
-        <div class="card" style="padding:14px;margin-top:8px;text-align:center">
-          <div style="font-size:13px;color:var(--tx2);margin-bottom:10px">Código: <strong>${barcode}</strong><br>Agrégalo manualmente:</div>
-          <button class="btn btnp btnf" onclick="addBarcodeProduct('')">
-            <i class="ti ti-pencil"></i> Ingresar nombre manualmente
-          </button>
-        </div>`;
-    }
-  } catch(e) {
-    statusEl.textContent = 'Error al consultar. Agrega manualmente.';
-    resultEl.innerHTML = `<button class="btn btnp btnf" style="margin-top:8px" onclick="addBarcodeProduct('')"><i class="ti ti-pencil"></i> Agregar manualmente</button>`;
-  }
-}
-
-function addBarcodeProduct(name) {
-  stopBarcodeScanner();
-  showFotoMode(null);
-  // Pre-llenar modal de agregar
-  openModal('m-add');
-  if (name) setTimeout(() => {
-    const inp = document.getElementById('m-name');
-    if (inp) { inp.value = name; inp.focus(); }
-  }, 100);
+// ── Expiry tab switcher ──
+function expTab(btn, tabId) {
+  stopExpiryMain();
+  document.getElementById('exp-main-result').innerHTML = '';
+  document.querySelectorAll('#exp-tabs .tab').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  document.getElementById('exp-tab-cam').style.display = tabId === 'exp-tab-cam' ? 'block' : 'none';
+  document.getElementById('exp-tab-gal').style.display = tabId === 'exp-tab-gal' ? 'block' : 'none';
 }
 
 // ── Expiry main camera ──
 let expMainStream = null;
 async function startExpiryMain() {
   try {
-    expMainStream = await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment',width:{ideal:1920},height:{ideal:1080}}});
+    expMainStream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: 'environment', width: { ideal: 1920 }, height: { ideal: 1080 } }
+    });
     const video = document.getElementById('exp-main-video');
     video.srcObject = expMainStream;
+    await video.play();
     document.getElementById('exp-main-wrap').style.display = 'block';
     document.getElementById('exp-main-start').style.display = 'none';
     document.getElementById('exp-main-controls').style.display = 'block';
-  } catch(e) { toast('⚠ No se pudo acceder a la cámara: '+e.message); }
+  } catch(e) {
+    toast('⚠ No se pudo acceder a la cámara: ' + e.message);
+  }
 }
 function stopExpiryMain() {
-  if(expMainStream) { expMainStream.getTracks().forEach(t=>t.stop()); expMainStream=null; }
-  document.getElementById('exp-main-wrap').style.display='none';
-  document.getElementById('exp-main-start').style.display='block';
-  document.getElementById('exp-main-controls').style.display='none';
+  if (expMainStream) { expMainStream.getTracks().forEach(t => t.stop()); expMainStream = null; }
+  const wrap = document.getElementById('exp-main-wrap');
+  const start = document.getElementById('exp-main-start');
+  const ctrl = document.getElementById('exp-main-controls');
+  if (wrap) wrap.style.display = 'none';
+  if (start) start.style.display = 'block';
+  if (ctrl) ctrl.style.display = 'none';
 }
 async function captureExpiryMain() {
   const video = document.getElementById('exp-main-video');
   const canvas = document.getElementById('exp-main-canvas');
   canvas.width = video.videoWidth; canvas.height = video.videoHeight;
-  canvas.getContext('2d').drawImage(video,0,0);
+  canvas.getContext('2d').drawImage(video, 0, 0);
   stopExpiryMain();
-  const b64 = canvas.toDataURL('image/jpeg',0.85).split(',')[1];
+  const b64 = canvas.toDataURL('image/jpeg', 0.92).split(',')[1];
+  // Show preview
   const res = document.getElementById('exp-main-result');
-  res.innerHTML = '<div class="card"><div class="al agr"><i class="ti ti-loader"></i><div class="al-b"><div class="al-t">Analizando imagen...</div><div class="al-s">La IA detecta el producto y la fecha</div></div></div></div>';
+  res.innerHTML = `<div class="card" style="text-align:center">
+    <img src="data:image/jpeg;base64,${b64}" style="width:100%;border-radius:10px;margin-bottom:10px;max-height:220px;object-fit:cover">
+    <div class="al agr" style="margin-bottom:0"><i class="ti ti-robot"></i><div class="al-b"><div class="al-t">Analizando con IA...</div><div class="al-s">Detectando producto y fecha</div></div></div>
+    <div class="loading-bar" style="margin-top:8px"><div class="loading-bar-fill"></div></div>
+  </div>`;
+  await analyzeExpiryImage(b64);
+}
+
+// ── Galería ──
+async function handleExpiryGallery(event) {
+  const file = event.target.files?.[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = async (e) => {
+    const dataUrl = e.target.result;
+    const preview = document.getElementById('exp-gal-preview');
+    preview.src = dataUrl;
+    preview.style.display = 'block';
+    const b64 = dataUrl.split(',')[1];
+    const mime = file.type || 'image/jpeg';
+    const res = document.getElementById('exp-main-result');
+    res.innerHTML = `<div class="card" style="text-align:center">
+      <div class="al agr" style="margin-bottom:0"><i class="ti ti-robot"></i><div class="al-b"><div class="al-t">Analizando con IA...</div><div class="al-s">Detectando producto y fecha</div></div></div>
+      <div class="loading-bar" style="margin-top:8px"><div class="loading-bar-fill"></div></div>
+    </div>`;
+    await analyzeExpiryImage(b64, mime);
+  };
+  reader.readAsDataURL(file);
+}
+
+// ── Núcleo de análisis IA ──
+async function analyzeExpiryImage(b64, mime = 'image/jpeg') {
+  const res = document.getElementById('exp-main-result');
   try {
     const body = {
-      contents:[{parts:[
-        {text:`Analiza esta imagen y extrae:
-1. Nombre del producto (máximo 3 palabras, en español)
-2. Fecha de vencimiento en formato YYYY-MM-DD
+      contents: [{
+        parts: [
+          { text: `Analiza esta imagen de un producto alimenticio. Tu tarea es extraer DOS datos:
 
-Responde SOLO en JSON exactamente así, sin markdown, sin texto extra:
-{"nombre":"Nombre del producto","fecha":"YYYY-MM-DD"}
+1. NOMBRE del producto: máximo 3 palabras en español (ej: "Leche Entera", "Yogur Natural", "Atún en Lata"). Si no hay nombre visible, usa "Producto".
+2. FECHA DE VENCIMIENTO: busca etiquetas como VENCE, VENCIMIENTO, EXP, EXPIRA, CAD, CADUCIDAD, BEST BEFORE, USE BY, BB, MFD, CONSUME ANTES. Acepta formatos como DD/MM/AA, MM/AAAA, DD-MM-YYYY, mes abreviado, etc. Conviértela a YYYY-MM-DD. Si solo hay mes y año, usa el último día del mes. Si no hay fecha, usa null.
 
-Si no encuentras fecha, usa "null". Si no encuentras nombre, usa "Producto".'`},
-        {inline_data:{mime_type:'image/jpeg',data:b64}}
-      ]}]
+Responde ÚNICAMENTE con este JSON, sin markdown, sin explicaciones:
+{"nombre":"Nombre producto","fecha":"YYYY-MM-DD"}` },
+          { inline_data: { mime_type: mime, data: b64 } }
+        ]
+      }]
     };
-    const r = await fetch(`https://meri-proxy.giovanniagc92.workers.dev`,
-      {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+    const r = await fetch('https://meri-proxy.giovanniagc92.workers.dev',
+      { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+    if (!r.ok) throw new Error('Error del servidor: ' + r.status);
     const data = await r.json();
-    const txt = data.candidates?.[0]?.content?.parts?.[0]?.text || '{}';
-    let parsed;
-    try { parsed = JSON.parse(txt.trim()); } catch { parsed = JSON.parse(txt.match(/\{[^}]+\}/)?.[0]||'{}'); }
-    const nombre = parsed.nombre || 'Producto';
-    const fecha = parsed.fecha && parsed.fecha !== 'null' ? parsed.fecha : '';
+    const txt = (data.candidates?.[0]?.content?.parts?.[0]?.text || '').trim();
+    let parsed = {};
+    try { parsed = JSON.parse(txt); }
+    catch {
+      const m = txt.match(/\{[\s\S]*?\}/);
+      if (m) try { parsed = JSON.parse(m[0]); } catch {}
+    }
+    const nombre = (parsed.nombre && parsed.nombre !== 'null') ? parsed.nombre : 'Producto';
+    const fecha = (parsed.fecha && parsed.fecha !== 'null' && parsed.fecha !== 'undefined') ? parsed.fecha : '';
+
     res.innerHTML = `<div class="card">
-      <div class="ct"><i class="ti ti-check"></i> Producto detectado</div>
+      <div class="ct" style="color:var(--g)"><i class="ti ti-check"></i> Producto detectado</div>
       <div class="ig" style="margin-bottom:10px">
         <label class="il">Nombre del producto</label>
-        <input class="inp" id="exp-r-name" value="${nombre}" placeholder="Nombre del producto">
+        <input class="inp" id="exp-r-name" value="${nombre.replace(/"/g,'&quot;')}" placeholder="Nombre del producto">
       </div>
-      <div class="ig" style="margin-bottom:14px">
+      <div class="ig" style="margin-bottom:6px">
         <label class="il">Fecha de vencimiento</label>
         <input class="inp" id="exp-r-date" type="date" value="${fecha}">
       </div>
-      <div style="display:flex;gap:8px">
+      ${!fecha ? '<div class="al aam" style="margin-bottom:10px;margin-top:4px"><i class="ti ti-calendar-x"></i><div class="al-b"><div class="al-t">No se detectó la fecha</div><div class="al-s">Ingresa la fecha manualmente o escanea de nuevo</div></div></div>' : ''}
+      <div style="display:flex;gap:8px;margin-top:8px">
         <button class="btn btnp" style="flex:1" onclick="saveScannedExpiry()"><i class="ti ti-plus"></i> Agregar a despensa</button>
-        <button class="btn" onclick="startExpiryMain(); document.getElementById('exp-main-result').innerHTML=''"><i class="ti ti-refresh"></i> Volver a escanear</button>
+        <button class="btn" onclick="retryExpiryScanner()"><i class="ti ti-refresh"></i> Reintentar</button>
       </div>
     </div>`;
   } catch(e) {
-    res.innerHTML = `<div class="card"><div class="al ard"><i class="ti ti-alert-circle"></i><div class="al-b"><div class="al-t">Error al analizar</div><div class="al-s">${e.message}</div></div></div></div>`;
+    res.innerHTML = `<div class="card">
+      <div class="al ard" style="margin-bottom:10px"><i class="ti ti-alert-circle"></i><div class="al-b"><div class="al-t">Error al analizar</div><div class="al-s">${e.message}</div></div></div>
+      <button class="btn btnp btnf" onclick="retryExpiryScanner()"><i class="ti ti-refresh"></i> Intentar de nuevo</button>
+    </div>`;
+  }
+}
+
+function retryExpiryScanner() {
+  document.getElementById('exp-main-result').innerHTML = '';
+  // Check active tab
+  const camTab = document.getElementById('exp-tab-cam');
+  if (camTab && camTab.style.display !== 'none') {
+    startExpiryMain();
+  } else {
+    // Reset gallery
+    const inp = document.getElementById('exp-gal-input');
+    const prev = document.getElementById('exp-gal-preview');
+    if (inp) inp.value = '';
+    if (prev) prev.style.display = 'none';
   }
 }
 function saveScannedExpiry() {
