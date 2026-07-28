@@ -2305,7 +2305,7 @@ function clearDoneShop() {
   saveState(); renderShopList(); toast(`✅ ${done.length} compra(s) guardada(s) en historial`);
 }
 function shareShopList() {
-  const items = S.shopping.filter(s=>!s.done).map(s=>(s.urgent?'🔴 ':'')+s.name+(s.qty&&s.qty!==1||s.unit&&s.unit!=='unidades'?` (${s.qty||1} ${s.unit||'unidades'})`:''));
+  const items = S.shopping.filter(s=>!s.done).map(s=>(s.urgent?'🔴 ':'')+s.name+` (${s.qty||1} ${s.unit||'unidades'})`);
   if(!items.length){toast('ℹ La lista está vacía');return;}
   const text = `🛒 Lista de compras MERI\n${new Date().toLocaleDateString('es-CO')}\n\n${items.join('\n')}`;
   if(navigator.share) navigator.share({title:'Lista de compras',text});
