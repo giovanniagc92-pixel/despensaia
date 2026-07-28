@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#16a34a">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="MERI">h
+<meta name="apple-mobile-web-app-title" content="MERI">
 <meta name="description" content="MERI — Tu asistente inteligente de cocina con IA: recetas, alertas y lista de compras">
 <link rel="manifest" href="./manifest.json">
 <link rel="apple-touch-icon" href="./icons/icon-192.png">
@@ -31,7 +31,6 @@
   --nb:env(safe-area-inset-bottom,0px);
   --nh:68px;
 }
-
 html,body{height:100%;overflow:hidden;background:var(--bg);font-family:'Nunito',sans-serif;color:var(--tx);font-size:15px}
 .app{display:flex;flex-direction:column;height:100dvh;max-width:430px;margin:0 auto;position:relative;background:var(--bg)}
 
@@ -433,11 +432,12 @@ textarea.inp{resize:none}
         <button class="qb" onclick="nav(&#39;compras&#39;)"><i class="ti ti-shopping-cart"></i>Lista de compras</button>
         <button class="qb" onclick="nav(&#39;cosecha&#39;)"><i class="ti ti-plant"></i>Cosecha</button>
       </div>
+      <button class="btn btn-am btnf" style="margin-top:8px" onclick="abrirUso()"><i class="ti ti-minus"></i> ¿Qué usaste hoy?</button>
     </div>
 
     <!-- FACTURA -->
     <div class="pg" id="p-foto">
-      <button class="back-btn" onclick="nav('home')"><i class="ti ti-arrow-left"></i> Inicio</button>
+      <button class="back-btn" onclick="goBack()"><i class="ti ti-arrow-left"></i> Volver</button>
       <!-- Selector principal -->
       <div id="foto-mode-selector">
         <button class="scan-btn scan-btn-inv" onclick="showFotoMode('invoice')">
@@ -573,7 +573,7 @@ Cebolla x2"></textarea>
 
     <!-- DESPENSA -->
     <div class="pg" id="p-despensa">
-      <button class="back-btn" onclick="nav('home')"><i class="ti ti-arrow-left"></i> Inicio</button>
+      <button class="back-btn" onclick="goBack()"><i class="ti ti-arrow-left"></i> Volver</button>
       <div class="searchbar">
         <i class="ti ti-search" aria-hidden="true"></i>
         <input type="text" id="pantry-search" placeholder="Buscar en tu despensa..." oninput="renderPantry()">
@@ -696,14 +696,17 @@ Cebolla x2"></textarea>
       </div>
     </div></div></div>
       <div id="pt-exp" style="display:none"><div class="card" id="pl-exp"></div></div>
-      <div id="pt-low" style="display:none"><div class="card" id="pl-low"></div></div>
+      <div id="pt-low" style="display:none">
+        <div class="card" id="pl-low"></div>
+        <button class="btn btn-am btnf" style="margin-top:8px" onclick="abrirUso()"><i class="ti ti-minus"></i> Registrar lo que usé hoy</button>
+      </div>
       <div id="pt-fav" style="display:none"><div class="card" id="pl-fav"></div></div>
       <button class="btn btnp btnf" style="margin-top:4px" onclick="openModal(&#39;m-add&#39;)"><i class="ti ti-plus"></i> Agregar alimento</button>
     </div>
 
     <!-- RECETAS -->
     <div class="pg" id="p-recetas">
-      <button class="back-btn" onclick="nav('home')"><i class="ti ti-arrow-left"></i> Inicio</button>
+      <button class="back-btn" onclick="goBack()"><i class="ti ti-arrow-left"></i> Volver</button>
       <div class="card">
         <div class="ct"><i class="ti ti-chef-hat"></i> Generar receta con IA</div>
         <label class="il">Selecciona ingredientes de tu despensa</label>
@@ -730,7 +733,7 @@ Cebolla x2"></textarea>
 
     <!-- COSECHA -->
     <div class="pg" id="p-cosecha">
-      <button class="back-btn" onclick="nav('home')"><i class="ti ti-arrow-left"></i> Inicio</button>
+      <button class="back-btn" onclick="goBack()"><i class="ti ti-arrow-left"></i> Volver</button>
       <div class="searchbar">
         <i class="ti ti-search" aria-hidden="true"></i>
         <input type="text" id="harvest-search" placeholder="Buscar cualquier alimento (ej. Arroz, Lenteja, Café...)" oninput="renderHarvest()">
@@ -757,7 +760,7 @@ Cebolla x2"></textarea>
 
     <!-- COMPRAS -->
     <div class="pg" id="p-compras">
-      <button class="back-btn" onclick="nav('home')"><i class="ti ti-arrow-left"></i> Inicio</button>
+      <button class="back-btn" onclick="goBack()"><i class="ti ti-arrow-left"></i> Volver</button>
       <div class="tabs" id="compras-tabs">
         <button class="tab on" onclick="comprasTab(this,&#39;ct-lista&#39;)">Mi lista</button>
         <button class="tab" onclick="comprasTab(this,&#39;ct-sugs&#39;)">Sugerencias</button>
@@ -766,9 +769,16 @@ Cebolla x2"></textarea>
 
       <div id="ct-lista">
         <div class="card" style="margin-bottom:10px">
-          <div style="display:flex;gap:8px;margin-bottom:11px">
+          <div style="display:flex;gap:8px;margin-bottom:7px">
             <input class="inp" id="shop-inp" style="flex:1" placeholder="Agregar producto..." onkeydown="if(event.key===&#39;Enter&#39;)addShopItem()">
             <button class="btn btnp btni" onclick="addShopItem()" aria-label="Agregar"><i class="ti ti-plus"></i></button>
+          </div>
+          <div style="display:flex;gap:6px;margin-bottom:11px">
+            <input class="inp" type="number" id="shop-qty" value="1" min="0.1" step="0.1" style="width:70px;flex-shrink:0">
+            <select class="inp" id="shop-unit" style="flex:1">
+              <option>unidades</option><option>gramos</option><option>kg</option>
+              <option>litros</option><option>ml</option><option>paquetes</option><option>tazas</option>
+            </select>
           </div>
           <div id="shop-items">
     <div class="sr">
@@ -816,6 +826,34 @@ Cebolla x2"></textarea>
   </div><!-- /pages -->
 
 </div><!-- /app -->
+
+<!-- MODAL: Registro de uso diario -->
+<div class="modal-bg" id="m-uso" onclick="if(event.target===this)closeModal('m-uso')">
+  <div class="modal" style="max-height:90%">
+    <div class="mh"></div>
+    <div class="mt">¿Qué usaste hoy? <span style="font-size:11px;font-weight:600;color:var(--tx2)">Descuenta de tu despensa</span></div>
+    <div style="font-size:12px;color:var(--tx2);margin-bottom:12px">Selecciona los alimentos que consumiste y ajusta la cantidad usada.</div>
+    <div id="uso-items" style="max-height:340px;overflow-y:auto"></div>
+    <div style="display:flex;gap:8px;margin-top:12px">
+      <button class="btn" style="flex:1" onclick="closeModal('m-uso')"><i class="ti ti-x"></i> Cancelar</button>
+      <button class="btn btnp" style="flex:2" onclick="registrarUso()"><i class="ti ti-check"></i> Registrar uso</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Lista IA editable -->
+<div class="modal-bg" id="m-ai-list" onclick="if(event.target===this)closeModal('m-ai-list')">
+  <div class="modal" style="max-height:90%">
+    <div class="mh"></div>
+    <div class="mt">Lista con IA <span style="font-size:11px;color:var(--tx2);font-weight:600">— edita antes de agregar</span></div>
+    <div id="ai-list-content" style="margin-bottom:10px"></div>
+    <div id="ai-list-items" style="max-height:300px;overflow-y:auto"></div>
+    <div style="display:flex;gap:8px;margin-top:12px">
+      <button class="btn" style="flex:1" onclick="closeModal('m-ai-list')"><i class="ti ti-x"></i> Cancelar</button>
+      <button class="btn btnp" id="ai-list-add-btn" style="flex:2;display:none" onclick="addAIListToShopping()"><i class="ti ti-shopping-cart"></i> Agregar a mi lista</button>
+    </div>
+  </div>
+</div>
 
 <!-- TOAST -->
 <div class="toast" id="toast" role="alert" aria-live="polite"></div>
@@ -1084,6 +1122,7 @@ function defaultState() {
     pantry: [],
     shopping: [],
     history: [],
+    purchaseHistory: [],
     savedRecipes: [],
     profile: {name:'',city:'Bogotá',people:2,diet:''},
     idc: 0
@@ -1108,14 +1147,15 @@ function foodEm(name, cat) {
 }
 
 // ===================== NAV =====================
-function nav(page) {
+let _navStack = ['home'];
+
+function nav(page, addToStack=true) {
   document.querySelectorAll('.pg').forEach(p => p.classList.remove('on'));
   document.querySelectorAll('.ni').forEach(b => b.classList.remove('on'));
   document.getElementById('p-'+page).classList.add('on');
   const nb = document.getElementById('ni-'+page);
   if(nb) nb.classList.add('on');
   document.getElementById('p-'+page).scrollTop = 0;
-  // Ocultar header en splash/auth
   const noHeader = ['splash','auth'].includes(page);
   document.querySelector('.hdr').style.display = noHeader ? 'none' : '';
   if(page==='home') renderHome();
@@ -1124,7 +1164,31 @@ function nav(page) {
   else if(page==='cosecha') renderHarvest();
   else if(page==='compras') renderShopList();
   if(!noHeader) vib([8]);
+  // Nav stack para botón volver y back de Android
+  if(addToStack && !noHeader) {
+    if(_navStack[_navStack.length-1] !== page) _navStack.push(page);
+    if(!['splash','auth','home'].includes(page)) history.pushState({page}, '');
+  }
 }
+
+function goBack() {
+  if(_navStack.length > 1) {
+    _navStack.pop();
+    const prev = _navStack[_navStack.length-1] || 'home';
+    nav(prev, false);
+  } else {
+    nav('home', false);
+  }
+}
+
+// Captura el botón hardware de Android (<)
+window.addEventListener('popstate', function(e) {
+  if(_navStack.length > 1) {
+    _navStack.pop();
+    const prev = _navStack[_navStack.length-1] || 'home';
+    nav(prev, false);
+  }
+});
 
 function fotoTab(btn, id) {
   stopCamera();
@@ -1591,34 +1655,101 @@ async function quickShoppingList() {
   const days = {semanal:7, quincenal:15, mensual:30};
   const curDays = days[freq] || 7;
   const prevDays = p.prevShoppingFreqDays || p.shoppingFreqDays || curDays;
-  // Habit context: scale quantities if frequency changed
   let habitCtx = '';
   if(p.shoppingFreq && p.shoppingFreq !== freq) {
-    habitCtx = `El usuario normalmente compraba ${p.shoppingFreq} (${prevDays} días). Ahora quiere comprar para ${curDays} días. Ajusta las cantidades proporcionalmente: multiplica por ${(curDays/prevDays).toFixed(2)}.`;
+    habitCtx = `El usuario normalmente compraba ${p.shoppingFreq} (${prevDays} días). Ahora quiere comprar para ${curDays} días. Ajusta las cantidades proporcionalmente.`;
   } else if(p.shoppingFreq) {
     habitCtx = `El usuario compra habitualmente de forma ${freq} (${curDays} días). Usa cantidades coherentes con ese hábito.`;
   }
-  // Save current selection as habit
   saveShoppingFreq(freq);
+  // Historial detallado de compras para personalización
+  const ph = (S.purchaseHistory||[]).slice(0,10);
+  let histCtx = '';
+  if(ph.length) {
+    const freq2 = {};
+    ph.forEach(h=>h.items.forEach(i=>{
+      const k = i.name.toLowerCase();
+      if(!freq2[k]) freq2[k]={name:i.name,count:0,totalQty:0,unit:i.unit};
+      freq2[k].count++; freq2[k].totalQty+=Number(i.qty)||1;
+    }));
+    const top = Object.values(freq2).sort((a,b)=>b.count-a.count).slice(0,15);
+    histCtx = `Historial real de compras del usuario (más frecuentes): ${top.map(x=>`${x.name} (${x.count}x, promedio ${(x.totalQty/x.count).toFixed(1)} ${x.unit})`).join(', ')}.`;
+  }
   const freqLabel = {semanal:'semanal (7 días)',quincenal:'quincenal (15 días)',mensual:'mensual (30 días)'}[freq] || freq;
-  const prompt = `Eres un asistente de compras experto para Colombia. 
+  const prompt = `Eres un asistente de compras experto para Colombia.
 Datos del hogar: ${p.people||2} persona(s). ${p.diet?'Dieta: '+p.diet+'.':''}
-Favoritos: ${favs.join(', ')||'variados'}. 
-Alimentos con stock bajo: ${low.join(', ')||'ninguno'}.
+Favoritos de su despensa: ${favs.join(', ')||'variados'}.
+Alimentos con stock bajo ahora: ${low.join(', ')||'ninguno'}.
+${histCtx}
 ${habitCtx}
 
-Genera una lista de compras para ${freqLabel}, organizada por secciones del supermercado colombiano:
-🥦 Frutas y Verduras
-🥛 Lácteos y Huevos
-🍗 Carnes y Proteínas
-🌾 Granos, Harinas y Enlatados
-🧃 Bebidas
-🧴 Aseo y Otros
+Genera una lista de compras personalizada para ${freqLabel}, basada en los hábitos reales del usuario.
+Organiza por secciones: 🥦 Frutas y Verduras | 🥛 Lácteos y Huevos | 🍗 Carnes | 🌾 Granos | 🧃 Bebidas | 🧴 Aseo y Otros
+IMPORTANTE: incluye cantidad exacta para ${curDays} días y ${p.people||2} persona(s). Formato: "- NombreProducto: X unidad/kg/etc"
+Responde SOLO la lista, sin explicaciones extra.`;
 
-IMPORTANTE: Para cada alimento incluye la cantidad exacta calculada para ${curDays} días y ${p.people||2} persona(s). Prioriza los favoritos. Responde en español, formato claro.`;
+  // Mostrar modal editable con la lista generada
+  const modal = document.getElementById('m-ai-list');
+  if(modal) {
+    openModal('m-ai-list');
+    document.getElementById('ai-list-content').innerHTML = '<div style="text-align:center;padding:20px"><div class="dot" style="margin:0 auto"></div><p style="color:var(--tx2);font-size:13px;margin-top:10px">Generando lista personalizada...</p></div>';
+    document.getElementById('ai-list-items').innerHTML = '';
+    document.getElementById('ai-list-add-btn').style.display = 'none';
+  }
   const comprasActive = document.getElementById('p-compras')?.classList.contains('on');
-  const targetId = comprasActive ? 'sugs-ai' : 'home-ai-result';
-  await callAI(targetId, prompt);
+  const targetId = modal ? 'ai-list-content' : (comprasActive ? 'sugs-ai' : 'home-ai-result');
+  await callAI(targetId, prompt, (text) => {
+    if(!modal) return;
+    // Parsear la lista generada en items editables
+    const lines = text.split('\n').filter(l=>l.trim().match(/^[-•*]\s*.+/));
+    if(lines.length) {
+      _aiGeneratedItems = lines.map((l,i)=>{
+        const clean = l.replace(/^[-•*]\s*/,'').trim();
+        const match = clean.match(/^(.+?):\s*([\d.,]+)\s*(.+)?$/);
+        return match ? {id:i,name:match[1].trim(),qty:parseFloat(match[2])||1,unit:(match[3]||'unidades').trim(),sel:true}
+                     : {id:i,name:clean,qty:1,unit:'unidades',sel:true};
+      });
+      renderAIListItems();
+      document.getElementById('ai-list-add-btn').style.display = 'block';
+    }
+  });
+}
+
+let _aiGeneratedItems = [];
+function renderAIListItems() {
+  const div = document.getElementById('ai-list-items');
+  if(!div) return;
+  div.innerHTML = _aiGeneratedItems.map(it=>`
+    <div class="fr" style="gap:8px;padding:8px 0;border-bottom:1px solid var(--bd)">
+      <div class="chk${it.sel?' ok':''}" onclick="toggleAIItem(${it.id})" style="flex-shrink:0">
+        ${it.sel?'<i class="ti ti-check" style="font-size:13px"></i>':''}
+      </div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:13px;font-weight:700;color:var(--tx)">${it.name}</div>
+        <div style="display:flex;gap:6px;margin-top:4px">
+          <input type="number" value="${it.qty}" min="0.1" step="0.1" style="width:60px;padding:4px 6px;border:1.5px solid var(--bd);border-radius:8px;background:var(--card);color:var(--tx);font-size:12px;font-family:inherit" onchange="_aiGeneratedItems[${it.id}].qty=parseFloat(this.value)||1">
+          <select style="flex:1;padding:4px 6px;border:1.5px solid var(--bd);border-radius:8px;background:var(--card);color:var(--tx);font-size:12px;font-family:inherit" onchange="_aiGeneratedItems[${it.id}].unit=this.value">
+            ${['unidades','gramos','kg','litros','ml','paquetes','tazas'].map(u=>`<option${it.unit===u?' selected':''}>${u}</option>`).join('')}
+          </select>
+        </div>
+      </div>
+      <button onclick="_aiGeneratedItems.splice(${it.id},1);_aiGeneratedItems.forEach((x,i)=>x.id=i);renderAIListItems()" style="background:none;border:none;color:var(--tx3);cursor:pointer;padding:4px"><i class="ti ti-x"></i></button>
+    </div>`).join('');
+}
+function toggleAIItem(id) {
+  const it = _aiGeneratedItems.find(x=>x.id===id);
+  if(it){it.sel=!it.sel;renderAIListItems();}
+}
+function addAIListToShopping() {
+  const sel = _aiGeneratedItems.filter(x=>x.sel);
+  if(!sel.length){toast('ℹ Selecciona al menos un producto');return;}
+  sel.forEach(it=>{
+    if(!S.shopping.find(s=>s.name.toLowerCase()===it.name.toLowerCase()))
+      S.shopping.push({id:nid(),name:it.name,qty:it.qty,unit:it.unit,done:false,urgent:false});
+  });
+  saveState(); closeModal('m-ai-list'); renderShopList();
+  toast(`✅ ${sel.length} productos agregados a la lista`);
+  nav('compras');
 }
 
 function renderSavedRecipes() {
@@ -1736,7 +1867,7 @@ function formatRecipe(text) {
 }
 
 // ===================== AI =====================
-async function callAI(targetId, prompt) {
+async function callAI(targetId, prompt, onSuccess=null) {
   let el = document.getElementById(targetId);
   if(!el) return;
   el.innerHTML = `<div class="ai-box"><div class="ai-hdr"><i class="ti ti-robot"></i> Generando con IA...</div><div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div></div>`;
@@ -1752,17 +1883,22 @@ async function callAI(targetId, prompt) {
     });
     if(!res.ok) throw new Error('API error: '+res.status);
     const data = await res.json();
-    const text = (data.candidates?.[0]?.content?.parts?.[0]?.text) || 
-      (data.candidates?.[0]?.output) || 
+    const text = (data.candidates?.[0]?.content?.parts?.[0]?.text) ||
+      (data.candidates?.[0]?.output) ||
       (typeof data === 'string' ? data : JSON.stringify(data)) || 'Sin respuesta.';
-    lastRecipeText = text;
-    el.innerHTML = `<div>
-      ${formatRecipe(text)}
-      <div style="display:flex;gap:7px;margin-top:12px;flex-wrap:wrap">
-        <button class="btn" style="font-size:11px;padding:7px 12px" onclick="saveRecipe()"><i class="ti ti-bookmark"></i> Guardar receta</button>
-        <button class="btn" style="font-size:11px;padding:7px 12px" onclick="shareRecipe()"><i class="ti ti-share"></i> Compartir</button>
-      </div>
-    </div>`;
+    if(onSuccess) {
+      el.innerHTML = `<div class="ai-box" style="font-size:12px;max-height:120px;overflow:auto">${formatRecipe(text)}</div>`;
+      onSuccess(text);
+    } else {
+      lastRecipeText = text;
+      el.innerHTML = `<div>
+        ${formatRecipe(text)}
+        <div style="display:flex;gap:7px;margin-top:12px;flex-wrap:wrap">
+          <button class="btn" style="font-size:11px;padding:7px 12px" onclick="saveRecipe()"><i class="ti ti-bookmark"></i> Guardar receta</button>
+          <button class="btn" style="font-size:11px;padding:7px 12px" onclick="shareRecipe()"><i class="ti ti-share"></i> Compartir</button>
+        </div>
+      </div>`;
+    }
     vib([10,5,20]);
   } catch(e) {
     const isQuota = e.message && e.message.includes('429');
@@ -2082,7 +2218,10 @@ function renderShopList() {
       <div class="chk${s.done?' ok':''}" onclick="toggleShop(${s.id})" role="checkbox" aria-checked="${s.done}">
         ${s.done?'<i class="ti ti-check" style="font-size:13px"></i>':''}
       </div>
-      <span class="sn2">${s.urgent&&!s.done?'🔴 ':''}${s.name}</span>
+      <div style="flex:1;min-width:0">
+        <div class="sn2">${s.urgent&&!s.done?'🔴 ':''}${s.name}</div>
+        ${s.qty?`<div style="font-size:11px;color:var(--tx2);font-weight:600">${s.qty} ${s.unit||'unidades'}</div>`:''}
+      </div>
       <button class="btn btni" onclick="deleteShop(${s.id})" aria-label="Eliminar" style="color:var(--tx3);padding:7px"><i class="ti ti-x" style="font-size:14px"></i></button>
     </div>`).join('');
   const pending = S.shopping.filter(s=>!s.done).length;
@@ -2109,9 +2248,22 @@ function renderAutoSuggestions() {
 function renderHistory() {
   const div = document.getElementById('hist-list');
   if(!div) return;
-  div.innerHTML = !S.history.length
-    ? '<div class="empty" style="padding:20px"><i class="ti ti-history"></i><p>Sin compras registradas</p></div>'
-    : S.history.map(h=>`<div class="fr"><div class="fec">🛒</div><div class="fi"><div class="fn">${h.store}</div><div class="fm">${fDate(h.date)} · ${h.items} productos</div></div><span class="badge btl">${fCOP(h.total)}</span></div>`).join('');
+  const ph = S.purchaseHistory || [];
+  if(!ph.length) {
+    div.innerHTML = '<div class="empty" style="padding:20px"><i class="ti ti-history"></i><p>Sin compras registradas — marca items como comprados y limpía la lista</p></div>';
+    return;
+  }
+  div.innerHTML = ph.map(h=>`
+    <div class="fr" style="flex-direction:column;align-items:flex-start;gap:4px;padding:12px 0">
+      <div style="display:flex;align-items:center;gap:8px;width:100%">
+        <div class="fec">🛒</div>
+        <div class="fi" style="flex:1"><div class="fn">${fDate(h.date)}</div>
+        <div class="fm">${h.items.length} producto(s)</div></div>
+      </div>
+      <div style="margin-left:50px;font-size:11px;color:var(--tx2);line-height:1.8">
+        ${h.items.map(i=>`• ${i.name} — ${i.qty} ${i.unit}`).join('<br>')}
+      </div>
+    </div>`).join('<hr style="border:none;border-top:1px solid var(--bd);margin:0">');
 }
 
 function toggleShop(id) {
@@ -2127,7 +2279,9 @@ function deleteShop(id) {
 function addShopItem() {
   const inp = document.getElementById('shop-inp');
   const name = inp.value.trim(); if(!name) return;
-  S.shopping.push({id:nid(),name,done:false,urgent:false});
+  const qty = parseFloat(document.getElementById('shop-qty')?.value) || 1;
+  const unit = document.getElementById('shop-unit')?.value || 'unidades';
+  S.shopping.push({id:nid(),name,qty,unit,done:false,urgent:false});
   saveState(); inp.value=''; renderShopList();
   toast(`✅ "${name}" agregado`); vib([8]);
 }
@@ -2138,10 +2292,17 @@ function addShopAuto(name, urgent=false) {
   toast(`🛒 "${name}" agregado${urgent?' con prioridad':''}`);
 }
 function clearDoneShop() {
-  const done = S.shopping.filter(s=>s.done).length;
-  if(!done){toast('ℹ No hay productos marcados como comprados');return;}
+  const done = S.shopping.filter(s=>s.done);
+  if(!done.length){toast('ℹ No hay productos marcados como comprados');return;}
+  // Guardar en historial detallado
+  if(!S.purchaseHistory) S.purchaseHistory = [];
+  S.purchaseHistory.unshift({
+    date: new Date().toISOString(),
+    items: done.map(s=>({name:s.name, qty:s.qty||1, unit:s.unit||'unidades'}))
+  });
+  if(S.purchaseHistory.length > 50) S.purchaseHistory = S.purchaseHistory.slice(0,50);
   S.shopping = S.shopping.filter(s=>!s.done);
-  saveState(); renderShopList(); toast(`🗑 ${done} producto(s) eliminado(s)`);
+  saveState(); renderShopList(); toast(`✅ ${done.length} compra(s) guardada(s) en historial`);
 }
 function shareShopList() {
   const items = S.shopping.filter(s=>!s.done).map(s=>(s.urgent?'🔴 ':'')+s.name);
@@ -2149,6 +2310,55 @@ function shareShopList() {
   const text = `🛒 Lista de compras MERI\n${new Date().toLocaleDateString('es-CO')}\n\n${items.join('\n')}`;
   if(navigator.share) navigator.share({title:'Lista de compras',text});
   else navigator.clipboard.writeText(text).then(()=>toast('📋 Lista copiada al portapapeles'));
+}
+
+// ===================== USO DIARIO =====================
+function abrirUso() {
+  const div = document.getElementById('uso-items');
+  if(!div) return;
+  if(!S.pantry.length) { toast('ℹ Tu despensa está vacía'); return; }
+  div.innerHTML = S.pantry.map(f=>`
+    <div class="fr" style="gap:8px;padding:8px 0;border-bottom:1px solid var(--bd)">
+      <div class="chk" id="uso-chk-${f.id}" onclick="toggleUsoItem(${f.id})" style="flex-shrink:0"></div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:13px;font-weight:700;color:var(--tx)">${f.em} ${f.name}</div>
+        <div style="font-size:11px;color:var(--tx2)">Stock: ${f.qty} ${f.unit}</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:4px;flex-shrink:0">
+        <input type="number" id="uso-qty-${f.id}" value="1" min="0.1" step="0.1"
+          style="width:55px;padding:4px 6px;border:1.5px solid var(--bd);border-radius:8px;background:var(--card);color:var(--tx);font-size:12px;font-family:inherit">
+        <span style="font-size:10px;color:var(--tx2)">${f.unit}</span>
+      </div>
+    </div>`).join('');
+  openModal('m-uso');
+}
+let _usoSeleccionados = new Set();
+function toggleUsoItem(id) {
+  const chk = document.getElementById('uso-chk-'+id);
+  if(_usoSeleccionados.has(id)) {
+    _usoSeleccionados.delete(id);
+    chk.classList.remove('ok'); chk.innerHTML='';
+  } else {
+    _usoSeleccionados.add(id);
+    chk.classList.add('ok'); chk.innerHTML='<i class="ti ti-check" style="font-size:13px"></i>';
+  }
+}
+function registrarUso() {
+  if(!_usoSeleccionados.size){toast('ℹ Selecciona al menos un alimento');return;}
+  let actualizados=0;
+  _usoSeleccionados.forEach(id=>{
+    const f = S.pantry.find(x=>x.id===id);
+    const used = parseFloat(document.getElementById('uso-qty-'+id)?.value)||1;
+    if(f){
+      f.qty = Math.max(0, parseFloat((f.qty-used).toFixed(2)));
+      actualizados++;
+    }
+  });
+  saveState(); renderPantry(); renderHome();
+  _usoSeleccionados.clear();
+  closeModal('m-uso');
+  toast(`✅ ${actualizados} alimento(s) descontado(s) de tu despensa`);
+  checkAndNotify();
 }
 
 // ===================== PROFILE =====================
@@ -2191,7 +2401,7 @@ async function requestNotifications() {
   const perm = await Notification.requestPermission();
   if(perm === 'granted') {
     renderNotifPrompt();
-    checkAndNotify();
+    scheduleDaily();
     toast('🔔 Notificaciones activadas');
     // Suscribir a Web Push real
     const user = auth.currentUser;
@@ -2202,15 +2412,41 @@ async function requestNotifications() {
 
 function checkAndNotify() {
   if(Notification.permission !== 'granted') return;
-  const urgent = S.pantry.filter(f=>dU(f.exp)<=1&&dU(f.exp)>=0);
-  if(urgent.length > 0) {
-    new Notification('MERI ⚠️', {
-      body: urgent.map(f=>f.name).join(', ')+' '+(urgent.length===1?'vence':'vencen')+' hoy o mañana',
-      icon: 'icons/icon-192.png',
-      badge: 'icons/icon-192.png',
-      tag: 'expiry-alert'
-    });
-  }
+  const notify = (title, body, tag) => {
+    try {
+      if(_swRegistration?.showNotification) {
+        _swRegistration.showNotification(title, {body, icon:'icons/icon-192.png', badge:'icons/icon-192.png', tag});
+      } else {
+        new Notification(title, {body, icon:'icons/icon-192.png', badge:'icons/icon-192.png', tag});
+      }
+    } catch(e) {}
+  };
+  // 1. Por vencer hoy/mañana
+  const hoyManana = S.pantry.filter(f=>dU(f.exp)<=1&&dU(f.exp)>=0);
+  if(hoyManana.length) notify('MERI ⚠️ Vence pronto',
+    hoyManana.map(f=>f.name).join(', ')+' vence'+(hoyManana.length>1?'n':'')+' hoy o mañana', 'expiry-1');
+  // 2. Por vencer en 3 días
+  const en3 = S.pantry.filter(f=>dU(f.exp)>1&&dU(f.exp)<=3);
+  if(en3.length) notify('MERI 📅 Alerta de vencimiento',
+    en3.map(f=>f.name).join(', ')+' vence'+(en3.length>1?'n':'')+' en menos de 3 días', 'expiry-3');
+  // 3. Stock bajo
+  const stockBajo = S.pantry.filter(f=>f.min>0&&f.qty<=f.min);
+  if(stockBajo.length) notify('MERI 📦 Stock bajo',
+    stockBajo.map(f=>`${f.name} (${f.qty} ${f.unit})`).join(', ')+' está'+(stockBajo.length>1?'n':'')+' por acabarse', 'stock-low');
+  // 4. Despensa casi vacía (menos de 3 alimentos)
+  if(S.pantry.length>0 && S.pantry.length<=3) notify('MERI 🛒 Tu despensa está casi vacía',
+    'Solo tienes '+S.pantry.length+' alimento(s). ¿Quieres crear una lista de compras?', 'pantry-empty');
+  // 5. Sugerencia de lista rápida si hay historial
+  const ph = S.purchaseHistory||[];
+  if(ph.length>=2 && S.shopping.length===0) notify('MERI 💡 ¿Es hora de hacer mercado?',
+    'Basado en tus compras anteriores, abre MERI y genera tu lista con IA', 'shop-suggest');
+}
+
+// Programar revisión diaria de notificaciones
+function scheduleDaily() {
+  checkAndNotify();
+  // Revisar cada 12 horas mientras la app está abierta
+  setInterval(checkAndNotify, 12*60*60*1000);
 }
 
 // ===================== SEARCH =====================
