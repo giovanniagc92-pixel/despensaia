@@ -2214,13 +2214,13 @@ function renderShopList() {
   }
   if(empty) empty.style.display='none';
   div.innerHTML = S.shopping.map(s=>`
-    <div class="sr${s.done?' dn':''}">
+    <div class="sr${s.done?' dn':''}" data-sid="${s.id}">
       <div class="chk${s.done?' ok':''}" onclick="toggleShop(${s.id})" role="checkbox" aria-checked="${s.done}">
         ${s.done?'<i class="ti ti-check" style="font-size:13px"></i>':''}
       </div>
-      <div style="flex:1;min-width:0">
+      <div class="shop-content" style="flex:1;min-width:0;cursor:${s.done?'default':'pointer'}" onclick="${s.done?'':` editShopQty(${s.id})`}">
         <div class="sn2">${s.urgent&&!s.done?'🔴 ':''}${s.name}</div>
-        ${s.qty?`<div style="font-size:11px;color:var(--tx2);font-weight:600">${s.qty} ${s.unit||'unidades'}</div>`:''}
+        <div style="font-size:11px;color:var(--tx2);font-weight:600">${s.qty||1} ${s.unit||'unidades'}</div>
       </div>
       <button class="btn btni" onclick="deleteShop(${s.id})" aria-label="Eliminar" style="color:var(--tx3);padding:7px"><i class="ti ti-x" style="font-size:14px"></i></button>
     </div>`).join('');
@@ -2275,6 +2275,35 @@ function deleteShop(id) {
   S.shopping = S.shopping.filter(x=>x.id!==id);
   saveState(); renderShopList();
   if(s) toast(`🗑 "${s.name}" eliminado`);
+}
+function editShopQty(id) {
+  const s = S.shopping.find(x=>x.id===id);
+  if(!s||s.done) return;
+  const row = document.querySelector(`[data-sid="${id}"]`);
+  if(!row) return;
+  const content = row.querySelector('.shop-content');
+  const units = ['unidades','gramos','kg','litros','ml','paquetes','tazas'];
+  content.onclick = null;
+  content.style.cursor = 'default';
+  content.innerHTML = `
+    <div style="font-size:12px;color:var(--tx2);margin-bottom:3px;font-weight:600">${s.name}</div>
+    <div style="display:flex;gap:5px;align-items:center">
+      <input id="eq-qty-${id}" type="number" class="inp" value="${s.qty||1}" min="0.1" step="0.1" style="width:65px;padding:5px 6px;font-size:13px">
+      <select id="eq-unit-${id}" class="inp" style="flex:1;padding:5px 6px;font-size:13px">
+        ${units.map(u=>`<option${(s.unit||'unidades')===u?' selected':''}>${u}</option>`).join('')}
+      </select>
+      <button class="btn" style="padding:5px 10px;font-size:13px;background:var(--g);color:#fff" onclick="saveShopQty(${id})"><i class="ti ti-check"></i></button>
+    </div>`;
+  const qtyEl = document.getElementById(`eq-qty-${id}`);
+  qtyEl.focus(); qtyEl.select();
+  qtyEl.addEventListener('keydown', e=>{ if(e.key==='Enter') saveShopQty(id); });
+}
+function saveShopQty(id) {
+  const s = S.shopping.find(x=>x.id===id);
+  if(!s) return;
+  s.qty = parseFloat(document.getElementById(`eq-qty-${id}`)?.value)||1;
+  s.unit = document.getElementById(`eq-unit-${id}`)?.value||'unidades';
+  saveState(); renderShopList();
 }
 function addShopItem() {
   const inp = document.getElementById('shop-inp');
