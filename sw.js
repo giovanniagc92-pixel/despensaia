@@ -1,5 +1,6 @@
 // MERI Service Worker — Push Notifications + Offline Cache
 const CACHE = 'meri-v1';
+const ICON = '/despensaia/icons/icon-192.png';
 
 // ── Install & Cache ──────────────────────────────────────────
 self.addEventListener('install', e => {
@@ -19,9 +20,9 @@ self.addEventListener('push', event => {
   event.waitUntil(
     self.registration.showNotification(data.title, {
       body: data.body,
-      icon: '/despensaia/icons/icon-192.png',
-      badge: '/despensaia/icons/icon-192.png',
-      tag: 'meri-expiry',
+      icon: ICON,
+      badge: ICON,
+      tag: 'meri-push',
       requireInteraction: false,
       vibrate: [200, 100, 200],
       data: { url: '/despensaia/' }
@@ -29,36 +30,76 @@ self.addEventListener('push', event => {
   );
 });
 
-// ── Periodic Sync: revisar vencimientos sin push del servidor ─
+// ── Periodic Sync: revisar estado sin push del servidor ──────
 self.addEventListener('periodicsync', event => {
   if (event.tag === 'check-expiry') {
-    event.waitUntil(checkExpiryBackground());
+    event.waitUntil(checkStateBackground());
   }
 });
 
-async function checkExpiryBackground() {
+function daysUntil(dateStr) {
+  if (!dateStr) return 999;
+  return Math.round((new Date(dateStr) - Date.now()) / 86400000);
+}
+
+async function checkStateBackground() {
   try {
     const cache = await caches.open(CACHE);
-    const resp = await cache.match('meri-pantry');
+    const resp = await cache.match('meri-state');
     if (!resp) return;
-    const pantry = await resp.json();
-    const today = Date.now();
-    const expiring = pantry.filter(item => {
-      if (!item.exp) return false;
-      const days = Math.round((new Date(item.exp) - today) / 86400000);
-      return days >= 0 && days <= 2;
-    });
-    if (!expiring.length) return;
-    const names = expiring.map(i => i.name).join(', ');
-    const plural = expiring.length === 1;
-    await self.registration.showNotification('MERI ⚠️ Alimentos por vencer', {
-      body: `${names} ${plural ? 'vence' : 'vencen'} hoy o mañana. Úsalos pronto.`,
-      icon: '/despensaia/icons/icon-192.png',
-      badge: '/despensaia/icons/icon-192.png',
-      tag: 'meri-expiry',
-      vibrate: [200, 100, 200],
-      data: { url: '/despensaia/' }
-    });
+    const state = await resp.json();
+    const pantry = state.pantry || [];
+    const shopping = state.shopping || [];
+    const purchaseHistory = state.purchaseHistory || [];
+
+    const notify = async (title, body, tag) => {
+      const existing = await self.registration.getNotifications({tag});
+      if (existing.length) return; // ya existe esa notificación
+      await self.registration.showNotification(title, {
+        body, icon: ICON, badge: ICON, tag,
+        vibrate: [200, 100, 200],
+        data: { url: '/despensaia/' }
+      });
+    };
+
+    // 1. Vence hoy o mañana
+    const hoyManana = pantry.filter(f => { const d=daysUntil(f.exp); return d>=0&&d<=1; });
+    if (hoyManana.length) await notify(
+      'MERI ⚠️ Vence hoy o mañana',
+      hoyManana.map(f=>f.name).join(', ') + (hoyManana.length>1?' vencen':' vence') + ' pronto. Úsalos ya.',
+      'expiry-1'
+    );
+
+    // 2. Vence en 3 días
+    const en3 = pantry.filter(f => { const d=daysUntil(f.exp); return d>1&&d<=3; });
+    if (en3.length) await notify(
+      'MERI 📅 Alimentos por vencer',
+      en3.map(f=>f.name).join(', ') + ' vence'+(en3.length>1?'n':'')+' en menos de 3 días',
+      'expiry-3'
+    );
+
+    // 3. Stock bajo
+    const stockBajo = pantry.filter(f => f.min>0 && f.qty<=f.min);
+    if (stockBajo.length) await notify(
+      'MERI 📦 Stock bajo',
+      stockBajo.map(f=>`${f.name} (${f.qty} ${f.unit||''})`).join(', ') + ' está'+(stockBajo.length>1?'n':'')+' por acabarse',
+      'stock-low'
+    );
+
+    // 4. Despensa casi vacía
+    if (pantry.length > 0 && pantry.length <= 3) await notify(
+      'MERI 🛒 Tu despensa está casi vacía',
+      'Solo tienes ' + pantry.length + ' alimento(s). ¿Es hora de hacer mercado?',
+      'pantry-empty'
+    );
+
+    // 5. Sugerencia de lista
+    if (purchaseHistory.length >= 2 && shopping.length === 0) await notify(
+      'MERI 💡 ¿Hora de hacer mercado?',
+      'Abre MERI y genera tu lista personalizada con IA en un toque',
+      'shop-suggest'
+    );
+
   } catch(e) {}
 }
 

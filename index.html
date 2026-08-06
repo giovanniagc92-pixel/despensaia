@@ -1109,12 +1109,25 @@ async function syncPantryToWorker(uid) {
 function saveState() {
   const user = auth.currentUser;
   if (!user || user.isAnonymous) {
-    // Invitados: usar localStorage temporal
     try { localStorage.setItem('meri_guest_state', JSON.stringify(S)); } catch(e) {}
     return;
   }
   if (_saveTimer) clearTimeout(_saveTimer);
   _saveTimer = setTimeout(() => _saveToFirestore(user.uid), 1000);
+  // Sync state to SW cache for background notifications
+  syncToSWCache();
+}
+
+async function syncToSWCache() {
+  if (!_swRegistration) return;
+  try {
+    const cache = await caches.open('meri-v1');
+    await cache.put('meri-state', new Response(JSON.stringify({
+      pantry: S.pantry || [],
+      shopping: S.shopping || [],
+      purchaseHistory: S.purchaseHistory || []
+    })));
+  } catch(e) {}
 }
 
 function defaultState() {
@@ -2441,12 +2454,13 @@ async function requestNotifications() {
 
 function checkAndNotify() {
   if(Notification.permission !== 'granted') return;
+  const icon = '/despensaia/icons/icon-192.png';
   const notify = (title, body, tag) => {
     try {
       if(_swRegistration?.showNotification) {
-        _swRegistration.showNotification(title, {body, icon:'icons/icon-192.png', badge:'icons/icon-192.png', tag});
+        _swRegistration.showNotification(title, {body, icon, badge:icon, tag, vibrate:[200,100,200]});
       } else {
-        new Notification(title, {body, icon:'icons/icon-192.png', badge:'icons/icon-192.png', tag});
+        new Notification(title, {body, icon, badge:icon, tag});
       }
     } catch(e) {}
   };
@@ -2472,10 +2486,16 @@ function checkAndNotify() {
 }
 
 // Programar revisión diaria de notificaciones
-function scheduleDaily() {
+async function scheduleDaily() {
+  syncToSWCache();
   checkAndNotify();
-  // Revisar cada 12 horas mientras la app está abierta
   setInterval(checkAndNotify, 12*60*60*1000);
+  // Registrar periodic sync para notificaciones en background
+  if(_swRegistration && 'periodicSync' in _swRegistration) {
+    try {
+      await _swRegistration.periodicSync.register('check-expiry', {minInterval: 12*60*60*1000});
+    } catch(e) {}
+  }
 }
 
 // ===================== SEARCH =====================
