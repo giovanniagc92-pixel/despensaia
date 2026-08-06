@@ -1110,11 +1110,11 @@ function saveState() {
   const user = auth.currentUser;
   if (!user || user.isAnonymous) {
     try { localStorage.setItem('meri_guest_state', JSON.stringify(S)); } catch(e) {}
+    syncToSWCache();
     return;
   }
   if (_saveTimer) clearTimeout(_saveTimer);
   _saveTimer = setTimeout(() => _saveToFirestore(user.uid), 1000);
-  // Sync state to SW cache for background notifications
   syncToSWCache();
 }
 
