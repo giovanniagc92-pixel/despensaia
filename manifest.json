@@ -1,7 +1,7 @@
 {
   "name": "MERI — Tu despensa inteligente",
   "short_name": "MERI",
-  "description": "Tu despensa inteligente con IA — recetas, precios de mercado y lista de compras",
+  "description": "Tu despensa inteligente con IA — alertas de vencimiento, lista de compras y control de stock",
   "start_url": "/despensaia/",
   "scope": "/despensaia/",
   "display": "standalone",
