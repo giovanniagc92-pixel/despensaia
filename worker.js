@@ -7,12 +7,45 @@
 
 const VAPID_EMAIL = 'mailto:meriapp.soporte@gmail.com';
 
+// ── Dominios permitidos (CORS) ───────────────────────────────
+const ALLOWED_ORIGINS = [
+  'https://giovanniagc92-pixel.github.io',
+  'http://localhost',
+  'http://127.0.0.1',
+];
+
+// ── Rate limiting: máx llamadas a Gemini por IP por día ──────
+const RATE_LIMIT_MAX = 30;
+const RATE_LIMIT_WINDOW = 86400; // segundos (24h)
+
+async function checkRateLimit(env, ip) {
+  if (!env.PUSH_SUBS) return true; // sin KV, permitir
+  const key = `rl:${ip}:${new Date().toISOString().slice(0,10)}`;
+  const raw = await env.PUSH_SUBS.get(key);
+  const count = raw ? parseInt(raw) : 0;
+  if (count >= RATE_LIMIT_MAX) return false;
+  await env.PUSH_SUBS.put(key, String(count + 1), { expirationTtl: RATE_LIMIT_WINDOW });
+  return true;
+}
+
+function getAllowedOrigin(request) {
+  const origin = request.headers.get('Origin') || '';
+  return ALLOWED_ORIGINS.find(o => origin.startsWith(o)) || ALLOWED_ORIGINS[0];
+}
+
 export default {
   // ── HTTP requests ────────────────────────────────────────────
   async fetch(request, env) {
     const url = new URL(request.url);
+    const origin = request.headers.get('Origin') || '';
+    const allowed = ALLOWED_ORIGINS.some(o => origin.startsWith(o));
 
-    if (request.method === 'OPTIONS') return corsResponse('', 204);
+    if (request.method === 'OPTIONS') return corsResponse('', 204, getAllowedOrigin(request));
+
+    // Bloquear orígenes no permitidos (excepto llamadas directas sin Origin, ej. cron)
+    if (origin && !allowed) {
+      return corsResponse(JSON.stringify({ error: 'Forbidden' }), 403, origin);
+    }
 
     // ── Push: guardar suscripción ──
     if (url.pathname === '/push-subscribe' && request.method === 'POST') {
@@ -45,9 +78,17 @@ export default {
     }
 
     // ── Gemini proxy ──
-    if (request.method !== 'POST') return corsResponse(JSON.stringify({ error: 'Method not allowed' }), 405);
+    if (request.method !== 'POST') return corsResponse(JSON.stringify({ error: 'Method not allowed' }), 405, getAllowedOrigin(request));
     let body;
-    try { body = await request.json(); } catch { return corsResponse(JSON.stringify({ error: 'Invalid JSON' }), 400); }
+    try { body = await request.json(); } catch { return corsResponse(JSON.stringify({ error: 'Invalid JSON' }), 400, getAllowedOrigin(request)); }
+
+    // Rate limiting por IP
+    const ip = request.headers.get('CF-Connecting-IP') || request.headers.get('X-Forwarded-For') || 'unknown';
+    const allowed2 = await checkRateLimit(env, ip);
+    if (!allowed2) {
+      return corsResponse(JSON.stringify({ error: 'rate_limit', message: 'Límite diario de IA alcanzado' }), 429, getAllowedOrigin(request));
+    }
+
     const model = body.model || 'gemini-2.5-flash';
     delete body.model;
     try {
@@ -56,9 +97,9 @@ export default {
         { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) }
       );
       const data = await geminiRes.json();
-      return corsResponse(JSON.stringify(data), geminiRes.status);
+      return corsResponse(JSON.stringify(data), geminiRes.status, getAllowedOrigin(request));
     } catch(e) {
-      return corsResponse(JSON.stringify({ error: 'Gemini request failed', detail: e.message }), 500);
+      return corsResponse(JSON.stringify({ error: 'Gemini request failed', detail: e.message }), 500, getAllowedOrigin(request));
     }
   },
 
@@ -244,14 +285,15 @@ function base64urlToUint8(b64url) {
   return Uint8Array.from(atob(b64), c => c.charCodeAt(0));
 }
 
-function corsResponse(body, status = 200) {
+function corsResponse(body, status = 200, origin = ALLOWED_ORIGINS[0]) {
   return new Response(body, {
     status,
     headers: {
       'Content-Type': 'application/json',
-      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Origin': origin,
       'Access-Control-Allow-Methods': 'POST, OPTIONS',
       'Access-Control-Allow-Headers': 'Content-Type',
+      'X-Content-Type-Options': 'nosniff',
     },
   });
 }

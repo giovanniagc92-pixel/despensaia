@@ -1148,6 +1148,7 @@ function dU(s) { if(!s) return 999; return Math.round((new Date(s) - new Date())
 function fDate(s) { if(!s) return '—'; return new Date(s).toLocaleDateString('es-CO',{day:'2-digit',month:'short',year:'2-digit'}); }
 function fCOP(n) { return new Intl.NumberFormat('es-CO',{style:'currency',currency:'COP',maximumFractionDigits:0}).format(n); }
 function nid() { return ++S.idc; }
+function esc(str) { const d=document.createElement('div'); d.appendChild(document.createTextNode(String(str||''))); return d.innerHTML; }
 function vib(p=[10]) { if(navigator.vibrate) navigator.vibrate(p); }
 function catEm(cat) {
   return {Lácteos:'🥛',Carnes:'🍗',Verduras:'🥦',Frutas:'🍎',Granos:'🌾',Condimentos:'🧄',Bebidas:'🧃',Snacks:'🍪',Otros:'📦'}[cat]||'📦';
@@ -1281,13 +1282,13 @@ function renderAlerts() {
   if(!div) return;
   let html = '';
   S.pantry.filter(f=>dU(f.exp)<=0).forEach(f=>{
-    html += `<div class="al ard" onclick="openEditModal(${f.id})"><i class="ti ti-alert-octagon"></i><div class="al-b"><div class="al-t">${f.em} ${f.name} venció hoy</div><div class="al-s">¡Úsalo ya o descártalo! Toca para editar</div></div></div>`;
+    html += `<div class="al ard" onclick="openEditModal(${f.id})"><i class="ti ti-alert-octagon"></i><div class="al-b"><div class="al-t">${esc(f.em)} ${esc(f.name)} venció hoy</div><div class="al-s">¡Úsalo ya o descártalo! Toca para editar</div></div></div>`;
   });
   S.pantry.filter(f=>{ const d=dU(f.exp); return d>0&&d<=1; }).forEach(f=>{
-    html += `<div class="al ard" onclick="nav('despensa')"><i class="ti ti-alert-triangle"></i><div class="al-b"><div class="al-t">${f.em} ${f.name} vence mañana</div><div class="al-s">Úsalo pronto — toca para ver tu despensa</div></div></div>`;
+    html += `<div class="al ard" onclick="nav('despensa')"><i class="ti ti-alert-triangle"></i><div class="al-b"><div class="al-t">${esc(f.em)} ${esc(f.name)} vence mañana</div><div class="al-s">Úsalo pronto — toca para ver tu despensa</div></div></div>`;
   });
   S.pantry.filter(f=>{ const d=dU(f.exp); return d>1&&d<=5; }).forEach(f=>{
-    html += `<div class="al aam"><i class="ti ti-clock"></i><div class="al-b"><div class="al-t">${f.em} ${f.name} vence en ${dU(f.exp)} días</div><div class="al-s">Planifica para no desperdiciar</div></div></div>`;
+    html += `<div class="al aam"><i class="ti ti-clock"></i><div class="al-b"><div class="al-t">${esc(f.em)} ${esc(f.name)} vence en ${dU(f.exp)} días</div><div class="al-s">Planifica para no desperdiciar</div></div></div>`;
   });
   S.pantry.filter(f=>f.min>0&&f.qty<f.min).forEach(f=>{
     html += `<div class="al aam" onclick="addShopAuto('${f.name}',true)" style="cursor:pointer"><i class="ti ti-package"></i><div class="al-b"><div class="al-t">${f.em} ${f.name} está por acabar</div><div class="al-s">Toca para agregar a la lista de compras</div></div></div>`;
@@ -1355,7 +1356,7 @@ function renderPantry() {
     return `<div class="fr">
       <div class="fec">${f.em||catEm(f.cat)}</div>
       <div class="fi" onclick="openEditModal(${f.id})" style="cursor:pointer">
-        <div class="fn">${f.name}${f.fav?' ⭐':''}</div>
+        <div class="fn">${esc(f.name)}${f.fav?' ⭐':''}</div>
         <div class="fm">${f.qty} ${f.unit} · Vence: ${fDate(f.exp)} · ${f.cat}</div>
         <div class="prog"><div class="pf" style="width:${pct}%;background:${barColor}"></div></div>
         ${low?`<div style="font-size:10px;color:var(--am);font-weight:700;margin-top:2px">⚠ Stock bajo</div>`:''}
@@ -1738,7 +1739,7 @@ function renderAIListItems() {
         ${it.sel?'<i class="ti ti-check" style="font-size:13px"></i>':''}
       </div>
       <div style="flex:1;min-width:0">
-        <div style="font-size:13px;font-weight:700;color:var(--tx)">${it.name}</div>
+        <div style="font-size:13px;font-weight:700;color:var(--tx)">${esc(it.name)}</div>
         <div style="display:flex;gap:6px;margin-top:4px">
           <input type="number" value="${it.qty}" min="0.1" step="0.1" style="width:60px;padding:4px 6px;border:1.5px solid var(--bd);border-radius:8px;background:var(--card);color:var(--tx);font-size:12px;font-family:inherit" onchange="_aiGeneratedItems[${it.id}].qty=parseFloat(this.value)||1">
           <select style="flex:1;padding:4px 6px;border:1.5px solid var(--bd);border-radius:8px;background:var(--card);color:var(--tx);font-size:12px;font-family:inherit" onchange="_aiGeneratedItems[${it.id}].unit=this.value">
@@ -2092,22 +2093,22 @@ function getHarvestData() {
   const m = new Date().getMonth()+1;
   return [
     {name:'Maracuyá',emoji:'🌺',months:[5,6,7,8],priceMin:4500,priceMax:5000,unit:'kg',pres:'Bolsa de 10 kg (Maracuyá): $45.000 – $50.000'},
-    {name:'Mango',emoji:'🥭',months:[4,5,6,7,8],priceMin:8300,priceMax:9200,unit:'kg',pres:'Canastilla de 24 kg (Mango tommy): $200.000 – $250.000'},
+    {name:'Mango',emoji:'🥭',months:[4,5,6,7,8],priceMin:8300,priceMax:9200,unit:'kg',pres:'Canastilla de 24 kg (Mango tommy): $200.000 – $220.000'},
     {name:'Frijol',emoji:'🫘',months:[5,6,7,10,11,12],priceMin:5600,priceMax:6000,unit:'kg',pres:'Bulto de 50 kg (Fríjol verde cargamanto): $280.000 – $300.000'},
-    {name:'Maíz',emoji:'🌽',months:[6,7,8,9],priceMin:2400,priceMax:2600,unit:'kg',pres:'Bulto de 50 kg (Chócolo mazorca): $120.000 – $110.000'},
+    {name:'Maíz',emoji:'🌽',months:[6,7,8,9],priceMin:2400,priceMax:2600,unit:'kg',pres:'Bulto de 50 kg (Chócolo mazorca): $120.000 – $130.000'},
     {name:'Aguacate',emoji:'🥑',months:[6,7,8,9,10],priceMin:9000,priceMax:10000,unit:'kg',pres:'Kilogramo (Aguacate hass): $9.000 – $10.000'},
     {name:'Papa',emoji:'🥔',months:[6,7,8,11,12],priceMin:2000,priceMax:2400,unit:'kg',pres:'Bulto de 50 kg (Papa parda pastusa): $100.000 – $120.000'},
     {name:'Fresa',emoji:'🍓',months:[1,2,3],priceMin:12000,priceMax:13000,unit:'kg',pres:'Kilogramo (Fresa): $12.000 – $13.000'},
-    {name:'Banano',emoji:'🍌',months:[1,2,3,4,5,6,7,8,9,10,11,12],priceMin:2000,priceMax:2800,unit:'kg',pres:'Kilogramo (Banano criollo): $2.000 – $2.600'},
+    {name:'Banano',emoji:'🍌',months:[1,2,3,4,5,6,7,8,9,10,11,12],priceMin:2000,priceMax:2800,unit:'kg',pres:'Kilogramo (Banano criollo): $2.000 – $2.800'},
     {name:'Naranja',emoji:'🍊',months:[12,1,2,3],priceMin:2500,priceMax:3000,unit:'kg',pres:'Canastilla de 20 kg (Naranja valencia): $50.000 – $60.000'},
-    {name:'Tomate',emoji:'🍅',months:[3,4,5,6,7],priceMin:3000,priceMax:3400,unit:'kg',pres:'Canastilla de 22 kg (Tomate chonto): $65.000 – $70.000'},
-    {name:'Lulo',emoji:'🟠',months:[6,7,8,9],priceMin:5200,priceMax:5600,unit:'kg',pres:'Canastilla de 25 kg (Lulo): $130.000 – $150.000'},
+    {name:'Tomate',emoji:'🍅',months:[3,4,5,6,7],priceMin:3000,priceMax:3400,unit:'kg',pres:'Canastilla de 22 kg (Tomate chonto): $65.000 – $75.000'},
+    {name:'Lulo',emoji:'🟠',months:[6,7,8,9],priceMin:5200,priceMax:5600,unit:'kg',pres:'Canastilla de 25 kg (Lulo): $130.000 – $140.000'},
     {name:'Mora',emoji:'🫐',months:[4,5,6,9,10],priceMin:5800,priceMax:6700,unit:'kg',pres:'Caja de madera de 6 kg (Mora de castilla): $35.000 – $40.000'},
     {name:'Piña',emoji:'🍍',months:[3,4,5,9,10],priceMin:3200,priceMax:3600,unit:'kg',pres:'Caja de cartón de 11 kg (Piña gold): $35.000 – $40.000'},
     {name:'Guayaba',emoji:'🍐',months:[8,9,10,11],priceMin:2500,priceMax:2900,unit:'kg',pres:'Canastilla de 14 kg (Guayaba pera): $35.000 – $40.000'},
     {name:'Yuca',emoji:'🪵',months:[1,4,7,10],priceMin:2300,priceMax:2700,unit:'kg',pres:'Bolsa de 30 kg (Yuca llanera): $70.000 – $80.000'},
     {name:'Cacao',emoji:'🍫',months:[10,11,12,1],priceMin:null,priceMax:null,unit:'kg',pres:null},
-    {name:'Limón',emoji:'🍋',months:[1,2,11,12],priceMin:2100,priceMax:2400,unit:'kg',pres:'Bulto de 70 kg (Limón Tahití): $150.000 – $150.000'},
+    {name:'Limón',emoji:'🍋',months:[1,2,11,12],priceMin:2100,priceMax:2400,unit:'kg',pres:'Bulto de 70 kg (Limón Tahití): $150.000 – $170.000'},
     {name:'Zapote',emoji:'🟤',months:[11,12,1,2],priceMin:null,priceMax:null,unit:'kg',pres:null},
   ].map(h=>({...h,season:h.months.includes(m)}));
 }
@@ -2232,7 +2233,7 @@ function renderShopList() {
         ${s.done?'<i class="ti ti-check" style="font-size:13px"></i>':''}
       </div>
       <div class="shop-content" style="flex:1;min-width:0;cursor:${s.done?'default':'pointer'}" onclick="${s.done?'':` editShopQty(${s.id})`}">
-        <div class="sn2">${s.urgent&&!s.done?'🔴 ':''}${s.name}</div>
+        <div class="sn2">${s.urgent&&!s.done?'🔴 ':''}${esc(s.name)}</div>
         <div style="font-size:11px;color:var(--tx2);font-weight:600">${s.qty||1} ${s.unit||'unidades'}</div>
       </div>
       <button class="btn btni" onclick="deleteShop(${s.id})" aria-label="Eliminar" style="color:var(--tx3);padding:7px"><i class="ti ti-x" style="font-size:14px"></i></button>
