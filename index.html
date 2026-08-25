@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="MERI">
-<meta name="description" content="MERI — Tu asistente inteligente de cocina con IA: recetas, alertas y lista de compras">
+<meta name="description" content="MERI — Tu asistente inteligente de despensa: alertas de vencimiento, lista de compras y control de stock">
 <link rel="manifest" href="./manifest.json">
 <link rel="apple-touch-icon" href="./icons/icon-192.png">
 <link rel="icon" href="./icons/icon-192.png">
@@ -503,7 +503,6 @@ textarea.inp{resize:none}
           </div>
           <div id="gal-detected" style="display:none;margin-top:12px"></div>
         </div>
-        <div id="gal-recipe"></div>
       </div>
 
       <!-- MANUAL -->
@@ -519,9 +518,7 @@ Pollo 500g
 Arroz 1kg
 Cebolla x2"></textarea>
           </div>
-          <button class="btn btnp btnf" onclick="recipeFromManual()"><i class="ti ti-wand"></i> Sugerir receta ↗</button>
         </div>
-        <div id="man-recipe"></div>
       </div>
       </div><!-- /foto-invoice -->
 
@@ -702,33 +699,6 @@ Cebolla x2"></textarea>
       </div>
       <div id="pt-fav" style="display:none"><div class="card" id="pl-fav"></div></div>
       <button class="btn btnp btnf" style="margin-top:4px" onclick="openModal(&#39;m-add&#39;)"><i class="ti ti-plus"></i> Agregar alimento</button>
-    </div>
-
-    <!-- RECETAS -->
-    <div class="pg" id="p-recetas">
-      <button class="back-btn" onclick="goBack()"><i class="ti ti-arrow-left"></i> Volver</button>
-      <div class="card">
-        <div class="ct"><i class="ti ti-chef-hat"></i> Generar receta con IA</div>
-        <label class="il">Selecciona ingredientes de tu despensa</label>
-        <div id="recipe-chips" style="margin-bottom:11px;min-height:32px"></div>
-        <div class="ig">
-          <label class="il">Preferencias (opcional)</label>
-          <input class="inp" id="recipe-prefs" placeholder="vegetariano, rápido, para 4 personas, sin sal...">
-        </div>
-        <div style="display:flex;gap:8px;align-items:center;margin-top:10px">
-          <button class="btn btnp" style="flex:1;height:42px" onclick="generateRecipe()"><i class="ti ti-wand"></i> Generar receta ↗</button>
-          <select id="sel-method" class="sel-inline">
-            <option value="🔥 Estufa">🔥 Estufa</option>
-            <option value="💨 Air Fryer">💨 Air Fryer</option>
-            <option value="♨️ Horno">♨️ Horno</option>
-          </select>
-        </div>
-      </div>
-      <div id="recipe-result"></div>
-      <div id="saved-recipes-section">
-        <div class="sec">Recetas guardadas</div>
-        <div id="saved-recipes-list"><div class="empty" style="padding:16px"><i class="ti ti-bookmark"></i><p>Genera recetas y guárdalas aquí</p></div></div>
-      </div>
     </div>
 
     <!-- COSECHA -->
@@ -981,18 +951,6 @@ Cebolla x2"></textarea>
   </div>
 </div>
 
-<!-- MODAL: Detalle receta -->
-<div class="modal-bg" id="m-recipe" onclick="if(event.target===this)closeModal(&#39;m-recipe&#39;)">
-  <div class="modal">
-    <div class="mh"></div>
-    <div id="m-recipe-content"></div>
-    <div style="display:flex;gap:8px;margin-top:14px">
-      <button class="btn" style="flex:1" onclick="saveRecipe()"><i class="ti ti-bookmark"></i> Guardar</button>
-      <button class="btn btnp" style="flex:1" onclick="closeModal(&#39;m-recipe&#39;)"><i class="ti ti-check"></i> Listo</button>
-    </div>
-  </div>
-</div>
-
 <!-- MODAL: Cámara fecha vencimiento -->
 <div class="modal-bg" id="m-exp-cam" onclick="if(event.target===this)closeExpiryCam()">
   <div class="modal">
@@ -1050,7 +1008,6 @@ let S = defaultState(); // Inicia con defaults; se reemplaza al cargar desde Fir
 let _saveTimer = null;
 let selectedChips = new Set();
 let camStream = null;
-let lastRecipeText = '';
 let currentPantryFilter = 'all';
 
 async function loadUserState(uid) {
@@ -1136,7 +1093,6 @@ function defaultState() {
     shopping: [],
     history: [],
     purchaseHistory: [],
-    savedRecipes: [],
     profile: {name:'',city:'Bogotá',people:2,diet:''},
     idc: 0
   };
@@ -1174,7 +1130,6 @@ function nav(page, addToStack=true) {
   document.querySelector('.hdr').style.display = noHeader ? 'none' : '';
   if(page==='home') renderHome();
   else if(page==='despensa') renderPantry();
-  else if(page==='recetas') renderRecipeChips();
   else if(page==='cosecha') renderHarvest();
   else if(page==='compras') renderShopList();
   if(!noHeader) vib([8]);
@@ -1249,7 +1204,6 @@ function renderHome() {
   renderFavs();
   renderHomeHarvest();
   renderNotifPrompt();
-  renderSavedRecipes();
   setTimeout(initFreqSelect, 50);
 }
 
@@ -1534,10 +1488,8 @@ async function analyzeInvoiceImage(b64, resultId) {
       <div class="sec" style="margin-top:4px">Alimentos detectados (${foods.length}) — toca para seleccionar</div>
       <div id="det-chips-inner">${foods.map(f=>`<span class="chip chip-det" onclick="togDetected(this,'${f.replace(/'/g,'')}')">${foodEm(f,'Otros')} ${f}</span>`).join('')}</div>
       <div style="display:flex;gap:8px;margin-top:12px">
-        <button class="btn btnp" style="flex:1;font-size:12px" onclick="recipeFromDetected()"><i class="ti ti-chef-hat"></i> Receta ↗</button>
         <button class="btn" style="flex:1;font-size:12px" onclick="addAllDetected()"><i class="ti ti-plus"></i> Todos a despensa</button>
-      </div>
-      <div id="det-recipe-result"></div>`;
+      </div>`;
     window._detectedFoods = foods;
     window._selectedDetected = new Set();
   } catch(e) {
@@ -1562,324 +1514,6 @@ function addAllDetected() {
   nav('despensa');
 }
 
-async function recipeFromDetected() {
-  const sel = window._selectedDetected && window._selectedDetected.size > 0
-    ? [...window._selectedDetected]
-    : (window._detectedFoods||[]);
-  if(!sel.length) { toast('⚠ Selecciona alimentos primero'); return; }
-  await callAI('det-recipe-result', buildPrompt(sel.join(', ')));
-}
-
-// ===================== RECIPES =====================
-function renderRecipeChips() {
-  document.getElementById('recipe-chips').innerHTML = S.pantry.map(f=>`
-    <span class="chip${selectedChips.has(f.id)?' sel':''}" onclick="toggleChip(${f.id},this)">${f.em||'📦'} ${f.name}</span>`).join('');
-}
-
-function toggleChip(id, el) {
-  if(selectedChips.has(id)){selectedChips.delete(id);el.classList.remove('sel');}
-  else{selectedChips.add(id);el.classList.add('sel');}
-}
-
-function clearChips() { selectedChips.clear(); renderRecipeChips(); }
-
-// ── Shopping habit tracking ──
-function saveShoppingFreq(freq) {
-  const days = {semanal:7, quincenal:15, mensual:30};
-  const prev = S.profile.shoppingFreq || 'semanal';
-  S.profile.shoppingFreq = freq;
-  S.profile.shoppingFreqDays = days[freq] || 7;
-  S.profile.prevShoppingFreq = prev;
-  S.profile.prevShoppingFreqDays = days[prev] || 7;
-  saveState();
-}
-function initFreqSelect() {
-  const sel = document.getElementById('sel-freq');
-  if(sel && S.profile.shoppingFreq) sel.value = S.profile.shoppingFreq;
-}
-
-function buildPrompt(ingredients) {
-  const p = S.profile;
-  const diet = p.diet ? `RESTRICCIÓN IMPORTANTE: ${p.diet}.` : '';
-  const ppl = `Para ${p.people||2} persona(s).`;
-  const prefs = document.getElementById('recipe-prefs')?.value||'';
-  const method = document.getElementById('sel-method')?.value || '🔥 Estufa';
-  const methodTips = {
-    '🔥 Estufa': 'Usa fuego medio-alto. En cada paso indica: nivel de fuego (bajo/medio/alto), tiempo en minutos, y si tapa o no la olla.',
-    '💨 Air Fryer': 'Precalienta el air fryer 3 min a 180°C antes de comenzar. En cada paso indica: temperatura en °C, tiempo en minutos, y si hay que voltear a mitad de cocción.',
-    '♨️ Horno': 'Precalienta el horno (indica temperatura y tiempo de precalentamiento). En cada paso indica: temperatura en °C, nivel de rejilla (alto/medio/bajo) y tiempo exacto en minutos.'
-  };
-  const methodGuide = methodTips[method] || methodTips['🔥 Estufa'];
-  return `Eres un chef colombiano experto en cocina casera y tradicional.
-
-Ingredientes disponibles: ${ingredients}
-Método de cocción: ${method}
-${diet}
-${ppl}
-${prefs ? 'Preferencias adicionales: '+prefs : ''}
-
-Crea UNA receta deliciosa colombiana usando PRINCIPALMENTE estos ingredientes, preparada en ${method}. Responde EXACTAMENTE en este formato:
-
-🍽 [NOMBRE DE LA RECETA EN MAYÚSCULAS]
-⏱ Tiempo total: X minutos | 👥 Porciones: X | 🍳 ${method}
-
-📋 INGREDIENTES:
-• [ingrediente] - [cantidad exacta: tazas, cucharadas, gramos, unidades]
-(incluir TODOS con cantidades precisas)
-
-👨‍🍳 PREPARACIÓN EN ${method.replace(/[🔥💨♨️]/g,'').trim().toUpperCase()}:
-Nota: ${methodGuide}
-
-1. [Paso detallado con tiempo y temperatura exacta para ${method}]
-2. [Siguiente paso — indica siempre tiempo en minutos y temperatura]
-3. [Continúa — mínimo 6 pasos bien detallados]
-(Cada paso DEBE incluir: acción + tiempo en minutos + temperatura cuando aplique)
-
-💡 TRUCO PARA ${method.replace(/[🔥💨♨️]/g,'').trim().toUpperCase()}: [consejo específico para este método]
-
-Sé preciso: medidas exactas, minutos, °C. El usuario debe poder seguir la receta sin dudas.`;
-}
-
-async function generateRecipe() {
-  const sel = selectedChips.size > 0
-    ? S.pantry.filter(f=>selectedChips.has(f.id)).map(f=>f.name)
-    : S.pantry.map(f=>f.name);
-  if(!sel.length) { toast('⚠ Agrega alimentos a tu despensa primero'); return; }
-  await callAI('recipe-result', buildPrompt(sel.join(', ')));
-}
-
-async function recipeFromExpiring() {
-  const exp = S.pantry.filter(f=>dU(f.exp)<=5).map(f=>f.name);
-  if(!exp.length) { toast('✅ No tienes alimentos por vencer — ¡bien!'); return; }
-  toast('🍳 Generando receta con lo que vence pronto...');
-  await callAI('recipe-result', buildPrompt(exp.join(', ')));
-}
-
-async function recipeFromManual() {
-  const text = document.getElementById('man-text').value.trim();
-  if(!text) { toast('⚠ Escribe algunos ingredientes'); return; }
-  await callAI('man-recipe', buildPrompt(text));
-}
-
-async function quickShoppingList() {
-  const favs = S.pantry.filter(f=>f.fav).map(f=>f.name);
-  const low = S.pantry.filter(f=>f.min>0&&f.qty<f.min).map(f=>f.name);
-  const p = S.profile;
-  const freq = document.getElementById('sel-freq')?.value || p.shoppingFreq || 'semanal';
-  const days = {semanal:7, quincenal:15, mensual:30};
-  const curDays = days[freq] || 7;
-  const prevDays = p.prevShoppingFreqDays || p.shoppingFreqDays || curDays;
-  let habitCtx = '';
-  if(p.shoppingFreq && p.shoppingFreq !== freq) {
-    habitCtx = `El usuario normalmente compraba ${p.shoppingFreq} (${prevDays} días). Ahora quiere comprar para ${curDays} días. Ajusta las cantidades proporcionalmente.`;
-  } else if(p.shoppingFreq) {
-    habitCtx = `El usuario compra habitualmente de forma ${freq} (${curDays} días). Usa cantidades coherentes con ese hábito.`;
-  }
-  saveShoppingFreq(freq);
-  // Historial detallado de compras para personalización
-  const ph = (S.purchaseHistory||[]).slice(0,10);
-  let histCtx = '';
-  if(ph.length) {
-    const freq2 = {};
-    ph.forEach(h=>h.items.forEach(i=>{
-      const k = i.name.toLowerCase();
-      if(!freq2[k]) freq2[k]={name:i.name,count:0,totalQty:0,unit:i.unit};
-      freq2[k].count++; freq2[k].totalQty+=Number(i.qty)||1;
-    }));
-    const top = Object.values(freq2).sort((a,b)=>b.count-a.count).slice(0,15);
-    histCtx = `Historial real de compras del usuario (más frecuentes): ${top.map(x=>`${x.name} (${x.count}x, promedio ${(x.totalQty/x.count).toFixed(1)} ${x.unit})`).join(', ')}.`;
-  }
-  const freqLabel = {semanal:'semanal (7 días)',quincenal:'quincenal (15 días)',mensual:'mensual (30 días)'}[freq] || freq;
-  const prompt = `Eres un asistente de compras experto para Colombia.
-Datos del hogar: ${p.people||2} persona(s). ${p.diet?'Dieta: '+p.diet+'.':''}
-Favoritos de su despensa: ${favs.join(', ')||'variados'}.
-Alimentos con stock bajo ahora: ${low.join(', ')||'ninguno'}.
-${histCtx}
-${habitCtx}
-
-Genera una lista de compras personalizada para ${freqLabel}, basada en los hábitos reales del usuario.
-Organiza por secciones: 🥦 Frutas y Verduras | 🥛 Lácteos y Huevos | 🍗 Carnes | 🌾 Granos | 🧃 Bebidas | 🧴 Aseo y Otros
-IMPORTANTE: incluye cantidad exacta para ${curDays} días y ${p.people||2} persona(s). Formato: "- NombreProducto: X unidad/kg/etc"
-Responde SOLO la lista, sin explicaciones extra.`;
-
-  // Mostrar modal editable con la lista generada
-  const modal = document.getElementById('m-ai-list');
-  if(modal) {
-    openModal('m-ai-list');
-    document.getElementById('ai-list-content').innerHTML = '<div style="text-align:center;padding:20px"><div class="dot" style="margin:0 auto"></div><p style="color:var(--tx2);font-size:13px;margin-top:10px">Generando lista personalizada...</p></div>';
-    document.getElementById('ai-list-items').innerHTML = '';
-    document.getElementById('ai-list-add-btn').style.display = 'none';
-  }
-  const comprasActive = document.getElementById('p-compras')?.classList.contains('on');
-  const targetId = modal ? 'ai-list-content' : (comprasActive ? 'sugs-ai' : 'home-ai-result');
-  await callAI(targetId, prompt, (text) => {
-    if(!modal) return;
-    // Parsear la lista generada en items editables
-    const lines = text.split('\n').filter(l=>l.trim().match(/^[-•*]\s*.+/));
-    if(lines.length) {
-      _aiGeneratedItems = lines.map((l,i)=>{
-        const clean = l.replace(/^[-•*]\s*/,'').trim();
-        const match = clean.match(/^(.+?):\s*([\d.,]+)\s*(.+)?$/);
-        return match ? {id:i,name:match[1].trim(),qty:parseFloat(match[2])||1,unit:(match[3]||'unidades').trim(),sel:true}
-                     : {id:i,name:clean,qty:1,unit:'unidades',sel:true};
-      });
-      renderAIListItems();
-      document.getElementById('ai-list-add-btn').style.display = 'block';
-    }
-  });
-}
-
-let _aiGeneratedItems = [];
-function renderAIListItems() {
-  const div = document.getElementById('ai-list-items');
-  if(!div) return;
-  div.innerHTML = _aiGeneratedItems.map(it=>`
-    <div class="fr" style="gap:8px;padding:8px 0;border-bottom:1px solid var(--bd)">
-      <div class="chk${it.sel?' ok':''}" onclick="toggleAIItem(${it.id})" style="flex-shrink:0">
-        ${it.sel?'<i class="ti ti-check" style="font-size:13px"></i>':''}
-      </div>
-      <div style="flex:1;min-width:0">
-        <div style="font-size:13px;font-weight:700;color:var(--tx)">${esc(it.name)}</div>
-        <div style="display:flex;gap:6px;margin-top:4px">
-          <input type="number" value="${it.qty}" min="0.1" step="0.1" style="width:60px;padding:4px 6px;border:1.5px solid var(--bd);border-radius:8px;background:var(--card);color:var(--tx);font-size:12px;font-family:inherit" onchange="_aiGeneratedItems[${it.id}].qty=parseFloat(this.value)||1">
-          <select style="flex:1;padding:4px 6px;border:1.5px solid var(--bd);border-radius:8px;background:var(--card);color:var(--tx);font-size:12px;font-family:inherit" onchange="_aiGeneratedItems[${it.id}].unit=this.value">
-            ${['unidades','gramos','kg','litros','ml','paquetes','tazas'].map(u=>`<option${it.unit===u?' selected':''}>${u}</option>`).join('')}
-          </select>
-        </div>
-      </div>
-      <button onclick="_aiGeneratedItems.splice(${it.id},1);_aiGeneratedItems.forEach((x,i)=>x.id=i);renderAIListItems()" style="background:none;border:none;color:var(--tx3);cursor:pointer;padding:4px"><i class="ti ti-x"></i></button>
-    </div>`).join('');
-}
-function toggleAIItem(id) {
-  const it = _aiGeneratedItems.find(x=>x.id===id);
-  if(it){it.sel=!it.sel;renderAIListItems();}
-}
-function addAIListToShopping() {
-  const sel = _aiGeneratedItems.filter(x=>x.sel);
-  if(!sel.length){toast('ℹ Selecciona al menos un producto');return;}
-  sel.forEach(it=>{
-    if(!S.shopping.find(s=>s.name.toLowerCase()===it.name.toLowerCase()))
-      S.shopping.push({id:nid(),name:it.name,qty:it.qty,unit:it.unit,done:false,urgent:false});
-  });
-  saveState(); closeModal('m-ai-list'); renderShopList();
-  toast(`✅ ${sel.length} productos agregados a la lista`);
-  nav('compras');
-}
-
-function renderSavedRecipes() {
-  const div = document.getElementById('saved-recipes-list');
-  if(!div) return;
-  if(!S.savedRecipes || !S.savedRecipes.length) {
-    div.innerHTML = '<div class="empty" style="padding:16px"><i class="ti ti-bookmark"></i><p>Genera recetas y guárdalas aquí</p></div>';
-    return;
-  }
-  div.innerHTML = S.savedRecipes.map((r,i)=>`
-    <div class="card" style="cursor:pointer" onclick="showSavedRecipe(${i})">
-      <div style="display:flex;align-items:center;justify-content:space-between">
-        <div>
-          <div style="font-size:13px;font-weight:700;color:var(--tx)">${r.name}</div>
-          <div style="font-size:11px;color:var(--tx2);margin-top:2px">${r.date}</div>
-        </div>
-        <div style="display:flex;gap:6px;align-items:center">
-          <span class="badge bg">Guardada</span>
-          <button class="btn btni" onclick="event.stopPropagation();deleteSavedRecipe(${i})" aria-label="Eliminar"><i class="ti ti-trash" style="font-size:14px;color:var(--tx3)"></i></button>
-        </div>
-      </div>
-    </div>`).join('');
-}
-
-function saveRecipe() {
-  if(!lastRecipeText) { toast('⚠ Genera una receta primero'); return; }
-  const nameMatch = lastRecipeText.match(/🍽\s*(.+)/);
-  const name = nameMatch ? nameMatch[1].trim() : 'Receta guardada';
-  if(!S.savedRecipes) S.savedRecipes = [];
-  S.savedRecipes.unshift({name, text: lastRecipeText, date: new Date().toLocaleDateString('es-CO')});
-  saveState();
-  closeModal('m-recipe');
-  renderSavedRecipes();
-  toast('📌 Receta guardada');
-}
-
-function showSavedRecipe(i) {
-  const r = S.savedRecipes[i];
-  if(!r) return;
-  lastRecipeText = r.text;
-  document.getElementById('m-recipe-content').innerHTML = formatRecipe(r.text);
-  openModal('m-recipe');
-}
-
-function deleteSavedRecipe(i) {
-  S.savedRecipes.splice(i, 1);
-  saveState();
-  renderSavedRecipes();
-  toast('🗑 Receta eliminada');
-}
-
-function formatRecipe(text) {
-  const lines = text.split('\n').filter(l => l.trim());
-  let html = '<div class="recipe-card" style="margin-top:0;margin-bottom:0">';
-  let stepNum = 0;
-  let inPrep = false;
-
-  for (let i = 0; i < lines.length; i++) {
-    const l = lines[i].trim();
-    if (!l) continue;
-
-    // Título principal (🍽)
-    if (l.startsWith('🍽')) {
-      const title = l.replace('🍽','').replace(/\*\*/g,'').trim();
-      html += `<div class="recipe-title">🍽 ${title}</div>`;
-      inPrep = false; stepNum = 0;
-
-    // Meta (⏱ tiempo / porciones)
-    } else if (l.startsWith('⏱')) {
-      const parts = l.split('|').map(p => p.trim());
-      html += '<div class="recipe-meta">';
-      parts.forEach(p => {
-        const clean = p.replace(/⏱|👥|\*\*/g,'').trim();
-        const icon = p.includes('⏱') ? '⏱' : p.includes('👥') ? '👥' : '📌';
-        html += `<div class="recipe-meta-item">${icon} ${clean}</div>`;
-      });
-      html += '</div>';
-
-    // Sección INGREDIENTES
-    } else if (l.includes('INGREDIENTES') || l.startsWith('📋')) {
-      html += `<div class="recipe-section"><i class="ti ti-list"></i> Ingredientes</div><div class="ing-list">`;
-      inPrep = false; stepNum = 0;
-
-    // Sección PREPARACIÓN
-    } else if (l.includes('PREPARACIÓN') || l.includes('PREPARACION') || l.startsWith('👨')) {
-      html += `</div><div class="recipe-section"><i class="ti ti-chef-hat"></i> Preparación</div>`;
-      inPrep = true; stepNum = 0;
-
-    // CONSEJO DEL CHEF
-    } else if (l.includes('CONSEJO') || l.startsWith('💡')) {
-      const tip = l.replace(/💡|CONSEJO DEL CHEF:?|\*\*/gi,'').trim();
-      html += `</div><div class="recipe-tip"><strong>💡 Consejo del chef</strong>${tip}</div>`;
-      inPrep = false;
-
-    // Pasos numerados (1. 2. etc.)
-    } else if (inPrep && /^\d+[\.\)]/.test(l)) {
-      stepNum++;
-      const content = l.replace(/^\d+[\.\)]\s*/,'').replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>');
-      html += `<div class="recipe-step"><div class="step-n">${stepNum}</div><div>${content}</div></div>`;
-
-    // Ingredientes con viñeta
-    } else if (!inPrep && (l.startsWith('•') || l.startsWith('-') || l.startsWith('*'))) {
-      const content = l.replace(/^[•\-\*]\s*/,'').replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>');
-      html += `<div class="ing-item">${content}</div>`;
-
-    // Texto genérico
-    } else {
-      const content = l.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>');
-      html += `<p style="font-size:13px;color:var(--tx2);margin:4px 0">${content}</p>`;
-    }
-  }
-
-  html += '</div>';
-  return html;
-}
-
 // ===================== AI =====================
 async function callAI(targetId, prompt, onSuccess=null) {
   let el = document.getElementById(targetId);
@@ -1901,31 +1535,13 @@ async function callAI(targetId, prompt, onSuccess=null) {
       (data.candidates?.[0]?.output) ||
       (typeof data === 'string' ? data : JSON.stringify(data)) || 'Sin respuesta.';
     if(onSuccess) {
-      el.innerHTML = `<div class="ai-box" style="font-size:12px;max-height:120px;overflow:auto">${formatRecipe(text)}</div>`;
       onSuccess(text);
-    } else {
-      lastRecipeText = text;
-      el.innerHTML = `<div>
-        ${formatRecipe(text)}
-        <div style="display:flex;gap:7px;margin-top:12px;flex-wrap:wrap">
-          <button class="btn" style="font-size:11px;padding:7px 12px" onclick="saveRecipe()"><i class="ti ti-bookmark"></i> Guardar receta</button>
-          <button class="btn" style="font-size:11px;padding:7px 12px" onclick="shareRecipe()"><i class="ti ti-share"></i> Compartir</button>
-        </div>
-      </div>`;
     }
     vib([10,5,20]);
   } catch(e) {
     const isQuota = e.message && e.message.includes('429');
     el.innerHTML = `<div class="ai-box" style="background:var(--rdl);color:var(--rd)"><div class="ai-hdr"><i class="ti ti-${isQuota?'clock':'wifi-off'}"></i> ${isQuota?'Límite de IA alcanzado':'Sin conexión'}</div>${isQuota?'Se alcanzó el límite diario de la IA. Intenta mañana o contacta al desarrollador.':'Verifica tu internet e intenta de nuevo.'}</div>`;
   }
-}
-
-function shareRecipe() {
-  if(!lastRecipeText) return;
-  const nameMatch = lastRecipeText.match(/🍽\s*(.+)/);
-  const title = nameMatch ? nameMatch[1].trim() : 'Receta MERI';
-  if(navigator.share) navigator.share({title, text: lastRecipeText});
-  else navigator.clipboard.writeText(lastRecipeText).then(()=>toast('📋 Receta copiada'));
 }
 
 // ===================== HARVEST =====================
