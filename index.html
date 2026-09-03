@@ -1,0 +1,2691 @@
+<!DOCTYPE html>
+<!-- saved from url=(0044)file:///C:/Users/DELL/Downloads/index_4.html -->
+<html lang="es"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#16a34a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="MERI">
+<meta name="description" content="MERI — Tu asistente inteligente de despensa: alertas de vencimiento, lista de compras y control de stock">
+<link rel="manifest" href="./manifest.json">
+<link rel="apple-touch-icon" href="./icons/icon-192.png">
+<link rel="icon" href="./icons/icon-192.png">
+<title>MERI</title>
+<link rel="stylesheet" href="./index_files/tabler-icons.min.css">
+<link href="./index_files/css2" rel="stylesheet">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Fraunces:ital,wght@0,700;0,900;1,700&display=swap');
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --g:#16a34a;--g2:#15803d;--g3:#22c55e;--gl:#dcfce7;--gll:#f0fdf4;
+  --am:#d97706;--aml:#fef3c7;--am2:#f59e0b;
+  --rd:#dc2626;--rdl:#fee2e2;
+  --tl:#0891b2;--tll:#e0f2fe;
+  --bg:#ffffff;--card:#ffffff;--bd:rgba(22,163,74,0.12);
+  --tx:#0f172a;--tx2:#475569;--tx3:#94a3b8;
+  --sh:0 2px 12px rgba(22,163,74,0.08);
+  --sh2:0 8px 32px rgba(22,163,74,0.15);
+  --r:16px;--r2:12px;
+  --nt:env(safe-area-inset-top,0px);
+  --nb:env(safe-area-inset-bottom,0px);
+  --nh:68px;
+}
+html,body{height:100%;overflow:hidden;background:var(--bg);font-family:'Nunito',sans-serif;color:var(--tx);font-size:15px}
+.app{display:flex;flex-direction:column;height:100dvh;max-width:430px;margin:0 auto;position:relative;background:var(--bg)}
+
+/* HEADER */
+.hdr{background:linear-gradient(135deg,#16a34a 0%,#22c55e 100%);color:#fff;padding:calc(var(--nt)+12px) 16px 14px;flex-shrink:0;display:flex;align-items:center;justify-content:space-between;box-shadow:0 4px 20px rgba(22,163,74,0.3)}
+.hdr-l{display:flex;align-items:center;gap:12px}
+.hdr-logo{width:40px;height:40px;background:rgba(255,255,255,.22);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px;backdrop-filter:blur(4px);border:1.5px solid rgba(255,255,255,.3);box-shadow:0 2px 8px rgba(0,0,0,.12)}
+.hdr-title{font-size:22px;font-weight:900;font-family:'Fraunces',serif;line-height:1;letter-spacing:-0.5px}
+.hdr-sub{font-size:11px;opacity:.85;margin-top:2px;font-weight:600}
+.hdr-btns{display:flex;gap:8px}
+.hib{width:36px;height:36px;background:rgba(255,255,255,.2);border-radius:11px;border:none;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:17px;transition:all .15s;backdrop-filter:blur(4px)}
+.hib:active{background:rgba(255,255,255,.35);transform:scale(.93)}
+
+/* PAGES */
+.pages{flex:1;overflow:hidden;position:relative}
+.pg{position:absolute;inset:0;overflow-y:auto;-webkit-overflow-scrolling:touch;display:none;padding:14px 14px calc(var(--nb)+20px)}
+.pg.on{display:block}
+.pg::-webkit-scrollbar{display:none}
+
+/* NAV */
+.back-btn{display:flex;align-items:center;gap:6px;border:none;background:none;color:var(--g2);font-size:13px;font-weight:800;font-family:inherit;cursor:pointer;padding:2px 0 14px;margin:0}
+.back-btn i{font-size:18px}
+.back-btn:active{opacity:.6}
+.ni-dot{position:absolute;top:5px;right:calc(50% - 14px);width:7px;height:7px;background:var(--rd);border-radius:50%;border:2px solid var(--card)}
+
+/* CARDS */
+.card{background:var(--card);border-radius:var(--r);border:1px solid var(--bd);padding:16px;margin-bottom:12px;box-shadow:var(--sh);transition:box-shadow .2s}
+.card:active{box-shadow:var(--sh2)}
+.ct{font-size:13px;font-weight:800;color:var(--tx);display:flex;align-items:center;gap:7px;margin-bottom:12px}
+.ct i{color:var(--g);font-size:18px}
+.sec{font-size:11px;font-weight:800;color:var(--g);text-transform:uppercase;letter-spacing:.6px;margin:18px 0 8px;display:flex;align-items:center;gap:6px}
+.sec::after{content:'';flex:1;height:1px;background:var(--gl)}
+
+/* ALERTS */
+.al{border-radius:12px;padding:12px 14px;margin-bottom:9px;display:flex;align-items:flex-start;gap:10px;font-size:12px;font-weight:600;transition:transform .14s;cursor:default}
+.al:active{transform:scale(.98)}
+.al i{font-size:18px;flex-shrink:0;margin-top:1px}
+.al-b .al-t{font-weight:800;font-size:12px}
+.al-b .al-s{font-size:11px;opacity:.8;margin-top:2px}
+.ard{background:var(--rdl);color:var(--rd);border-left:3px solid var(--rd)}
+.aam{background:var(--aml);color:var(--am);border-left:3px solid var(--am2)}
+.agr{background:var(--gl);color:var(--g);border-left:3px solid var(--g)}
+.atl{background:var(--tll);color:var(--tl);border-left:3px solid var(--tl)}
+
+/* STATS */
+.sg{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
+.sc{background:var(--card);border-radius:14px;border:1px solid var(--bd);padding:14px 8px;text-align:center;box-shadow:var(--sh);position:relative;overflow:hidden}
+.sc::before{content:'';position:absolute;top:-10px;right:-10px;width:40px;height:40px;background:var(--gl);border-radius:50%;opacity:.6}
+.sn{font-size:24px;font-weight:900;font-family:'Fraunces',serif;position:relative}
+.sl{font-size:10px;color:var(--tx2);font-weight:700;margin-top:2px;position:relative}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:11px 16px;border-radius:12px;border:1px solid var(--bd);background:var(--card);color:var(--tx);cursor:pointer;font-size:13px;font-weight:700;font-family:inherit;transition:all .15s;-webkit-appearance:none}
+.btn:active{transform:scale(.95)}
+.btnp{background:linear-gradient(135deg,var(--g),var(--g3));color:#fff;border-color:transparent;box-shadow:0 4px 14px rgba(22,163,74,0.35)}
+.btnp:active{background:var(--g2);box-shadow:none}
+.btnf{width:100%}
+.btni{padding:10px;border-radius:11px}
+.btn-am{background:var(--am2);color:#fff;border-color:transparent;box-shadow:0 4px 12px rgba(245,158,11,0.3)}
+
+/* INPUTS */
+.inp{width:100%;padding:12px 14px;border:1.5px solid var(--bd);border-radius:12px;background:var(--card);color:var(--tx);font-size:14px;font-family:inherit;font-weight:600;-webkit-appearance:none;transition:all .15s}
+.inp:focus{outline:none;border-color:var(--g);box-shadow:0 0 0 3px rgba(22,163,74,0.12)}
+.inp::placeholder{color:var(--tx3);font-weight:400}
+select.inp{cursor:pointer}
+textarea.inp{resize:none}
+.il{font-size:11px;font-weight:800;color:var(--g);margin-bottom:5px;display:block;letter-spacing:.3px}
+.ig{margin-bottom:12px}
+.ir{display:flex;gap:8px;margin-bottom:12px}
+.ir>div{flex:1}
+
+/* BADGES */
+.badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700}
+.bg{background:var(--gl);color:var(--g2)}
+.br{background:var(--rdl);color:var(--rd)}
+.bam{background:var(--aml);color:var(--am)}
+.btl{background:var(--tll);color:var(--tl)}
+.b-g{background:var(--bg);color:var(--tx2);border:1px solid var(--bd)}
+
+/* FOOD ROWS */
+.fr{display:flex;align-items:center;padding:12px 0;border-bottom:1px solid var(--bd);gap:10px;transition:background .14s}
+.fr:last-child{border-bottom:none}
+.fec{width:42px;height:42px;border-radius:13px;background:linear-gradient(135deg,var(--gl),var(--gll));display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;border:1px solid var(--bd)}
+.fi{flex:1;min-width:0}
+.fn{font-size:13px;font-weight:800;color:var(--tx)}
+.fm{font-size:10px;color:var(--tx2);margin-top:2px;font-weight:600}
+.fa{display:flex;gap:5px;align-items:center;flex-shrink:0}
+.prog{height:4px;background:var(--bg);border-radius:3px;margin-top:5px}
+.pf{height:100%;border-radius:3px;transition:width .4s}
+
+/* SHOPPING */
+.sr{display:flex;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid var(--bd)}
+.sr:last-child{border-bottom:none}
+.chk{width:23px;height:23px;border-radius:7px;border:2px solid var(--bd);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:all .15s}
+.chk.ok{background:linear-gradient(135deg,var(--g),var(--g3));border-color:transparent;color:#fff;box-shadow:0 2px 8px rgba(22,163,74,0.35)}
+.sn2{flex:1;font-size:13px;font-weight:700;color:var(--tx)}
+.sr.dn .sn2{text-decoration:line-through;color:var(--tx3)}
+
+/* CHIPS */
+.chip{display:inline-flex;align-items:center;gap:4px;padding:6px 12px;border-radius:20px;font-size:11px;font-weight:700;background:var(--gl);color:var(--g2);cursor:pointer;margin:3px;border:1.5px solid transparent;transition:all .15s;user-select:none}
+.chip.sel{background:linear-gradient(135deg,var(--g),var(--g3));color:#fff;box-shadow:0 3px 10px rgba(22,163,74,0.3)}
+.chip-det{background:var(--tll);color:var(--tl)}
+.chip-det.sel{background:var(--tl);color:#fff}
+
+/* TABS */
+.tabs{display:flex;background:var(--gl);border-radius:12px;padding:4px;margin-bottom:14px}
+.tab{flex:1;padding:8px;text-align:center;border-radius:9px;font-size:11px;font-weight:700;cursor:pointer;color:var(--g2);border:none;background:none;font-family:inherit;transition:all .15s}
+.tab.on{background:var(--card);color:var(--g);box-shadow:var(--sh)}
+
+/* HARVEST */
+.hg{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.hc{background:var(--card);border-radius:12px;padding:11px 6px;text-align:center;border:1px solid var(--bd);transition:transform .14s}
+.hc:active{transform:scale(.95)}
+.hcs{background:linear-gradient(135deg,var(--gl),var(--gll));border-color:rgba(22,163,74,0.2)}
+.he{font-size:28px;margin-bottom:4px}
+.hn{font-size:10px;font-weight:800;color:var(--tx)}
+.hs{font-size:9px;color:var(--tx3);margin-top:2px;font-weight:600}
+.hcs .hs{color:var(--g);font-weight:700}
+
+/* UPLOAD */
+.upz{border:2px dashed rgba(22,163,74,0.3);border-radius:14px;padding:30px 16px;text-align:center;cursor:pointer;color:var(--tx2);transition:all .2s;display:flex;flex-direction:column;align-items:center;gap:8px;background:var(--gll)}
+.upz:active,.upz.drag{border-color:var(--g);background:var(--gl);color:var(--g)}
+.upz i{font-size:40px;color:var(--g);opacity:.7}
+.upz-t{font-size:13px;font-weight:800}
+.upz-s{font-size:11px;opacity:.7}
+
+/* AI BOX */
+.ai-box{background:linear-gradient(135deg,var(--gll),var(--gl));border-radius:14px;padding:16px;font-size:13px;line-height:1.75;color:var(--g2);border:1px solid rgba(22,163,74,0.2);margin-top:12px;box-shadow:var(--sh)}
+.ai-hdr{font-size:11px;font-weight:800;margin-bottom:10px;display:flex;align-items:center;gap:6px;color:var(--g)}
+.ai-hdr i{font-size:16px}
+.dots{display:flex;gap:6px;padding:4px 0;align-items:center}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--g);opacity:.4;animation:pulse 1.2s infinite}
+.dot:nth-child(2){animation-delay:.2s}.dot:nth-child(3){animation-delay:.4s}
+@keyframes pulse{0%,100%{opacity:.4;transform:scale(1)}50%{opacity:1;transform:scale(1.3)}}
+
+/* TOAST */
+.toast{position:absolute;top:12px;left:14px;right:14px;background:linear-gradient(135deg,#0f172a,#1e293b);color:#fff;padding:13px 16px;border-radius:14px;font-size:13px;font-weight:700;z-index:90;transform:translateY(-100px);transition:transform .3s cubic-bezier(.32,.72,0,1);display:flex;align-items:center;gap:9px;box-shadow:0 8px 30px rgba(0,0,0,0.2)}
+.toast.show{transform:translateY(0)}
+
+/* MODAL */
+.modal-bg{position:absolute;inset:0;background:rgba(0,0,0,.5);z-index:50;display:none;align-items:flex-end;backdrop-filter:blur(2px)}
+.modal-bg.open{display:flex;animation:fi .18s}
+.modal{background:var(--card);border-radius:24px 24px 0 0;padding:18px 16px calc(18px + var(--nb));width:100%;max-height:92%;overflow-y:auto;border-top:1px solid var(--bd)}
+.modal::-webkit-scrollbar{display:none}
+.mh{width:36px;height:4px;background:var(--bd);border-radius:2px;margin:0 auto 18px}
+.mt{font-size:17px;font-weight:900;margin-bottom:14px;font-family:'Fraunces',serif;color:var(--tx)}
+@keyframes fi{from{opacity:0}to{opacity:1}}
+@keyframes su{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.modal{animation:su .3s cubic-bezier(.32,.72,0,1)}
+
+/* EMPTY STATE */
+.empty{text-align:center;padding:40px 20px;color:var(--tx3)}
+.empty i{font-size:48px;display:block;margin-bottom:12px;color:var(--g);opacity:.35}
+.empty p{font-size:13px;font-weight:700}
+
+/* QUICK ACTIONS GRID */
+.qg{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-bottom:14px}
+.qb{border-radius:16px;border:1px solid transparent;background:var(--g2);padding:18px 10px;display:flex;flex-direction:column;align-items:center;gap:6px;font-size:11px;font-weight:800;color:#fff;cursor:pointer;transition:all .16s;box-shadow:0 6px 20px rgba(22,163,74,0.3)}
+.qb:active{transform:scale(.94);box-shadow:none}
+.qb i{font-size:28px}
+.qb-full{grid-column:1 / -1}
+
+/* RECIPE DISPLAY */
+.recipe-card{background:var(--card);border-radius:16px;padding:18px;margin-top:12px;border:1px solid var(--bd);box-shadow:var(--sh2)}
+.recipe-title{font-family:'Fraunces',serif;font-size:20px;font-weight:900;color:var(--g);margin-bottom:12px;line-height:1.2}
+.recipe-meta{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+.recipe-meta-item{display:flex;align-items:center;gap:5px;background:var(--gl);color:var(--g2);border-radius:20px;padding:5px 11px;font-size:11px;font-weight:700}
+.recipe-section{font-size:11px;font-weight:800;color:var(--g);text-transform:uppercase;letter-spacing:.5px;margin:14px 0 8px;display:flex;align-items:center;gap:6px}
+.recipe-section::after{content:'';flex:1;height:1px;background:var(--gl)}
+.recipe-step{display:flex;gap:10px;margin-bottom:10px;font-size:13px;line-height:1.65;color:var(--tx);align-items:flex-start}
+.step-n{min-width:26px;height:26px;background:linear-gradient(135deg,var(--g),var(--g3));color:#fff;border-radius:9px;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 2px 8px rgba(22,163,74,0.3)}
+.ing-list{font-size:13px;color:var(--tx);line-height:2}
+.ing-item{display:flex;align-items:center;gap:8px;padding:4px 0;border-bottom:1px solid var(--bd)}
+.ing-item:last-child{border-bottom:none}
+.ing-item::before{content:'•';color:var(--g);font-weight:900;font-size:16px}
+.recipe-tip{background:linear-gradient(135deg,var(--aml),#fffbeb);border-radius:12px;padding:12px 14px;font-size:12px;color:var(--am);border-left:3px solid var(--am2);margin-top:14px;font-weight:600;line-height:1.6}
+.recipe-tip strong{display:block;font-size:11px;font-weight:800;margin-bottom:4px;text-transform:uppercase;letter-spacing:.4px}
+
+/* CAMERA OVERLAY */
+.cam-wrap{background:#000;border-radius:14px;overflow:hidden;aspect-ratio:4/3;position:relative;margin-bottom:12px;box-shadow:var(--sh2)}
+.cam-wrap video{width:100%;height:100%;object-fit:cover}
+.cam-overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
+.cam-frame{width:80%;aspect-ratio:3/2;border:2.5px solid rgba(255,255,255,.8);border-radius:12px;box-shadow:0 0 0 9999px rgba(0,0,0,.35)}
+.cam-hint{position:absolute;bottom:12px;left:0;right:0;text-align:center;color:rgba(255,255,255,.9);font-size:11px;font-weight:700;letter-spacing:.3px}
+
+/* NOTIFICATION BANNER */
+.notif-banner{background:linear-gradient(135deg,var(--gl),var(--gll));border-radius:14px;padding:12px 14px;display:flex;align-items:center;gap:10px;font-size:12px;font-weight:700;color:var(--g);margin-bottom:12px;cursor:pointer;border:1px solid rgba(22,163,74,0.2);box-shadow:var(--sh)}
+.notif-banner i{font-size:20px}
+
+/* PROGRESS BAR */
+.loading-bar{height:3px;background:var(--gl);border-radius:2px;overflow:hidden;margin-bottom:12px}
+.loading-bar-fill{height:100%;background:linear-gradient(90deg,var(--g),var(--g3));border-radius:2px;animation:load 1.8s infinite}
+@keyframes load{0%{width:0%;margin-left:0}50%{width:60%;margin-left:20%}100%{width:0%;margin-left:100%}}
+
+/* SWIPE HINT */
+@keyframes bounce-x{0%,100%{transform:translateX(0)}50%{transform:translateX(-4px)}}
+
+/* PHOTO PREVIEW */
+.preview-img{width:100%;max-height:200px;object-fit:cover;border-radius:12px;margin-bottom:12px;box-shadow:var(--sh)}
+
+/* REMINDER ITEM */
+.remind{display:flex;align-items:center;gap:10px;background:var(--aml);border-radius:12px;padding:11px 13px;margin-bottom:8px;font-size:12px;font-weight:700;color:var(--am);cursor:pointer;border:1px solid rgba(217,119,6,.15);transition:transform .14s}
+.remind:active{transform:scale(.97)}
+.remind i{font-size:18px;flex-shrink:0}
+
+/* SEARCH BAR */
+.searchbar{display:flex;align-items:center;gap:9px;background:var(--card);border:1.5px solid var(--bd);border-radius:13px;padding:10px 13px;margin-bottom:13px;box-shadow:var(--sh)}
+.searchbar i{color:var(--g);font-size:18px}
+.searchbar input{border:none;background:none;font-size:13px;color:var(--tx);flex:1;font-family:inherit;font-weight:600}
+.searchbar input::placeholder{color:var(--tx3);font-weight:400}
+.searchbar input:focus{outline:none}
+
+/* WELCOME CARD */
+.welcome-hero{background:linear-gradient(135deg,var(--g) 0%,var(--g3) 100%);border-radius:20px;padding:20px;margin-bottom:16px;color:#fff;position:relative;overflow:hidden;box-shadow:0 8px 30px rgba(22,163,74,0.35)}
+.welcome-hero::before{content:'🌿';position:absolute;right:-10px;bottom:-15px;font-size:80px;opacity:.15;transform:rotate(15deg)}
+.welcome-hero h2{font-family:'Fraunces',serif;font-size:22px;font-weight:900;margin-bottom:4px}
+.welcome-hero p{font-size:12px;opacity:.88;font-weight:600}
+
+/* ── Scan mode buttons ── */
+.scan-btn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;width:100%;padding:22px 16px;border-radius:18px;border:none;cursor:pointer;font-family:inherit;transition:transform .15s,box-shadow .15s;margin-bottom:12px;text-align:center}
+.scan-btn i{font-size:28px;display:block}
+.scan-btn span{font-size:16px;font-weight:800;display:block}
+.scan-btn small{font-size:11px;opacity:.8;display:block;line-height:1.3}
+.scan-btn:active{transform:scale(.97)}
+.scan-btn-inv{background:linear-gradient(135deg,var(--g),var(--g3));color:#fff;box-shadow:0 6px 20px rgba(22,163,74,.3)}
+.scan-btn-exp{background:linear-gradient(135deg,#f59e0b,#ef4444);color:#fff;box-shadow:0 6px 20px rgba(239,68,68,.3)}
+/* ── Inline selects ── */
+/* ── Inline select dropdowns ── */
+.sel-inline{appearance:none;-webkit-appearance:none;background:var(--gl) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%2316a34a'/%3E%3C/svg%3E") no-repeat right 10px center;padding:0 30px 0 12px;height:42px;border:2px solid var(--g);border-radius:12px;font-size:13px;font-weight:700;color:var(--g);cursor:pointer;font-family:inherit;min-width:130px;flex-shrink:0}
+.sel-inline:focus{outline:none;box-shadow:0 0 0 3px rgba(22,163,74,.15)}
+
+/* ── SPLASH ── */
+#p-splash{background:linear-gradient(150deg,#14532d 0%,#16a34a 55%,#22c55e 100%);padding:0!important;overflow:hidden!important}
+#p-splash.on{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0}
+.splash-logo-wrap{margin-bottom:28px;filter:drop-shadow(0 8px 32px rgba(0,0,0,.25));animation:splashIn .7s cubic-bezier(.34,1.56,.64,1) both}
+.splash-brand{font-size:52px;font-weight:900;color:#fff;font-family:'Fraunces',serif;letter-spacing:-1px;line-height:1;animation:splashIn .7s .15s cubic-bezier(.34,1.56,.64,1) both}
+.splash-tag{font-size:15px;color:rgba(255,255,255,.8);font-weight:600;margin-top:10px;animation:splashIn .7s .25s both}
+.splash-dots{display:flex;gap:7px;margin-top:56px;animation:fadeIn 1s .6s both}
+.splash-dots span{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.4)}
+.splash-dots span:nth-child(1){animation:dotPulse 1.2s .0s ease-in-out infinite}
+.splash-dots span:nth-child(2){animation:dotPulse 1.2s .2s ease-in-out infinite}
+.splash-dots span:nth-child(3){animation:dotPulse 1.2s .4s ease-in-out infinite}
+@keyframes splashIn{from{opacity:0;transform:translateY(22px) scale(.9)}to{opacity:1;transform:none}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes dotPulse{0%,100%{background:rgba(255,255,255,.3)}50%{background:rgba(255,255,255,.9)}}
+
+/* ── AUTH ── */
+#p-auth{background:var(--bg);padding:0!important;overflow:hidden!important}
+#p-auth.on{display:flex;flex-direction:column}
+.auth-top{background:linear-gradient(150deg,#14532d 0%,#16a34a 60%,#22c55e 100%);padding:calc(var(--nt)+28px) 24px 32px;display:flex;flex-direction:column;align-items:center;gap:12px;flex-shrink:0}
+.auth-logo-sm{filter:drop-shadow(0 4px 12px rgba(0,0,0,.2))}
+.auth-brand{font-size:30px;font-weight:900;color:#fff;font-family:'Fraunces',serif;letter-spacing:-0.5px}
+.auth-sub{font-size:13px;color:rgba(255,255,255,.8);font-weight:600}
+.auth-body{flex:1;overflow-y:auto;padding:24px 20px 40px;display:flex;flex-direction:column;gap:16px}
+.auth-tabs{display:flex;background:var(--gl);border-radius:14px;padding:3px;gap:3px}
+.auth-tab{flex:1;padding:9px;border:none;background:transparent;border-radius:11px;font-size:13px;font-weight:800;font-family:inherit;color:var(--tx2);cursor:pointer;transition:all .18s}
+.auth-tab.on{background:#fff;color:var(--g);box-shadow:0 2px 8px rgba(22,163,74,.15)}
+.auth-form{display:flex;flex-direction:column;gap:12px}
+.auth-inp{width:100%;padding:14px 16px;border:1.5px solid var(--bd);border-radius:13px;font-size:15px;font-family:inherit;background:var(--card);color:var(--tx);outline:none;transition:border-color .18s}
+.auth-inp:focus{border-color:var(--g);box-shadow:0 0 0 3px rgba(22,163,74,.12)}
+.auth-inp::placeholder{color:var(--tx3)}
+.auth-btn-main{width:100%;padding:15px;border:none;border-radius:13px;background:linear-gradient(135deg,#16a34a,#22c55e);color:#fff;font-size:16px;font-weight:800;font-family:inherit;cursor:pointer;box-shadow:0 4px 16px rgba(22,163,74,.35);transition:all .18s;margin-top:4px}
+.auth-btn-main:active{transform:scale(.97);box-shadow:0 2px 8px rgba(22,163,74,.2)}
+.auth-divider{display:flex;align-items:center;gap:12px;color:var(--tx3);font-size:12px;font-weight:700}
+.auth-divider::before,.auth-divider::after{content:'';flex:1;height:1px;background:var(--bd)}
+.auth-google{width:100%;padding:13px 16px;border:1.5px solid var(--bd);border-radius:13px;background:var(--card);color:var(--tx);font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;transition:all .18s;box-shadow:var(--sh)}
+.auth-google:active{transform:scale(.97)}
+.auth-guest{background:none;border:none;color:var(--tx3);font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;padding:6px;text-align:center;width:100%;margin-top:-4px}
+.auth-guest:active{color:var(--tx2)}
+.auth-err{color:#dc2626;font-size:12px;font-weight:700;min-height:18px;text-align:center;display:none}
+.auth-err.on{display:block}
+
+</style>
+</head>
+<body>
+
+<div class="app" id="app">
+
+  <!-- HEADER -->
+  <div class="hdr">
+    <div class="hdr-l">
+      <div class="hdr-logo">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="26" height="26">
+          <rect x="37" y="39" width="6" height="26" rx="3" fill="white"/>
+          <path d="M40 47 C49 41 58 28 53 18 C44 17 34 30 38 45" fill="white"/>
+          <path d="M40 55 C31 49 22 37 27 26 C36 25 46 38 42 52" fill="rgba(255,255,255,0.85)"/>
+          <circle cx="40" cy="37" r="5" fill="white"/>
+        </svg>
+      </div>
+      <div>
+        <div class="hdr-title">MERI</div>
+        <div class="hdr-sub" id="hdr-sub">Tu asistente de cocina inteligente</div>
+      </div>
+    </div>
+    <div class="hdr-btns">
+      <button class="hib" onclick="openModal(&#39;m-search&#39;)" aria-label="Buscar"><i class="ti ti-search"></i></button>
+      <button class="hib" onclick="openModal(&#39;m-profile&#39;)" aria-label="Perfil"><i class="ti ti-user"></i></button>
+    </div>
+  </div>
+
+  <!-- PAGES -->
+  <div class="pages">
+
+    <!-- SPLASH -->
+    <div class="pg" id="p-splash">
+      <div class="splash-logo-wrap">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 110 110" width="110" height="110">
+          <defs>
+            <linearGradient id="sl" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="rgba(255,255,255,0.28)"/>
+              <stop offset="100%" stop-color="rgba(255,255,255,0.06)"/>
+            </linearGradient>
+          </defs>
+          <rect width="110" height="110" rx="26" fill="rgba(255,255,255,0.18)"/>
+          <rect width="110" height="110" rx="26" fill="url(#sl)"/>
+          <!-- Stem -->
+          <rect x="51" y="54" width="8" height="36" rx="4" fill="white"/>
+          <!-- Right leaf -->
+          <path d="M55 65 C68 56 80 38 73 25 C60 24 47 42 53 62" fill="white"/>
+          <!-- Left leaf -->
+          <path d="M55 75 C42 66 30 50 36 36 C49 34 62 52 56 72" fill="rgba(255,255,255,0.85)"/>
+          <!-- Bud -->
+          <circle cx="55" cy="52" r="7" fill="white"/>
+          <!-- Base plate -->
+          <ellipse cx="55" cy="90" rx="24" ry="6" fill="rgba(255,255,255,0.25)"/>
+          <path d="M31 90 Q55 103 79 90 Q79 98 55 104 Q31 98 31 90Z" fill="rgba(255,255,255,0.18)"/>
+        </svg>
+      </div>
+      <div class="splash-brand">MERI</div>
+      <div class="splash-tag">Tu despensa inteligente</div>
+      <div class="splash-dots"><span></span><span></span><span></span></div>
+    </div>
+
+    <!-- AUTH -->
+    <div class="pg" id="p-auth">
+      <div class="auth-top">
+        <div class="auth-logo-sm">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="68" height="68">
+            <rect width="80" height="80" rx="19" fill="rgba(255,255,255,0.2)"/>
+            <!-- Stem -->
+            <rect x="37" y="39" width="6" height="26" rx="3" fill="white"/>
+            <!-- Right leaf -->
+            <path d="M40 47 C49 41 58 28 53 18 C44 17 34 30 38 45" fill="white"/>
+            <!-- Left leaf -->
+            <path d="M40 55 C31 49 22 37 27 26 C36 25 46 38 42 52" fill="rgba(255,255,255,0.85)"/>
+            <circle cx="40" cy="37" r="5" fill="white"/>
+            <ellipse cx="40" cy="65" rx="17" ry="4" fill="rgba(255,255,255,0.25)"/>
+          </svg>
+        </div>
+        <div class="auth-brand">MERI</div>
+        <div class="auth-sub">Tu despensa inteligente</div>
+      </div>
+      <div class="auth-body">
+        <div class="auth-tabs">
+          <button class="auth-tab on" id="tab-login" onclick="authTab('login')">Iniciar sesión</button>
+          <button class="auth-tab" id="tab-register" onclick="authTab('register')">Registrarse</button>
+        </div>
+
+        <!-- LOGIN -->
+        <div id="auth-form-login" class="auth-form">
+          <input class="auth-inp" id="auth-email" type="email" placeholder="Correo electrónico" autocomplete="email">
+          <input class="auth-inp" id="auth-pw" type="password" placeholder="Contraseña" autocomplete="current-password">
+          <div class="auth-err" id="auth-err-login"></div>
+          <button class="auth-btn-main" onclick="doLogin()"><i class="ti ti-login"></i> Iniciar sesión</button>
+          <div class="auth-divider">o</div>
+          <button class="auth-google" onclick="doGoogleLogin()">
+            <svg width="20" height="20" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+            Continuar con Google
+          </button>
+          <button class="auth-guest" onclick="authGuest()">Continuar como invitado →</button>
+        </div>
+
+        <!-- REGISTER -->
+        <div id="auth-form-register" class="auth-form" style="display:none">
+          <input class="auth-inp" id="auth-reg-name" type="text" placeholder="Tu nombre" autocomplete="name">
+          <input class="auth-inp" id="auth-reg-email" type="email" placeholder="Correo electrónico" autocomplete="email">
+          <input class="auth-inp" id="auth-reg-pw" type="password" placeholder="Contraseña (mín. 6 caracteres)" autocomplete="new-password">
+          <div class="auth-err" id="auth-err-register"></div>
+          <button class="auth-btn-main" onclick="doRegister()"><i class="ti ti-user-plus"></i> Crear cuenta</button>
+          <div class="auth-divider">o</div>
+          <button class="auth-google" onclick="doGoogleLogin()">
+            <svg width="20" height="20" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+            Continuar con Google
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- HOME -->
+    <div class="pg" id="p-home">
+      <div class="sg" id="stats">
+    <div class="sc"><div class="sn">10</div><div class="sl">Alimentos</div></div>
+    <div class="sc"><div class="sn" style="color:var(--rd)">6</div><div class="sl">Por vencer</div></div>
+    <div class="sc"><div class="sn" style="color:var(--am)">2</div><div class="sl">Por acabar</div></div></div>
+      <div class="sec">Acciones rápidas</div>
+      <div class="qg">
+        <button class="qb" onclick="nav(&#39;despensa&#39;)"><i class="ti ti-fridge"></i>Mi despensa</button>
+        <button class="qb" onclick="nav(&#39;foto&#39;)"><i class="ti ti-camera"></i>Escanear</button>
+        <button class="qb" onclick="nav(&#39;compras&#39;)"><i class="ti ti-shopping-cart"></i>Lista de compras</button>
+        <button class="qb" onclick="nav(&#39;cosecha&#39;)"><i class="ti ti-plant"></i>Cosecha</button>
+      </div>
+      <button class="btn btn-am btnf" style="margin-top:8px" onclick="abrirUso()"><i class="ti ti-minus"></i> ¿Qué usaste hoy?</button>
+      <div id="notif-prompt"></div>
+      <div id="home-alerts"></div>
+      <div class="sec" id="favs-sec" style="display:none">Favoritos</div>
+      <div id="favs-row" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:4px"></div>
+      <div class="sec" id="harvest-sec" style="display:none">En cosecha ahora</div>
+      <div class="hg" id="home-harvest"></div>
+    </div>
+
+    <!-- FACTURA -->
+    <div class="pg" id="p-foto">
+      <button class="back-btn" onclick="goBack()"><i class="ti ti-arrow-left"></i> Volver</button>
+      <!-- Selector principal -->
+      <div id="foto-mode-selector">
+        <button class="scan-btn scan-btn-inv" onclick="showFotoMode('invoice')">
+          <i class="ti ti-receipt"></i>
+          <span>Escanear factura</span>
+          <small>Detecta alimentos y agrégalos a tu despensa</small>
+        </button>
+        <button class="scan-btn scan-btn-exp" onclick="showFotoMode('expiry')">
+          <i class="ti ti-calendar-time"></i>
+          <span>Escanear fecha de vencimiento</span>
+          <small>Agrega el producto y su vencimiento a tu despensa</small>
+        </button>
+      </div>
+
+      <!-- INVOICE MODE -->
+      <div id="foto-invoice" style="display:none">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+          <button class="btn" onclick="showFotoMode(null)" style="padding:6px 10px"><i class="ti ti-arrow-left"></i></button>
+          <div class="sec" style="margin:0">Escanear factura</div>
+        </div>
+        <div class="tabs" id="foto-tabs">
+          <button class="tab on" onclick="fotoTab(this,&#39;fc-cam&#39;)">Cámara</button>
+          <button class="tab" onclick="fotoTab(this,&#39;fc-gal&#39;)">Galería</button>
+          <button class="tab" onclick="fotoTab(this,&#39;fc-man&#39;)">Manual</button>
+        </div>
+
+      <!-- CÁMARA EN VIVO -->
+      <div id="fc-cam">
+        <div class="card">
+          <div class="ct"><i class="ti ti-camera"></i> Cámara en vivo</div>
+          <div class="cam-wrap" id="cam-wrap" style="display:none">
+            <video id="cam-video" autoplay="" playsinline="" muted=""></video>
+            <div class="cam-overlay">
+              <div class="cam-frame"></div>
+              <div class="cam-hint">Centra la factura en el marco</div>
+            </div>
+          </div>
+          <div id="cam-start-area">
+            <div class="al agr" style="margin-bottom:10px"><i class="ti ti-info-circle"></i><div class="al-b"><div class="al-t">Usa la cámara para escanear tu factura</div><div class="al-s">La IA detectará los alimentos automáticamente</div></div></div>
+            <button class="btn btnp btnf" onclick="startCamera()"><i class="ti ti-camera"></i> Activar cámara</button>
+          </div>
+          <div id="cam-controls" style="display:none;margin-top:10px">
+            <div style="display:flex;gap:8px">
+              <button class="btn btnp" style="flex:1" onclick="capturePhoto()"><i class="ti ti-aperture"></i> Capturar</button>
+              <button class="btn" onclick="stopCamera()"><i class="ti ti-x"></i> Cancelar</button>
+            </div>
+          </div>
+        </div>
+        <div id="cam-result"></div>
+      </div>
+
+      <!-- GALERÍA -->
+      <div id="fc-gal" style="display:none">
+        <div class="card">
+          <div class="ct"><i class="ti ti-photo"></i> Subir foto</div>
+          <input type="file" id="file-inp" accept="image/*" style="display:none" onchange="handleGalleryPhoto(event)">
+          <canvas id="capture-canvas" style="display:none"></canvas>
+          <img id="gal-preview" class="preview-img" style="display:none">
+          <div class="upz" id="upz" onclick="document.getElementById(&#39;file-inp&#39;).click()" ondrop="handleDrop(event)" ondragover="e=&gt;{e.preventDefault();document.getElementById(&#39;upz&#39;).classList.add(&#39;drag&#39;)}" ondragleave="document.getElementById(&#39;upz&#39;).classList.remove(&#39;drag&#39;)">
+            <i class="ti ti-cloud-upload"></i>
+            <div class="upz-t">Toca para elegir foto</div>
+            <div class="upz-s">JPG, PNG — la IA leerá tu factura</div>
+          </div>
+          <div id="gal-detected" style="display:none;margin-top:12px"></div>
+        </div>
+      </div>
+
+      <!-- MANUAL -->
+      <div id="fc-man" style="display:none">
+        <div class="card">
+          <div class="ct"><i class="ti ti-pencil"></i> Ingresar manualmente</div>
+          <div class="ig">
+            <label class="il">Escribe los productos de tu factura</label>
+            <textarea class="inp" id="man-text" rows="7" placeholder="Tomates x3
+Leche 1L
+Huevos x12
+Pollo 500g
+Arroz 1kg
+Cebolla x2"></textarea>
+          </div>
+        </div>
+      </div>
+      </div><!-- /foto-invoice -->
+
+      <!-- EXPIRY MODE -->
+      <div id="foto-expiry" style="display:none">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+          <button class="btn" onclick="showFotoMode(null);stopExpiryMain()" style="padding:6px 10px"><i class="ti ti-arrow-left"></i></button>
+          <div class="sec" style="margin:0">Escanear fecha de vencimiento</div>
+        </div>
+        <div class="tabs" id="exp-tabs">
+          <button class="tab on" onclick="expTab(this,'exp-tab-cam')"><i class="ti ti-camera"></i> Cámara</button>
+          <button class="tab" onclick="expTab(this,'exp-tab-gal')"><i class="ti ti-photo"></i> Galería</button>
+        </div>
+
+        <!-- CÁMARA -->
+        <div id="exp-tab-cam">
+          <div class="card">
+            <div class="al agr" style="margin-bottom:12px"><i class="ti ti-info-circle"></i><div class="al-b"><div class="al-t">Apunta al empaque donde dice VENCE / EXP / CAD</div><div class="al-s">La IA detectará el nombre y la fecha automáticamente</div></div></div>
+            <div class="cam-wrap" id="exp-main-wrap" style="display:none">
+              <video id="exp-main-video" autoplay playsinline muted></video>
+              <div class="cam-overlay"><div class="cam-frame"></div><div class="cam-hint">Centra la fecha en el marco</div></div>
+            </div>
+            <div id="exp-main-start">
+              <button class="btn btnp btnf" onclick="startExpiryMain()"><i class="ti ti-camera"></i> Activar cámara</button>
+            </div>
+            <div id="exp-main-controls" style="display:none;margin-top:10px">
+              <div style="display:flex;gap:8px">
+                <button class="btn btnp" style="flex:1" onclick="captureExpiryMain()"><i class="ti ti-aperture"></i> Capturar y analizar</button>
+                <button class="btn" onclick="stopExpiryMain()"><i class="ti ti-x"></i> Cancelar</button>
+              </div>
+            </div>
+            <canvas id="exp-main-canvas" style="display:none"></canvas>
+          </div>
+        </div>
+
+        <!-- GALERÍA -->
+        <div id="exp-tab-gal" style="display:none">
+          <div class="card">
+            <div class="al agr" style="margin-bottom:12px"><i class="ti ti-info-circle"></i><div class="al-b"><div class="al-t">Sube una foto del producto o su etiqueta</div><div class="al-s">La IA detectará el nombre y la fecha de vencimiento</div></div></div>
+            <input type="file" id="exp-gal-input" accept="image/*" style="display:none" onchange="handleExpiryGallery(event)">
+            <img id="exp-gal-preview" style="display:none;width:100%;border-radius:10px;margin-bottom:10px;max-height:240px;object-fit:cover">
+            <button class="btn btnp btnf" onclick="document.getElementById('exp-gal-input').click()"><i class="ti ti-photo"></i> Elegir foto</button>
+          </div>
+        </div>
+
+        <div id="exp-main-result"></div>
+      </div><!-- /foto-expiry -->
+    </div><!-- /p-foto -->
+
+    <!-- DESPENSA -->
+    <div class="pg" id="p-despensa">
+      <button class="back-btn" onclick="goBack()"><i class="ti ti-arrow-left"></i> Volver</button>
+      <div class="searchbar">
+        <i class="ti ti-search" aria-hidden="true"></i>
+        <input type="text" id="pantry-search" placeholder="Buscar en tu despensa..." oninput="renderPantry()">
+      </div>
+      <div class="tabs" id="pantry-tabs">
+        <button class="tab on" onclick="pantryTab(this,&#39;pt-all&#39;)">Todos</button>
+        <button class="tab" onclick="pantryTab(this,&#39;pt-exp&#39;)">Por vencer</button>
+        <button class="tab" onclick="pantryTab(this,&#39;pt-low&#39;)">Pocos</button>
+        <button class="tab" onclick="pantryTab(this,&#39;pt-fav&#39;)">Favoritos</button>
+      </div>
+      <div id="pt-all"><div class="card" id="pl-all"><div class="fr">
+      <div class="fec">🥚</div>
+      <div class="fi" onclick="openEditModal(1)" style="cursor:pointer">
+        <div class="fn">Huevos ⭐</div>
+        <div class="fm">8 unidades · Vence: 07 de jun de 26 · Otros</div>
+        <div class="prog"><div class="pf" style="width:100%;background:var(--rd)"></div></div>
+        
+      </div>
+      <div class="fa">
+        <span class="badge br">¡Venció!</span>
+      </div>
+    </div><div class="fr">
+      <div class="fec">🍦</div>
+      <div class="fi" onclick="openEditModal(3)" style="cursor:pointer">
+        <div class="fn">Yogur</div>
+        <div class="fm">1 unidades · Vence: 07 de jun de 26 · Lácteos</div>
+        <div class="prog"><div class="pf" style="width:50%;background:var(--am2)"></div></div>
+        <div style="font-size:10px;color:var(--am);font-weight:700;margin-top:2px">⚠ Stock bajo</div>
+      </div>
+      <div class="fa">
+        <span class="badge br">¡Venció!</span>
+      </div>
+    </div><div class="fr">
+      <div class="fec">🍗</div>
+      <div class="fi" onclick="openEditModal(6)" style="cursor:pointer">
+        <div class="fn">Pollo</div>
+        <div class="fm">500 gramos · Vence: 08 de jun de 26 · Carnes</div>
+        <div class="prog"><div class="pf" style="width:75%;background:var(--rd)"></div></div>
+        
+      </div>
+      <div class="fa">
+        <span class="badge br">Mañana</span>
+      </div>
+    </div><div class="fr">
+      <div class="fec">🥛</div>
+      <div class="fi" onclick="openEditModal(2)" style="cursor:pointer">
+        <div class="fn">Leche ⭐</div>
+        <div class="fm">1 litros · Vence: 09 de jun de 26 · Lácteos</div>
+        <div class="prog"><div class="pf" style="width:100%;background:var(--rd)"></div></div>
+        
+      </div>
+      <div class="fa">
+        <span class="badge bam">2d</span>
+      </div>
+    </div><div class="fr">
+      <div class="fec">🍌</div>
+      <div class="fi" onclick="openEditModal(10)" style="cursor:pointer">
+        <div class="fn">Plátano ⭐</div>
+        <div class="fm">5 unidades · Vence: 10 de jun de 26 · Frutas</div>
+        <div class="prog"><div class="pf" style="width:100%;background:var(--rd)"></div></div>
+        
+      </div>
+      <div class="fa">
+        <span class="badge bam">3d</span>
+      </div>
+    </div><div class="fr">
+      <div class="fec">🍅</div>
+      <div class="fi" onclick="openEditModal(4)" style="cursor:pointer">
+        <div class="fn">Tomate ⭐</div>
+        <div class="fm">4 unidades · Vence: 11 de jun de 26 · Verduras</div>
+        <div class="prog"><div class="pf" style="width:100%;background:var(--rd)"></div></div>
+        
+      </div>
+      <div class="fa">
+        <span class="badge bam">4d</span>
+      </div>
+    </div><div class="fr">
+      <div class="fec">🧅</div>
+      <div class="fi" onclick="openEditModal(5)" style="cursor:pointer">
+        <div class="fn">Cebolla ⭐</div>
+        <div class="fm">3 unidades · Vence: 16 de jun de 26 · Verduras</div>
+        <div class="prog"><div class="pf" style="width:100%;background:var(--g3)"></div></div>
+        
+      </div>
+      <div class="fa">
+        <span class="badge btl">9d</span>
+      </div>
+    </div><div class="fr">
+      <div class="fec">🧄</div>
+      <div class="fi" onclick="openEditModal(9)" style="cursor:pointer">
+        <div class="fn">Ajo ⭐</div>
+        <div class="fm">5 unidades · Vence: 26 de jun de 26 · Condimentos</div>
+        <div class="prog"><div class="pf" style="width:100%;background:var(--g3)"></div></div>
+        
+      </div>
+      <div class="fa">
+        <span class="badge bg">OK</span>
+      </div>
+    </div><div class="fr">
+      <div class="fec">🫘</div>
+      <div class="fi" onclick="openEditModal(8)" style="cursor:pointer">
+        <div class="fn">Frijol ⭐</div>
+        <div class="fm">400 gramos · Vence: 04 de sept de 26 · Granos</div>
+        <div class="prog"><div class="pf" style="width:100%;background:var(--g3)"></div></div>
+        
+      </div>
+      <div class="fa">
+        <span class="badge bg">OK</span>
+      </div>
+    </div><div class="fr">
+      <div class="fec">🍚</div>
+      <div class="fi" onclick="openEditModal(7)" style="cursor:pointer">
+        <div class="fn">Arroz ⭐</div>
+        <div class="fm">300 gramos · Vence: 04 de oct de 26 · Granos</div>
+        <div class="prog"><div class="pf" style="width:60%;background:var(--am2)"></div></div>
+        <div style="font-size:10px;color:var(--am);font-weight:700;margin-top:2px">⚠ Stock bajo</div>
+      </div>
+      <div class="fa">
+        <span class="badge bg">OK</span>
+      </div>
+    </div></div></div>
+      <div id="pt-exp" style="display:none"><div class="card" id="pl-exp"></div></div>
+      <div id="pt-low" style="display:none">
+        <div class="card" id="pl-low"></div>
+        <button class="btn btn-am btnf" style="margin-top:8px" onclick="abrirUso()"><i class="ti ti-minus"></i> Registrar lo que usé hoy</button>
+      </div>
+      <div id="pt-fav" style="display:none"><div class="card" id="pl-fav"></div></div>
+      <button class="btn btnp btnf" style="margin-top:4px" onclick="openModal(&#39;m-add&#39;)"><i class="ti ti-plus"></i> Agregar alimento</button>
+    </div>
+
+    <!-- COSECHA -->
+    <div class="pg" id="p-cosecha">
+      <button class="back-btn" onclick="goBack()"><i class="ti ti-arrow-left"></i> Volver</button>
+      <div class="searchbar">
+        <i class="ti ti-search" aria-hidden="true"></i>
+        <input type="text" id="harvest-search" placeholder="Buscar cualquier alimento (ej. Arroz, Lenteja, Café...)" oninput="renderHarvest()">
+      </div>
+      <div id="harvest-search-results" style="display:none"></div>
+      <div id="harvest-default">
+        <div class="al agr" style="margin-bottom:14px">
+          <i class="ti ti-map-pin"></i>
+          <div class="al-b">
+            <div class="al-t">Temporada de cosecha Colombia</div>
+            <div class="al-s" id="cosecha-month">Cargando...</div>
+          </div>
+        </div>
+        <div class="sec">Disponibles ahora ✅</div>
+        <div class="hg" id="harvest-now" style="margin-bottom:14px"></div>
+        <div class="sec">Próximamente</div>
+        <div class="hg" id="harvest-soon"></div>
+        <div class="al atl" style="margin-top:14px">
+          <i class="ti ti-info-circle"></i>
+          <div class="al-b"><div class="al-t">Compra en temporada</div><div class="al-s">Los alimentos en cosecha son más frescos y económicos en Colombia</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- COMPRAS -->
+    <div class="pg" id="p-compras">
+      <button class="back-btn" onclick="goBack()"><i class="ti ti-arrow-left"></i> Volver</button>
+      <div class="tabs" id="compras-tabs">
+        <button class="tab on" onclick="comprasTab(this,&#39;ct-lista&#39;)">Mi lista</button>
+        <button class="tab" onclick="comprasTab(this,&#39;ct-sugs&#39;)">Sugerencias</button>
+        <button class="tab" onclick="comprasTab(this,&#39;ct-hist&#39;)">Historial</button>
+      </div>
+
+      <div id="ct-lista">
+        <div class="card" style="margin-bottom:10px">
+          <div style="display:flex;gap:8px;margin-bottom:7px">
+            <input class="inp" id="shop-inp" style="flex:1" placeholder="Agregar producto..." onkeydown="if(event.key===&#39;Enter&#39;)addShopItem()">
+            <button class="btn btnp btni" onclick="addShopItem()" aria-label="Agregar"><i class="ti ti-plus"></i></button>
+          </div>
+          <div style="display:flex;gap:6px;margin-bottom:11px">
+            <input class="inp" type="number" id="shop-qty" value="1" min="0.1" step="0.1" style="width:70px;flex-shrink:0">
+            <select class="inp" id="shop-unit" style="flex:1">
+              <option>unidades</option><option>gramos</option><option>kg</option>
+              <option>litros</option><option>ml</option><option>paquetes</option><option>tazas</option>
+            </select>
+          </div>
+          <div id="shop-items">
+    <div class="sr">
+      <div class="chk" onclick="toggleShop(1)" role="checkbox" aria-checked="false">
+        
+      </div>
+      <span class="sn2">🔴 Arroz (bulto)</span>
+      <button class="btn btni" onclick="deleteShop(1)" aria-label="Eliminar" style="color:var(--tx3);padding:7px"><i class="ti ti-x" style="font-size:14px"></i></button>
+    </div>
+    <div class="sr">
+      <div class="chk" onclick="toggleShop(2)" role="checkbox" aria-checked="false">
+        
+      </div>
+      <span class="sn2">Leche x2</span>
+      <button class="btn btni" onclick="deleteShop(2)" aria-label="Eliminar" style="color:var(--tx3);padding:7px"><i class="ti ti-x" style="font-size:14px"></i></button>
+    </div>
+    <div class="sr">
+      <div class="chk" onclick="toggleShop(3)" role="checkbox" aria-checked="false">
+        
+      </div>
+      <span class="sn2">Café</span>
+      <button class="btn btni" onclick="deleteShop(3)" aria-label="Eliminar" style="color:var(--tx3);padding:7px"><i class="ti ti-x" style="font-size:14px"></i></button>
+    </div></div>
+          <div id="shop-empty" style="display:none" class="empty"><i class="ti ti-check"></i><p>Lista vacía — agrega productos</p></div>
+        </div>
+        <div style="display:flex;gap:8px">
+          <button class="btn" style="flex:1;font-size:12px" onclick="clearDoneShop()"><i class="ti ti-trash"></i> Limpiar comprados</button>
+          <button class="btn btnp" style="flex:1;font-size:12px" onclick="shareShopList()"><i class="ti ti-share"></i> Compartir</button>
+        </div>
+      </div>
+
+      <div id="ct-sugs" style="display:none">
+        <div class="sec" style="margin-top:0">Basado en tu despensa</div>
+        <div id="auto-sugs"></div>
+        <button class="btn btnp btnf" style="margin-top:6px" onclick="quickShoppingList()"><i class="ti ti-wand"></i> Lista completa con IA ↗</button>
+        <div id="sugs-ai"></div>
+      </div>
+
+      <div id="ct-hist" style="display:none">
+        <div class="sec" style="margin-top:0">Compras registradas</div>
+        <div class="card" id="hist-list"></div>
+      </div>
+    </div>
+
+  </div><!-- /pages -->
+
+</div><!-- /app -->
+
+<!-- MODAL: Registro de uso diario -->
+<div class="modal-bg" id="m-uso" onclick="if(event.target===this)closeModal('m-uso')">
+  <div class="modal" style="max-height:90%">
+    <div class="mh"></div>
+    <div class="mt">¿Qué usaste hoy? <span style="font-size:11px;font-weight:600;color:var(--tx2)">Descuenta de tu despensa</span></div>
+    <div style="font-size:12px;color:var(--tx2);margin-bottom:12px">Selecciona los alimentos que consumiste y ajusta la cantidad usada.</div>
+    <div id="uso-items" style="max-height:340px;overflow-y:auto"></div>
+    <div style="display:flex;gap:8px;margin-top:12px">
+      <button class="btn" style="flex:1" onclick="closeModal('m-uso')"><i class="ti ti-x"></i> Cancelar</button>
+      <button class="btn btnp" style="flex:2" onclick="registrarUso()"><i class="ti ti-check"></i> Registrar uso</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Lista IA editable -->
+<div class="modal-bg" id="m-ai-list" onclick="if(event.target===this)closeModal('m-ai-list')">
+  <div class="modal" style="max-height:90%">
+    <div class="mh"></div>
+    <div class="mt">Lista con IA <span style="font-size:11px;color:var(--tx2);font-weight:600">— edita antes de agregar</span></div>
+    <div id="ai-list-content" style="margin-bottom:10px"></div>
+    <div id="ai-list-items" style="max-height:300px;overflow-y:auto"></div>
+    <div style="display:flex;gap:8px;margin-top:12px">
+      <button class="btn" style="flex:1" onclick="closeModal('m-ai-list')"><i class="ti ti-x"></i> Cancelar</button>
+      <button class="btn btnp" id="ai-list-add-btn" style="flex:2;display:none" onclick="addAIListToShopping()"><i class="ti ti-shopping-cart"></i> Agregar a mi lista</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast" role="alert" aria-live="polite"></div>
+
+<!-- MODAL: Agregar alimento -->
+<div class="modal-bg" id="m-add" onclick="if(event.target===this)closeModal(&#39;m-add&#39;)">
+  <div class="modal">
+    <div class="mh"></div>
+    <div class="mt">Agregar alimento</div>
+    <div class="ig"><label class="il">Nombre *</label><input class="inp" id="m-name" placeholder="Ej: Leche, Tomates, Arroz..."></div>
+    <div class="ir">
+      <div><label class="il">Cantidad</label><input class="inp" type="number" id="m-qty" value="1" min="0.1" step="0.1"></div>
+      <div><label class="il">Unidad</label>
+        <select class="inp" id="m-unit">
+          <option>unidades</option><option>gramos</option><option>kg</option>
+          <option>litros</option><option>ml</option><option>paquetes</option><option>tazas</option>
+        </select>
+      </div>
+    </div>
+    <div class="ig"><label class="il">Fecha de vencimiento</label>
+      <div style="display:flex;gap:8px">
+        <input class="inp" type="date" id="m-exp" style="flex:1">
+        <button class="btn btnp btni" onclick="openExpiryCamera('m-exp')" type="button" title="Escanear con cámara"><i class="ti ti-camera"></i></button>
+      </div>
+    </div>
+    <div class="ir">
+      <div><label class="il">Categoría</label>
+        <select class="inp" id="m-cat">
+          <option>Lácteos</option><option>Carnes</option><option>Verduras</option><option>Frutas</option>
+          <option>Granos</option><option>Condimentos</option><option>Bebidas</option><option>Snacks</option><option>Otros</option>
+        </select>
+      </div>
+      <div><label class="il">Alerta si baja de</label><input class="inp" type="number" id="m-min" placeholder="0" value="0" min="0"></div>
+    </div>
+    <div style="display:flex;align-items:center;gap:9px;margin-bottom:14px">
+      <input type="checkbox" id="m-fav" style="width:20px;height:20px;cursor:pointer;accent-color:var(--g)">
+      <label for="m-fav" style="font-size:13px;font-weight:700;cursor:pointer;color:var(--tx)">⭐ Agregar a favoritos</label>
+    </div>
+    <button class="btn btnp btnf" onclick="saveFood()"><i class="ti ti-check"></i> Guardar alimento</button>
+  </div>
+</div>
+
+<!-- MODAL: Editar alimento -->
+<div class="modal-bg" id="m-edit" onclick="if(event.target===this)closeModal(&#39;m-edit&#39;)">
+  <div class="modal">
+    <div class="mh"></div>
+    <div class="mt">Editar alimento</div>
+    <input type="hidden" id="edit-id">
+    <div class="ig"><label class="il">Nombre</label><input class="inp" id="edit-name"></div>
+    <div class="ir">
+      <div><label class="il">Cantidad</label><input class="inp" type="number" id="edit-qty" step="0.1"></div>
+      <div><label class="il">Unidad</label>
+        <select class="inp" id="edit-unit">
+          <option>unidades</option><option>gramos</option><option>kg</option>
+          <option>litros</option><option>ml</option><option>paquetes</option><option>tazas</option>
+        </select>
+      </div>
+    </div>
+    <div class="ig"><label class="il">Fecha de vencimiento</label>
+      <div style="display:flex;gap:8px">
+        <input class="inp" type="date" id="edit-exp" style="flex:1">
+        <button class="btn btnp btni" onclick="openExpiryCamera('edit-exp')" type="button" title="Escanear con cámara"><i class="ti ti-camera"></i></button>
+      </div>
+    </div>
+    <div class="ir">
+      <div><label class="il">Categoría</label>
+        <select class="inp" id="edit-cat">
+          <option>Lácteos</option><option>Carnes</option><option>Verduras</option><option>Frutas</option>
+          <option>Granos</option><option>Condimentos</option><option>Bebidas</option><option>Snacks</option><option>Otros</option>
+        </select>
+      </div>
+      <div><label class="il">Mínimo</label><input class="inp" type="number" id="edit-min" value="0"></div>
+    </div>
+    <div style="display:flex;align-items:center;gap:9px;margin-bottom:14px">
+      <input type="checkbox" id="edit-fav" style="width:20px;height:20px;cursor:pointer;accent-color:var(--g)">
+      <label for="edit-fav" style="font-size:13px;font-weight:700;cursor:pointer;color:var(--tx)">⭐ Favorito</label>
+    </div>
+    <div style="display:flex;gap:8px">
+      <button class="btn" style="flex:1;color:var(--rd)" onclick="deleteFoodFromEdit()"><i class="ti ti-trash"></i> Eliminar</button>
+      <button class="btn btnp" style="flex:1" onclick="updateFood()"><i class="ti ti-check"></i> Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Perfil -->
+<div class="modal-bg" id="m-profile" onclick="if(event.target===this)closeModal(&#39;m-profile&#39;)">
+  <div class="modal">
+    <div class="mh"></div>
+    <div class="mt">Mi perfil</div>
+    <div class="ig"><label class="il">Tu nombre</label><input class="inp" id="prof-name" placeholder="¿Cómo te llamamos?"></div>
+    <div class="ir">
+      <div><label class="il">Ciudad</label>
+        <select class="inp" id="prof-city">
+          <option>Bogotá</option><option>Medellín</option><option>Cali</option><option>Barranquilla</option>
+          <option>Cartagena</option><option>Bucaramanga</option><option>Pereira</option><option>Manizales</option><option>Otra</option>
+        </select>
+      </div>
+      <div><label class="il">Personas en el hogar</label><input class="inp" type="number" id="prof-people" value="2" min="1" max="20"></div>
+    </div>
+    <div class="ig"><label class="il">Restricciones alimentarias</label>
+      <select class="inp" id="prof-diet">
+        <option value="">Sin restricciones</option><option>Vegetariano</option><option>Vegano</option>
+        <option>Sin gluten</option><option>Sin lactosa</option><option>Diabético</option><option>Hipertensión</option>
+      </select>
+    </div>
+    <div class="al agr" style="margin-bottom:14px">
+      <i class="ti ti-shield-lock"></i>
+      <div class="al-b"><div class="al-t">Tus datos son locales</div><div class="al-s">Todo se guarda solo en este dispositivo. Nada se sube a la nube.</div></div>
+    </div>
+    <button class="btn btnp btnf" onclick="saveProfile()"><i class="ti ti-check"></i> Guardar perfil</button>
+    <button class="btn btnf" style="margin-top:8px;color:var(--rd)" onclick="confirmClearData()"><i class="ti ti-trash"></i> Borrar todos mis datos</button>
+    <button class="btn btnf" style="margin-top:8px;color:var(--tx2);border-top:1px solid var(--bd);padding-top:14px" onclick="closeModal('m-profile');logout()"><i class="ti ti-logout"></i> Cerrar sesión</button>
+  </div>
+</div>
+
+<!-- MODAL: Buscar -->
+<div class="modal-bg" id="m-search" onclick="if(event.target===this)closeModal(&#39;m-search&#39;)">
+  <div class="modal">
+    <div class="mh"></div>
+    <div class="searchbar" style="margin-bottom:12px">
+      <i class="ti ti-search" aria-hidden="true"></i>
+      <input type="text" id="global-search-inp" placeholder="Buscar en tu despensa..." oninput="globalSearch(this.value)">
+    </div>
+    <div id="search-results"></div>
+  </div>
+</div>
+
+<!-- MODAL: Cámara fecha vencimiento -->
+<div class="modal-bg" id="m-exp-cam" onclick="if(event.target===this)closeExpiryCam()">
+  <div class="modal">
+    <div class="mh"></div>
+    <div class="mt">📷 Escanear fecha de vencimiento</div>
+    <div class="al agr" style="margin-bottom:10px"><i class="ti ti-info-circle"></i><div class="al-b"><div class="al-t">Apunta al empaque del producto</div><div class="al-s">La IA detectará la fecha automáticamente</div></div></div>
+    <div class="cam-wrap" id="exp-cam-wrap" style="display:none">
+      <video id="exp-cam-video" autoplay playsinline muted></video>
+      <div class="cam-overlay">
+        <div class="cam-frame"></div>
+        <div class="cam-hint">Centra la fecha de vencimiento en el marco</div>
+      </div>
+    </div>
+    <canvas id="exp-capture-canvas" style="display:none"></canvas>
+    <div style="display:flex;gap:8px;margin-top:10px">
+      <button class="btn btnp" style="flex:1" onclick="captureExpiry()" id="exp-capture-btn"><i class="ti ti-aperture"></i> Capturar</button>
+      <button class="btn" onclick="closeExpiryCam()"><i class="ti ti-x"></i> Cancelar</button>
+    </div>
+    <div id="exp-cam-result" style="margin-top:10px"></div>
+  </div>
+</div>
+
+<!-- MODAL: Precio de cosecha -->
+<div class="modal-bg" id="m-harvest" onclick="if(event.target===this)closeModal('m-harvest')">
+  <div class="modal">
+    <div class="mh"></div>
+    <div id="m-harvest-content"></div>
+    <button class="btn btnp" style="width:100%;margin-top:14px" onclick="closeModal('m-harvest')"><i class="ti ti-check"></i> Listo</button>
+  </div>
+</div>
+
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+<script>
+// ===================== FIREBASE CONFIG =====================
+// 👇 Pega aquí tu configuración de Firebase (Firebase Console → Project Settings → Your apps)
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyDTeO920axcnp5xtv12x5ALowq0sNgvA-o",
+  authDomain: "meri-app-71b0d.firebaseapp.com",
+  projectId: "meri-app-71b0d",
+  storageBucket: "meri-app-71b0d.firebasestorage.app",
+  messagingSenderId: "57456414739",
+  appId: "1:57456414739:web:c30c30b4904b1587452fe6"
+};
+firebase.initializeApp(FIREBASE_CONFIG);
+const auth = firebase.auth();
+const db = firebase.firestore();
+
+// ===================== STATE =====================
+const DB = 'despensaia_v3';
+let S = defaultState(); // Inicia con defaults; se reemplaza al cargar desde Firestore
+let _saveTimer = null;
+let selectedChips = new Set();
+let camStream = null;
+let currentPantryFilter = 'all';
+
+async function loadUserState(uid) {
+  try {
+    const doc = await db.collection('users').doc(uid).collection('data').doc('state').get();
+    if (doc.exists) {
+      S = { ...defaultState(), ...doc.data() };
+    } else {
+      // Migrar datos locales si existen (primera vez con Firebase)
+      const local = localStorage.getItem(DB);
+      if (local) {
+        S = { ...defaultState(), ...JSON.parse(local) };
+        await _saveToFirestore(uid);
+        localStorage.removeItem(DB);
+        toast('✅ Datos migrados a la nube');
+      }
+    }
+  } catch(e) {
+    console.warn('Error cargando estado:', e);
+  }
+}
+
+async function _saveToFirestore(uid) {
+  if (!uid) return;
+  try {
+    await db.collection('users').doc(uid).collection('data').doc('state').set(S);
+  } catch(e) { console.warn('Error guardando estado:', e); }
+  // Actualizar cache de pantry para Service Worker (Periodic Sync)
+  updatePantryCache();
+  // Sincronizar despensa con Cloudflare Worker (para push del servidor)
+  syncPantryToWorker(uid);
+}
+
+// ── Actualizar Cache API para acceso desde Service Worker ──
+async function updatePantryCache() {
+  if (!('caches' in window)) return;
+  try {
+    const cache = await caches.open('meri-v1');
+    const resp = new Response(JSON.stringify(S.pantry), { headers: { 'Content-Type': 'application/json' } });
+    await cache.put('meri-pantry', resp);
+  } catch(e) {}
+}
+
+// ── Sincronizar pantry con Cloudflare Worker ──
+async function syncPantryToWorker(uid) {
+  if (!uid) return;
+  try {
+    await fetch('https://meri-proxy.giovanniagc92.workers.dev/push-data', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ uid, pantry: S.pantry })
+    });
+  } catch(e) {}
+}
+
+function saveState() {
+  const user = auth.currentUser;
+  if (!user || user.isAnonymous) {
+    try { localStorage.setItem('meri_guest_state', JSON.stringify(S)); } catch(e) {}
+    syncToSWCache();
+    return;
+  }
+  if (_saveTimer) clearTimeout(_saveTimer);
+  _saveTimer = setTimeout(() => _saveToFirestore(user.uid), 1000);
+  syncToSWCache();
+}
+
+async function syncToSWCache() {
+  if (!_swRegistration) return;
+  try {
+    const cache = await caches.open('meri-v1');
+    await cache.put('meri-state', new Response(JSON.stringify({
+      pantry: S.pantry || [],
+      shopping: S.shopping || [],
+      purchaseHistory: S.purchaseHistory || []
+    })));
+  } catch(e) {}
+}
+
+function defaultState() {
+  return {
+    pantry: [],
+    shopping: [],
+    history: [],
+    purchaseHistory: [],
+    profile: {name:'',city:'Bogotá',people:2,diet:''},
+    idc: 0
+  };
+}
+
+// ===================== HELPERS =====================
+function dF(n) { const d = new Date(); d.setDate(d.getDate()+n); return d.toISOString().split('T')[0]; }
+function dU(s) { if(!s) return 999; return Math.round((new Date(s) - new Date()) / 86400000); }
+function fDate(s) { if(!s) return '—'; return new Date(s).toLocaleDateString('es-CO',{day:'2-digit',month:'short',year:'2-digit'}); }
+function fCOP(n) { return new Intl.NumberFormat('es-CO',{style:'currency',currency:'COP',maximumFractionDigits:0}).format(n); }
+function nid() { return ++S.idc; }
+function esc(str) { const d=document.createElement('div'); d.appendChild(document.createTextNode(String(str||''))); return d.innerHTML; }
+function vib(p=[10]) { if(navigator.vibrate) navigator.vibrate(p); }
+function catEm(cat) {
+  return {Lácteos:'🥛',Carnes:'🍗',Verduras:'🥦',Frutas:'🍎',Granos:'🌾',Condimentos:'🧄',Bebidas:'🧃',Snacks:'🍪',Otros:'📦'}[cat]||'📦';
+}
+function foodEm(name, cat) {
+  const l = name.toLowerCase();
+  const m = {huev:'🥚',lech:'🥛',yogur:'🍦',tomat:'🍅',ceboll:'🧅',poll:'🍗',arroz:'🍚',frijol:'🫘',lentejas:'🟤',ajo:'🧄',plát:'🍌',maíz:'🌽',papa:'🥔',zanah:'🥕',limón:'🍋',naranj:'🍊',mango:'🥭',aguacat:'🥑',café:'☕',azúcar:'🍬',sal:'🧂',aceit:'🫒',maracuy:'🌺',harin:'🌾',pasta:'🍝',pan:'🍞',queso:'🧀',miel:'🍯',carne:'🥩',cerdo:'🐷',pescad:'🐟',camar:'🦐',choc:'🍫',avena:'🌾',mantequill:'🧈',crema:'🥣',piña:'🍍',fresa:'🍓',mora:'🫐',guayab:'🍐',yuca:'🪵',espinac:'🥬',lechug:'🥗',pepino:'🥒',piment:'🫑',brocol:'🥦',cebolleta:'🌿',perejil:'🌿',cilantro:'🌿',oregano:'🌿'};
+  for(const [k,v] of Object.entries(m)) if(l.includes(k)) return v;
+  return catEm(cat);
+}
+
+// ===================== NAV =====================
+let _navStack = ['home'];
+
+function nav(page, addToStack=true) {
+  document.querySelectorAll('.pg').forEach(p => p.classList.remove('on'));
+  document.querySelectorAll('.ni').forEach(b => b.classList.remove('on'));
+  document.getElementById('p-'+page).classList.add('on');
+  const nb = document.getElementById('ni-'+page);
+  if(nb) nb.classList.add('on');
+  document.getElementById('p-'+page).scrollTop = 0;
+  const noHeader = ['splash','auth'].includes(page);
+  document.querySelector('.hdr').style.display = noHeader ? 'none' : '';
+  if(page==='home') renderHome();
+  else if(page==='despensa') renderPantry();
+  else if(page==='cosecha') renderHarvest();
+  else if(page==='compras') renderShopList();
+  if(!noHeader) vib([8]);
+  // Nav stack para botón volver y back de Android
+  if(addToStack && !noHeader) {
+    if(_navStack[_navStack.length-1] !== page) _navStack.push(page);
+    if(!['splash','auth','home'].includes(page)) history.pushState({page}, '');
+  }
+}
+
+function goBack() {
+  if(_navStack.length > 1) {
+    _navStack.pop();
+    const prev = _navStack[_navStack.length-1] || 'home';
+    nav(prev, false);
+  } else {
+    nav('home', false);
+  }
+}
+
+// Captura el botón hardware de Android (<)
+window.addEventListener('popstate', function(e) {
+  if(_navStack.length > 1) {
+    _navStack.pop();
+    const prev = _navStack[_navStack.length-1] || 'home';
+    nav(prev, false);
+  }
+});
+
+function fotoTab(btn, id) {
+  stopCamera();
+  btn.closest('.tabs').querySelectorAll('.tab').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  ['fc-cam','fc-gal','fc-man'].forEach(i => { const el=document.getElementById(i); if(el) el.style.display = i===id?'block':'none'; });
+}
+
+function pantryTab(btn, id) {
+  btn.closest('.tabs').querySelectorAll('.tab').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  ['pt-all','pt-exp','pt-low','pt-fav'].forEach(i => { const el=document.getElementById(i); if(el) el.style.display = i===id?'block':'none'; });
+  currentPantryFilter = id.replace('pt-','');
+  renderPantry();
+}
+
+function comprasTab(btn, id) {
+  btn.closest('.tabs').querySelectorAll('.tab').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  ['ct-lista','ct-sugs','ct-hist'].forEach(i => { const el=document.getElementById(i); if(el) el.style.display = i===id?'block':'none'; });
+  if(id==='ct-sugs') renderAutoSuggestions();
+  if(id==='ct-hist') renderHistory();
+}
+
+// ===================== MODALS =====================
+function openModal(id) { document.getElementById(id).classList.add('open'); vib([5]); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+// ===================== TOAST =====================
+let toastTimer;
+function toast(msg, dur=2400) {
+  vib([8]);
+  clearTimeout(toastTimer);
+  const t = document.getElementById('toast');
+  t.innerHTML = msg;
+  t.classList.add('show');
+  toastTimer = setTimeout(() => t.classList.remove('show'), dur);
+}
+
+// ===================== HOME =====================
+function renderHome() {
+  updateHeader();
+  renderStats();
+  renderAlerts();
+  renderFavs();
+  renderHomeHarvest();
+  renderNotifPrompt();
+}
+
+function updateHeader() {
+  const name = S.profile.name;
+  const h = new Date().getHours();
+  const greet = h<12?'Buenos días':h<18?'Buenas tardes':'Buenas noches';
+  const sub = name ? `${greet}, ${name}!` : `${S.pantry.length} alimentos · Toca para explorar`;
+  document.getElementById('hdr-sub').textContent = sub;
+}
+
+function renderStats() {
+  const exp = S.pantry.filter(f=>dU(f.exp)<=5).length;
+  const low = S.pantry.filter(f=>f.min>0&&f.qty<f.min).length;
+  document.getElementById('stats').innerHTML = `
+    <div class="sc"><div class="sn">${S.pantry.length}</div><div class="sl">Alimentos</div></div>
+    <div class="sc"><div class="sn" style="color:var(--rd)">${exp}</div><div class="sl">Por vencer</div></div>
+    <div class="sc"><div class="sn" style="color:var(--am)">${low}</div><div class="sl">Por acabar</div></div>`;
+  // Alert dot on nav
+  const nd = document.getElementById('ni-despensa');
+  if(nd) {
+    if(exp+low>0) {
+      if(!nd.querySelector('.ni-dot')) { const dot=document.createElement('div'); dot.className='ni-dot'; nd.appendChild(dot); }
+    } else { nd.querySelector('.ni-dot')?.remove(); }
+  }
+}
+
+function renderAlerts() {
+  const div = document.getElementById('home-alerts');
+  if(!div) return;
+  let html = '';
+  S.pantry.filter(f=>dU(f.exp)<=0).forEach(f=>{
+    html += `<div class="al ard" onclick="openEditModal(${f.id})"><i class="ti ti-alert-octagon"></i><div class="al-b"><div class="al-t">${esc(f.em)} ${esc(f.name)} venció hoy</div><div class="al-s">¡Úsalo ya o descártalo! Toca para editar</div></div></div>`;
+  });
+  S.pantry.filter(f=>{ const d=dU(f.exp); return d>0&&d<=1; }).forEach(f=>{
+    html += `<div class="al ard" onclick="nav('despensa')"><i class="ti ti-alert-triangle"></i><div class="al-b"><div class="al-t">${esc(f.em)} ${esc(f.name)} vence mañana</div><div class="al-s">Úsalo pronto — toca para ver tu despensa</div></div></div>`;
+  });
+  S.pantry.filter(f=>{ const d=dU(f.exp); return d>1&&d<=5; }).forEach(f=>{
+    html += `<div class="al aam"><i class="ti ti-clock"></i><div class="al-b"><div class="al-t">${esc(f.em)} ${esc(f.name)} vence en ${dU(f.exp)} días</div><div class="al-s">Planifica para no desperdiciar</div></div></div>`;
+  });
+  S.pantry.filter(f=>f.min>0&&f.qty<f.min).forEach(f=>{
+    html += `<div class="al aam" onclick="addShopAuto('${f.name}',true)" style="cursor:pointer"><i class="ti ti-package"></i><div class="al-b"><div class="al-t">${f.em} ${f.name} está por acabar</div><div class="al-s">Toca para agregar a la lista de compras</div></div></div>`;
+  });
+  if(html) html = `<div class="sec">Alertas</div>` + html;
+  div.innerHTML = html;
+}
+
+function renderFavs() {
+  const favs = S.pantry.filter(f=>f.fav);
+  const div = document.getElementById('favs-row');
+  if(!div) return;
+  const sec = document.getElementById('favs-sec');
+  if(favs.length) {
+    if(sec) sec.style.display = '';
+    div.innerHTML = favs.map(f=>`<span class="badge bg" style="cursor:pointer" onclick="nav('despensa')">${f.em} ${f.name}</span>`).join('');
+  } else {
+    if(sec) sec.style.display = 'none';
+    div.innerHTML = '';
+  }
+}
+
+function renderHomeHarvest() {
+  const div = document.getElementById('home-harvest');
+  if(!div) return;
+  const sec = document.getElementById('harvest-sec');
+  const inSeason = getHarvestData().filter(h=>h.season).slice(0,6);
+  if(inSeason.length) {
+    if(sec) sec.style.display = '';
+    div.innerHTML = inSeason.map(h=>`
+    <div class="hc hcs"><div class="he">${h.emoji}</div><div class="hn">${h.name}</div><div class="hs">✅ En cosecha</div></div>`).join('');
+  } else {
+    if(sec) sec.style.display = 'none';
+    div.innerHTML = '';
+  }
+}
+
+function renderNotifPrompt() {
+  const div = document.getElementById('notif-prompt');
+  if(!div) return;
+  if(!('Notification' in window) || Notification.permission !== 'default') { div.innerHTML=''; return; }
+  div.innerHTML = `<div class="notif-banner" onclick="requestNotifications()"><i class="ti ti-bell"></i><div><div style="font-weight:700;font-size:12px">Activar alertas de vencimiento</div><div style="font-size:11px;opacity:.8">Recibe notificaciones cuando tus alimentos estén por vencer</div></div><i class="ti ti-chevron-right" style="margin-left:auto"></i></div>`;
+}
+
+// ===================== PANTRY =====================
+function renderPantry() {
+  const q = (document.getElementById('pantry-search')?.value||'').toLowerCase();
+  let items = [...S.pantry].filter(f => !q || f.name.toLowerCase().includes(q));
+
+  const filter = currentPantryFilter;
+  if(filter==='exp') items = items.filter(f=>dU(f.exp)<=5);
+  else if(filter==='low') items = items.filter(f=>f.min>0&&f.qty<f.min);
+  else if(filter==='fav') items = items.filter(f=>f.fav);
+
+  items.sort((a,b) => dU(a.exp) - dU(b.exp));
+
+  const targetId = {all:'pl-all',exp:'pl-exp',low:'pl-low',fav:'pl-fav'}[filter]||'pl-all';
+  const div = document.getElementById(targetId);
+  if(!div) return;
+
+  if(!items.length) {
+    const msgs = {exp:'Ningún alimento próximo a vencer 🎉',low:'Todo bien abastecido 👍',fav:'No tienes favoritos aún — agrega desde el inventario',all:'Despensa vacía — agrega tu primer alimento'};
+    div.innerHTML = `<div class="empty"><i class="ti ti-mood-happy"></i><p>${msgs[filter]||msgs.all}</p></div>`;
+    return;
+  }
+
+  div.innerHTML = items.map(f => {
+    const d = dU(f.exp);
+    let badgeCls='bg', badgeTxt='OK';
+    if(d<=0){badgeCls='br';badgeTxt='¡Venció!';}
+    else if(d===1){badgeCls='br';badgeTxt='Mañana';}
+    else if(d<=5){badgeCls='bam';badgeTxt=d+'d';}
+    else if(d<=15){badgeCls='btl';badgeTxt=d+'d';}
+    const low = f.min>0&&f.qty<f.min;
+    const pct = f.min>0 ? Math.min(100,Math.round(f.qty/f.min*100)) : 75;
+    const barColor = low?'var(--am2)':d<=5?'var(--rd)':'var(--g3)';
+    return `<div class="fr">
+      <div class="fec">${f.em||catEm(f.cat)}</div>
+      <div class="fi" onclick="openEditModal(${f.id})" style="cursor:pointer">
+        <div class="fn">${esc(f.name)}${f.fav?' ⭐':''}</div>
+        <div class="fm">${f.qty} ${f.unit} · Vence: ${fDate(f.exp)} · ${f.cat}</div>
+        <div class="prog"><div class="pf" style="width:${pct}%;background:${barColor}"></div></div>
+        ${low?`<div style="font-size:10px;color:var(--am);font-weight:700;margin-top:2px">⚠ Stock bajo</div>`:''}
+      </div>
+      <div class="fa">
+        <span class="badge ${badgeCls}">${badgeTxt}</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function saveFood() {
+  const name = document.getElementById('m-name').value.trim();
+  if(!name) { toast('⚠ Ingresa el nombre del alimento'); return; }
+  const cat = document.getElementById('m-cat').value;
+  const item = {
+    id: nid(), name,
+    qty: parseFloat(document.getElementById('m-qty').value)||1,
+    unit: document.getElementById('m-unit').value,
+    exp: document.getElementById('m-exp').value || dF(30),
+    cat, min: parseFloat(document.getElementById('m-min').value)||0,
+    fav: document.getElementById('m-fav').checked,
+    em: foodEm(name, cat)
+  };
+  S.pantry.push(item);
+  saveState();
+  closeModal('m-add');
+  document.getElementById('m-name').value = '';
+  document.getElementById('m-qty').value = '1';
+  document.getElementById('m-exp').value = '';
+  document.getElementById('m-min').value = '0';
+  document.getElementById('m-fav').checked = false;
+  renderPantry();
+  renderStats();
+  renderFavs();
+  toast(`✅ ${name} agregado a la despensa`);
+  vib([10,5,10]);
+}
+
+function openEditModal(id) {
+  const f = S.pantry.find(x=>x.id===id);
+  if(!f) return;
+  document.getElementById('edit-id').value = id;
+  document.getElementById('edit-name').value = f.name;
+  document.getElementById('edit-qty').value = f.qty;
+  document.getElementById('edit-unit').value = f.unit;
+  document.getElementById('edit-exp').value = f.exp||'';
+  document.getElementById('edit-cat').value = f.cat;
+  document.getElementById('edit-min').value = f.min||0;
+  document.getElementById('edit-fav').checked = f.fav||false;
+  openModal('m-edit');
+}
+
+function updateFood() {
+  const id = parseInt(document.getElementById('edit-id').value);
+  const f = S.pantry.find(x=>x.id===id);
+  if(!f) return;
+  const cat = document.getElementById('edit-cat').value;
+  f.name = document.getElementById('edit-name').value.trim()||f.name;
+  f.qty = parseFloat(document.getElementById('edit-qty').value)||f.qty;
+  f.unit = document.getElementById('edit-unit').value;
+  f.exp = document.getElementById('edit-exp').value||f.exp;
+  f.cat = cat;
+  f.min = parseFloat(document.getElementById('edit-min').value)||0;
+  f.fav = document.getElementById('edit-fav').checked;
+  f.em = foodEm(f.name, cat);
+  saveState();
+  closeModal('m-edit');
+  renderPantry();
+  renderStats();
+  renderFavs();
+  toast(`✏️ ${f.name} actualizado`);
+}
+
+function deleteFoodFromEdit() {
+  const id = parseInt(document.getElementById('edit-id').value);
+  const f = S.pantry.find(x=>x.id===id);
+  if(!f || !confirm(`¿Eliminar "${f.name}" de la despensa?`)) return;
+  S.pantry = S.pantry.filter(x=>x.id!==id);
+  saveState();
+  closeModal('m-edit');
+  renderPantry();
+  renderStats();
+  renderFavs();
+  toast(`🗑 ${f.name} eliminado`);
+}
+
+// ===================== CAMERA =====================
+async function startCamera() {
+  try {
+    const constraints = {video:{facingMode:'environment',width:{ideal:1920},height:{ideal:1080}}};
+    camStream = await navigator.mediaDevices.getUserMedia(constraints);
+    const video = document.getElementById('cam-video');
+    video.srcObject = camStream;
+    document.getElementById('cam-wrap').style.display = 'block';
+    document.getElementById('cam-start-area').style.display = 'none';
+    document.getElementById('cam-controls').style.display = 'block';
+    toast('📷 Cámara activada — centra la factura');
+  } catch(e) {
+    toast('⚠ No se pudo acceder a la cámara. Usa la pestaña Galería.');
+  }
+}
+
+function stopCamera() {
+  if(camStream) { camStream.getTracks().forEach(t=>t.stop()); camStream=null; }
+  const wrap = document.getElementById('cam-wrap');
+  if(wrap) wrap.style.display = 'none';
+  const sa = document.getElementById('cam-start-area');
+  if(sa) sa.style.display = 'block';
+  const cc = document.getElementById('cam-controls');
+  if(cc) cc.style.display = 'none';
+}
+
+function capturePhoto() {
+  const video = document.getElementById('cam-video');
+  const canvas = document.getElementById('capture-canvas');
+  canvas.width = video.videoWidth;
+  canvas.height = video.videoHeight;
+  canvas.getContext('2d').drawImage(video,0,0);
+  stopCamera();
+  const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+  const b64 = dataUrl.split(',')[1];
+  analyzeInvoiceImage(b64, 'cam-result');
+  toast('📸 Capturado — analizando con IA...');
+}
+
+function handleGalleryPhoto(e) {
+  const file = e.target.files[0]; if(!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    const img = document.getElementById('gal-preview');
+    img.src = ev.target.result;
+    img.style.display = 'block';
+    document.getElementById('upz').style.display = 'none';
+    const b64 = ev.target.result.split(',')[1];
+    analyzeInvoiceImage(b64, 'gal-detected');
+  };
+  reader.readAsDataURL(file);
+}
+
+function handleDrop(e) {
+  e.preventDefault();
+  document.getElementById('upz').classList.remove('drag');
+  const file = e.dataTransfer.files[0];
+  if(file) handleGalleryPhoto({target:{files:[file]}});
+}
+
+async function analyzeInvoiceImage(b64, resultId) {
+  const div = document.getElementById(resultId);
+  div.style.display = 'block';
+  div.innerHTML = `<div class="al agr"><i class="ti ti-robot"></i><div class="al-b"><div class="al-t">Analizando tu factura con IA...</div><div class="al-s">Detectando alimentos automáticamente</div></div></div><div class="loading-bar"><div class="loading-bar-fill"></div></div>`;
+
+  try {
+    const res = await fetch('https://meri-proxy.giovanniagc92.workers.dev', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({
+        contents: [{parts: [
+          {inline_data: {mime_type: 'image/jpeg', data: b64}},
+          {text: 'Analiza esta imagen. Si es una factura o tiquete de supermercado, extrae SOLO los nombres de alimentos/comida comprados, uno por línea, sin cantidades ni precios. Si no es una factura, responde solo NO_FACTURA. Responde en español con nombres simples como: Leche, Tomates, Arroz, etc.'}
+        ]}]
+      })
+    });
+    const data = await res.json();
+    const text = data.candidates?.[0]?.content?.parts?.[0]?.text || data.candidates?.[0]?.output || '';
+    if(text.trim() === 'NO_FACTURA') {
+      div.innerHTML = `<div class="al ard"><i class="ti ti-photo-x"></i><div class="al-b"><div class="al-t">No parece una factura</div><div class="al-s">Sube la foto de un tiquete de supermercado o ingrésalo manualmente</div></div></div>`;
+      return;
+    }
+    const foods = text.split('\n').map(l=>l.replace(/^[-•*\d.]+\s*/,'').trim()).filter(l=>l.length>1&&l.length<40);
+    if(!foods.length) { div.innerHTML = `<div class="al aam"><i class="ti ti-alert-triangle"></i><div class="al-b"><div class="al-t">No se detectaron alimentos</div><div class="al-s">Intenta con mejor iluminación o usa el modo manual</div></div></div>`; return; }
+
+    let detectedSet = new Set();
+    div.innerHTML = `
+      <div class="sec" style="margin-top:4px">Alimentos detectados (${foods.length}) — toca para seleccionar</div>
+      <div id="det-chips-inner">${foods.map(f=>`<span class="chip chip-det" onclick="togDetected(this,'${f.replace(/'/g,'')}')">${foodEm(f,'Otros')} ${f}</span>`).join('')}</div>
+      <div style="display:flex;gap:8px;margin-top:12px">
+        <button class="btn" style="flex:1;font-size:12px" onclick="addAllDetected()"><i class="ti ti-plus"></i> Todos a despensa</button>
+      </div>`;
+    window._detectedFoods = foods;
+    window._selectedDetected = new Set();
+  } catch(e) {
+    div.innerHTML = `<div class="al ard"><i class="ti ti-wifi-off"></i><div class="al-b"><div class="al-t">Error de conexión</div><div class="al-s">Verifica tu internet e intenta de nuevo</div></div></div>`;
+  }
+}
+
+function togDetected(el, name) {
+  if(!window._selectedDetected) window._selectedDetected = new Set();
+  if(window._selectedDetected.has(name)) { window._selectedDetected.delete(name); el.classList.remove('sel'); }
+  else { window._selectedDetected.add(name); el.classList.add('sel'); }
+}
+
+function addAllDetected() {
+  const foods = window._detectedFoods || [];
+  foods.forEach(name => {
+    if(!S.pantry.find(f=>f.name.toLowerCase()===name.toLowerCase()))
+      S.pantry.push({id:nid(),name,qty:1,unit:'unidades',exp:dF(7),cat:'Otros',fav:false,min:0,em:foodEm(name,'Otros')});
+  });
+  saveState();
+  toast(`✅ ${foods.length} alimentos agregados a la despensa`);
+  nav('despensa');
+}
+
+// ===================== AI =====================
+async function callAI(targetId, prompt, onSuccess=null) {
+  let el = document.getElementById(targetId);
+  if(!el) return;
+  el.innerHTML = `<div class="ai-box"><div class="ai-hdr"><i class="ti ti-robot"></i> Generando con IA...</div><div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div></div>`;
+  el.scrollIntoView({behavior:'smooth',block:'nearest'});
+  try {
+    const res = await fetch('https://meri-proxy.giovanniagc92.workers.dev', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({
+        contents: [{parts: [{text: prompt}]}],
+        generationConfig: {maxOutputTokens: 2000, temperature: 0.7}
+      })
+    });
+    if(!res.ok) throw new Error('API error: '+res.status);
+    const data = await res.json();
+    const text = (data.candidates?.[0]?.content?.parts?.[0]?.text) ||
+      (data.candidates?.[0]?.output) ||
+      (typeof data === 'string' ? data : JSON.stringify(data)) || 'Sin respuesta.';
+    if(onSuccess) {
+      onSuccess(text);
+    }
+    vib([10,5,20]);
+  } catch(e) {
+    const isQuota = e.message && e.message.includes('429');
+    el.innerHTML = `<div class="ai-box" style="background:var(--rdl);color:var(--rd)"><div class="ai-hdr"><i class="ti ti-${isQuota?'clock':'wifi-off'}"></i> ${isQuota?'Límite de IA alcanzado':'Sin conexión'}</div>${isQuota?'Se alcanzó el límite diario de la IA. Intenta mañana o contacta al desarrollador.':'Verifica tu internet e intenta de nuevo.'}</div>`;
+  }
+}
+
+// ===================== HARVEST =====================
+// Precios mayoristas SIPSA-DANE, plaza Corabastos (Bogotá) — actualizado 2026-08-14
+// Fuente: Boletín diario SIPSA-DANE vía AgroPrecios.com.co
+const HARVEST_PRICES_UPDATED = '2026-08-14';
+// Base de precios completa (catálogo SIPSA-DANE Corabastos) para el buscador.
+// n=nombre, min/max=precio de referencia, u='kg' (precio por kilogramo) o 'presentación' (precio por unidad de venta), p=presentación de referencia
+const SIPSA_DB = [
+{n:'Aceite soya',min:96800,max:99000,u:'presentación',p:'Caja de cartón x 12 unidades de 1000 CC'},
+{n:'Acelga',min:400,max:467,u:'kg',p:'Atado/manojo de 15 kg'},
+{n:'Aguacate Hass',min:9000,max:10000,u:'kg',p:'Kilogramo'},
+{n:'Aguacate papelillo',min:12000,max:12500,u:'kg',p:'Kilogramo'},
+{n:'Ahuyama',min:1600,max:1800,u:'kg',p:'Kilogramo'},
+{n:'Ahuyamín (sakata)',min:1000,max:1200,u:'kg',p:'Bulto de 50 kg'},
+{n:'Ajo importado',min:5500,max:6000,u:'kg',p:'Caja de cartón de 10 kg'},
+{n:'Ajo',min:12000,max:13000,u:'kg',p:'Atado/manojo de 5 kg'},
+{n:'Almejas con concha',min:6000,max:8000,u:'presentación',p:'Kilogramo'},
+{n:'Almejas sin concha',min:18000,max:18000,u:'presentación',p:'Kilogramo'},
+{n:'Apio',min:320,max:400,u:'kg',p:'Atado/manojo de 25 kg'},
+{n:'Arándano',min:6000,max:6500,u:'presentación',p:'Caja PET de 125 g'},
+{n:'Arracacha amarilla',min:5333,max:5833,u:'kg',p:'Bulto de 60 kg'},
+{n:'Arroz de primera',min:3040,max:3200,u:'kg',p:'Bulto de 50 kg'},
+{n:'Arroz de segunda',min:2100,max:2400,u:'kg',p:'Bulto de 50 kg'},
+{n:'Arroz sopa cristal',min:2400,max:2960,u:'kg',p:'Arroba de 12.5 kg'},
+{n:'Arveja amarilla seca importada',min:3200,max:3680,u:'kg',p:'Arroba de 12.5 kg'},
+{n:'Arveja verde en vaina pastusa',min:5600,max:6000,u:'kg',p:'Bulto de 50 kg'},
+{n:'Arveja verde en vaina',min:7400,max:7600,u:'kg',p:'Bulto de 50 kg'},
+{n:'Arveja verde seca importada',min:3340,max:3500,u:'kg',p:'Bulto de 50 kg'},
+{n:'Avena en hojuelas',min:94800,max:97500,u:'presentación',p:'Bolsa de 54 unidades de 180 g'},
+{n:'Avena molida',min:102000,max:107750,u:'presentación',p:'Bolsa de 54 unidades de 180 g'},
+{n:'Azúcar refinada',min:3840,max:4240,u:'kg',p:'Arroba de 12.5 kg'},
+{n:'Azúcar sulfitada',min:2960,max:3320,u:'kg',p:'Bulto de 50 kg'},
+{n:'Banano bocadillo',min:2400,max:2700,u:'kg',p:'Kilogramo'},
+{n:'Banano criollo',min:2000,max:2500,u:'kg',p:'Kilogramo'},
+{n:'Banano urabá',min:2150,max:2250,u:'kg',p:'Caja de cartón de 20 kg'},
+{n:'Basa entero congelado importado',min:9000,max:12000,u:'kg',p:'Kilogramo'},
+{n:'Basa filete congelado importado',min:13000,max:15000,u:'kg',p:'Kilogramo'},
+{n:'Berenjena',min:4500,max:5000,u:'kg',p:'Kilogramo'},
+{n:'Bocadillo veleño',min:15000,max:16000,u:'presentación',p:'Caja de cartón x 36 unidades'},
+{n:'Borojó',min:5000,max:6000,u:'kg',p:'Kilogramo'},
+{n:'Brócoli',min:4000,max:4000,u:'kg',p:'Docena de 10 kg'},
+{n:'Café instantáneo',min:31150,max:33000,u:'presentación',p:'Frasco de 170 g'},
+{n:'Café molido',min:299000,max:318000,u:'presentación',p:'Bolsa x 12 unidades de 500 g'},
+{n:'Calabacín',min:750,max:1000,u:'kg',p:'Bolsa de 20 kg'},
+{n:'Calamar anillos',min:30000,max:38000,u:'kg',p:'Kilogramo'},
+{n:'Calamar blanco entero',min:15000,max:17000,u:'kg',p:'Kilogramo'},
+{n:'Cazuela de mariscos',min:18000,max:19000,u:'kg',p:'Kilogramo (paquete)'},
+{n:'Cebolla cabezona blanca',min:3200,max:3600,u:'kg',p:'Bulto de 50 kg'},
+{n:'Cebolla cabezona roja',min:3200,max:3400,u:'kg',p:'Bulto de 50 kg'},
+{n:'Cebolla junca aquitania',min:5000,max:5333,u:'kg',p:'Atado/manojo de 30 kg'},
+{n:'Cebolla puerro',min:2000,max:2500,u:'kg',p:'Atado/manojo de 20 kg'},
+{n:'Chocolate amargo',min:16000,max:16700,u:'presentación',p:'Unidad de 224 g'},
+{n:'Chocolate dulce',min:705000,max:735000,u:'presentación',p:'Caja de cartón x 48 unidades de 450 g'},
+{n:'Chócolo mazorca',min:1200,max:1400,u:'kg',p:'Bulto de 50 kg'},
+{n:'Cidra',min:2500,max:3000,u:'kg',p:'Kilogramo'},
+{n:'Cilantro',min:3500,max:4000,u:'kg',p:'Atado/manojo de 10 kg'},
+{n:'Ciruela roja',min:2800,max:3200,u:'kg',p:'Canastilla de 25 kg'},
+{n:'Coco',min:5833,max:6250,u:'kg',p:'Docena de 12 kg'},
+{n:'Coliflor',min:3000,max:4000,u:'kg',p:'Docena de 10 kg'},
+{n:'Color (bolsita)',min:1200,max:1800,u:'presentación',p:'Sobre/papeleta de 55 g'},
+{n:'Cuchuco de cebada',min:3920,max:4960,u:'kg',p:'Arroba de 12.5 kg'},
+{n:'Cuchuco de maíz',min:3600,max:4000,u:'kg',p:'Arroba de 12.5 kg'},
+{n:'Curuba',min:3636,max:3864,u:'kg',p:'Canastilla de 22 kg'},
+{n:'Durazno nacional',min:6000,max:7000,u:'kg',p:'Kilogramo'},
+{n:'Espinaca',min:1500,max:1500,u:'kg',p:'Atado/manojo de 10 kg'},
+{n:'Fécula de maíz',min:480000,max:500000,u:'presentación',p:'Caja de cartón x 40 unidades de 380 g'},
+{n:'Feijoa',min:5000,max:6000,u:'kg',p:'Kilogramo'},
+{n:'Fresa',min:13000,max:14000,u:'kg',p:'Kilogramo'},
+{n:'Fríjol bolón',min:14640,max:15000,u:'kg',p:'Bulto de 50 kg'},
+{n:'Fríjol cargamanto rojo',min:10400,max:10800,u:'kg',p:'Bulto de 50 kg'},
+{n:'Fríjol verde cargamanto',min:4000,max:4400,u:'kg',p:'Bulto de 50 kg'},
+{n:'Galletas saladas',min:127000,max:135000,u:'presentación',p:'Caja de cartón x 24 unidades de 300 g'},
+{n:'Garbanzo importado',min:8000,max:8700,u:'kg',p:'Bulto de 50 kg'},
+{n:'Gelatina',min:64450,max:68500,u:'presentación',p:'Caja de cartón x 48 unidades de 14 g'},
+{n:'Granadilla',min:9333,max:9333,u:'kg',p:'Caja de cartón de 15 kg'},
+{n:'Guanábana',min:4500,max:5000,u:'kg',p:'Kilogramo'},
+{n:'Guayaba pera',min:6429,max:7143,u:'kg',p:'Canastilla de 14 kg'},
+{n:'Gulupa',min:5000,max:5417,u:'kg',p:'Canastilla de 12 kg'},
+{n:'Habichuela',min:4667,max:5000,u:'kg',p:'Bulto de 60 kg'},
+{n:'Harina de trigo',min:2780,max:3000,u:'kg',p:'Bulto de 50 kg'},
+{n:'Harina precocida de maíz',min:50000,max:54000,u:'presentación',p:'Bolsa x 24 unidades de 500 g'},
+{n:'Higo',min:10000,max:10000,u:'kg',p:'Kilogramo'},
+{n:'Huevo rojo A',min:11000,max:12000,u:'presentación',p:'Panal x 30 unidades'},
+{n:'Huevo rojo AA',min:12000,max:13000,u:'presentación',p:'Panal x 30 unidades'},
+{n:'Huevo rojo B',min:10800,max:11000,u:'presentación',p:'Panal x 30 unidades'},
+{n:'Huevo rojo extra',min:14000,max:14500,u:'presentación',p:'Panal x 30 unidades'},
+{n:'Jugo instantáneo (sobre)',min:17000,max:18000,u:'presentación',p:'Caja de cartón x 20 unidades de 10 g'},
+{n:'Kiwi',min:12000,max:14000,u:'kg',p:'Canastilla de 10 kg'},
+{n:'Leche en polvo',min:285000,max:298000,u:'presentación',p:'Caja de cartón x 30 bolsas de 380 g'},
+{n:'Lechuga batavia',min:2000,max:2500,u:'kg',p:'Docena de 10 kg'},
+{n:'Lechuga crespa verde',min:4000,max:4000,u:'kg',p:'Bolsa de 6 kg'},
+{n:'Lenteja importada',min:4960,max:5200,u:'kg',p:'Bulto de 50 kg'},
+{n:'Limón común',min:2286,max:2571,u:'kg',p:'Bulto de 70 kg'},
+{n:'Limón Tahití',min:2286,max:2571,u:'kg',p:'Bulto de 70 kg'},
+{n:'Lomitos de atún en lata',min:257000,max:279000,u:'presentación',p:'Caja de cartón x 48 unidades de 140 g'},
+{n:'Lulo',min:5800,max:6000,u:'kg',p:'Canastilla de 25 kg'},
+{n:'Maíz amarillo cáscara',min:1750,max:1950,u:'kg',p:'Bulto de 60 kg'},
+{n:'Maíz blanco trillado',min:1980,max:2140,u:'kg',p:'Bulto de 50 kg'},
+{n:'Maíz pira',min:3300,max:3800,u:'kg',p:'Bulto de 25 kg'},
+{n:'Mandarina arrayana',min:4545,max:5000,u:'kg',p:'Canastilla de 22 kg'},
+{n:'Mango de azúcar',min:6250,max:6667,u:'kg',p:'Canastilla de 24 kg'},
+{n:'Mango Tommy',min:7500,max:8333,u:'kg',p:'Canastilla de 24 kg'},
+{n:'Manteca',min:7973,max:8133,u:'kg',p:'Caja de cartón de 15 kg'},
+{n:'Manzana nacional',min:7000,max:8000,u:'kg',p:'Canastilla de 20 kg'},
+{n:'Manzana roja importada',min:8421,max:8947,u:'kg',p:'Caja de cartón de 19 kg'},
+{n:'Manzana royal gala importada',min:7368,max:8421,u:'kg',p:'Caja de cartón de 19 kg'},
+{n:'Manzana verde importada',min:8947,max:9474,u:'kg',p:'Caja de cartón de 19 kg'},
+{n:'Maracuyá',min:4000,max:4500,u:'kg',p:'Bolsa de 10 kg'},
+{n:'Margarina',min:15555,max:16000,u:'kg',p:'Caja de cartón de 10 kg'},
+{n:'Mayonesa doy pack',min:50000,max:55000,u:'presentación',p:'Caja de cartón x 24 unidades de 120 g'},
+{n:'Melón cantalupo',min:1500,max:2000,u:'kg',p:'Kilogramo'},
+{n:'Merluza filete nacional',min:60000,max:62000,u:'kg',p:'Kilogramo'},
+{n:'Mora de Castilla',min:6333,max:6667,u:'kg',p:'Caja de madera de 6 kg'},
+{n:'Naranja sweet',min:2250,max:2500,u:'kg',p:'Canastilla de 20 kg'},
+{n:'Naranja Valencia',min:2250,max:2500,u:'kg',p:'Canastilla de 20 kg'},
+{n:'Panela cuadrada morena',min:88000,max:90000,u:'presentación',p:'Caja de cartón x 40 unidades de 500 g'},
+{n:'Panela pulverizada',min:80000,max:85000,u:'presentación',p:'Paca x 25 unidades de 500 g'},
+{n:'Papa criolla limpia',min:5778,max:6222,u:'kg',p:'Bulto de 45 kg'},
+{n:'Papa criolla sucia',min:3800,max:4000,u:'kg',p:'Bulto de 50 kg'},
+{n:'Papa parda pastusa',min:1800,max:2000,u:'kg',p:'Bulto de 50 kg'},
+{n:'Papa R-12 negra',min:1800,max:2000,u:'kg',p:'Bulto de 50 kg'},
+{n:'Papa sabanera',min:3600,max:4000,u:'kg',p:'Bulto de 50 kg'},
+{n:'Papa superior',min:1800,max:2000,u:'kg',p:'Bulto de 50 kg'},
+{n:'Papaya paulina',min:1389,max:1667,u:'kg',p:'Caja de madera de 18 kg'},
+{n:'Papaya Tainung',min:2500,max:3000,u:'kg',p:'Caja de madera de 10 kg'},
+{n:'Pastas alimenticias',min:45000,max:46200,u:'presentación',p:'Bolsa x 24 unidades de 250 g'},
+{n:'Patilla baby',min:2100,max:2700,u:'kg',p:'Kilogramo'},
+{n:'Patilla',min:2300,max:2500,u:'kg',p:'Kilogramo'},
+{n:'Pepino cohombro',min:3000,max:4000,u:'kg',p:'Kilogramo'},
+{n:'Pepino de rellenar (caja)',min:3750,max:4167,u:'kg',p:'Caja de cartón de 12 kg'},
+{n:'Pepino de rellenar (canastilla)',min:4000,max:5000,u:'kg',p:'Canastilla de 10 kg'},
+{n:'Pera importada',min:7000,max:7500,u:'kg',p:'Caja de cartón de 20 kg'},
+{n:'Pera nacional',min:1522,max:1739,u:'kg',p:'Canastilla de 23 kg'},
+{n:'Perejil',min:3333,max:3333,u:'kg',p:'Atado/manojo de 6 kg'},
+{n:'Pimentón',min:3500,max:4000,u:'kg',p:'Kilogramo'},
+{n:'Piña Gold',min:2000,max:2364,u:'kg',p:'Caja de cartón de 11 kg'},
+{n:'Pitahaya',min:8000,max:9000,u:'kg',p:'Kilogramo'},
+{n:'Plátano guineo',min:2300,max:3000,u:'kg',p:'Kilogramo'},
+{n:'Plátano hartón maduro',min:2000,max:2250,u:'kg',p:'Bolsa de 20 kg'},
+{n:'Plátano hartón verde llanero',min:3000,max:3500,u:'kg',p:'Canastilla de 20 kg'},
+{n:'Plátano hartón verde',min:2000,max:2250,u:'kg',p:'Bolsa de 20 kg'},
+{n:'Queso campesino',min:16000,max:16500,u:'kg',p:'Kilogramo'},
+{n:'Queso costeño',min:21000,max:23000,u:'kg',p:'Kilogramo'},
+{n:'Queso cuajada',min:17000,max:19000,u:'kg',p:'Kilogramo'},
+{n:'Queso doble crema',min:18000,max:20000,u:'kg',p:'Bloque de 2.5 kg'},
+{n:'Remolacha',min:1167,max:1333,u:'kg',p:'Bulto de 60 kg'},
+{n:'Repollo verde',min:1077,max:1231,u:'kg',p:'Bulto de 65 kg'},
+{n:'Sal yodada (bolsa)',min:49700,max:54000,u:'presentación',p:'Bolsa de 20 unidades de 1 kg'},
+{n:'Sal yodada (bulto)',min:1400,max:1600,u:'kg',p:'Bulto de 50 kg'},
+{n:'Salsa de tomate doy pack',min:50000,max:52000,u:'presentación',p:'Caja de cartón x 24 unidades de 120 g'},
+{n:'Sardinas en lata',min:180000,max:186200,u:'presentación',p:'Caja de cartón x 24 unidades de 425 g'},
+{n:'Sopa de pollo (caja)',min:76300,max:80000,u:'presentación',p:'Caja de cartón x 36 unidades de 85 g'},
+{n:'Tangelo',min:4400,max:4800,u:'kg',p:'Canastilla de 25 kg'},
+{n:'Tomate chonto',min:3636,max:4091,u:'kg',p:'Canastilla de 22 kg'},
+{n:'Tomate larga vida',min:5500,max:6000,u:'kg',p:'Canastilla de 20 kg'},
+{n:'Vinagre',min:5000,max:5000,u:'presentación',p:'Frasco de 3 litros'},
+{n:'Yuca llanera',min:2667,max:3000,u:'kg',p:'Bolsa de 30 kg'},
+{n:'Zanahoria',min:2667,max:3000,u:'kg',p:'Bulto de 60 kg'},
+];
+function normSearch(s) {
+  return (s||'').toString().normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().trim();
+}
+function getHarvestData() {
+  const m = new Date().getMonth()+1;
+  return [
+    {name:'Maracuyá',emoji:'🌺',months:[5,6,7,8],priceMin:4500,priceMax:5000,unit:'kg',pres:'Bolsa de 10 kg (Maracuyá): $45.000 – $50.000'},
+    {name:'Mango',emoji:'🥭',months:[4,5,6,7,8],priceMin:8300,priceMax:9200,unit:'kg',pres:'Canastilla de 24 kg (Mango tommy): $200.000 – $220.000'},
+    {name:'Frijol',emoji:'🫘',months:[5,6,7,10,11,12],priceMin:5600,priceMax:6000,unit:'kg',pres:'Bulto de 50 kg (Fríjol verde cargamanto): $280.000 – $300.000'},
+    {name:'Maíz',emoji:'🌽',months:[6,7,8,9],priceMin:2400,priceMax:2600,unit:'kg',pres:'Bulto de 50 kg (Chócolo mazorca): $120.000 – $130.000'},
+    {name:'Aguacate',emoji:'🥑',months:[6,7,8,9,10],priceMin:9000,priceMax:10000,unit:'kg',pres:'Kilogramo (Aguacate hass): $9.000 – $10.000'},
+    {name:'Papa',emoji:'🥔',months:[6,7,8,11,12],priceMin:2000,priceMax:2400,unit:'kg',pres:'Bulto de 50 kg (Papa parda pastusa): $100.000 – $120.000'},
+    {name:'Fresa',emoji:'🍓',months:[1,2,3],priceMin:12000,priceMax:13000,unit:'kg',pres:'Kilogramo (Fresa): $12.000 – $13.000'},
+    {name:'Banano',emoji:'🍌',months:[1,2,3,4,5,6,7,8,9,10,11,12],priceMin:2000,priceMax:2800,unit:'kg',pres:'Kilogramo (Banano criollo): $2.000 – $2.800'},
+    {name:'Naranja',emoji:'🍊',months:[12,1,2,3],priceMin:2500,priceMax:3000,unit:'kg',pres:'Canastilla de 20 kg (Naranja valencia): $50.000 – $60.000'},
+    {name:'Tomate',emoji:'🍅',months:[3,4,5,6,7],priceMin:3000,priceMax:3400,unit:'kg',pres:'Canastilla de 22 kg (Tomate chonto): $65.000 – $75.000'},
+    {name:'Lulo',emoji:'🟠',months:[6,7,8,9],priceMin:5200,priceMax:5600,unit:'kg',pres:'Canastilla de 25 kg (Lulo): $130.000 – $140.000'},
+    {name:'Mora',emoji:'🫐',months:[4,5,6,9,10],priceMin:5800,priceMax:6700,unit:'kg',pres:'Caja de madera de 6 kg (Mora de castilla): $35.000 – $40.000'},
+    {name:'Piña',emoji:'🍍',months:[3,4,5,9,10],priceMin:3200,priceMax:3600,unit:'kg',pres:'Caja de cartón de 11 kg (Piña gold): $35.000 – $40.000'},
+    {name:'Guayaba',emoji:'🍐',months:[8,9,10,11],priceMin:2500,priceMax:2900,unit:'kg',pres:'Canastilla de 14 kg (Guayaba pera): $35.000 – $40.000'},
+    {name:'Yuca',emoji:'🪵',months:[1,4,7,10],priceMin:2300,priceMax:2700,unit:'kg',pres:'Bolsa de 30 kg (Yuca llanera): $70.000 – $80.000'},
+    {name:'Cacao',emoji:'🍫',months:[10,11,12,1],priceMin:null,priceMax:null,unit:'kg',pres:null},
+    {name:'Limón',emoji:'🍋',months:[1,2,11,12],priceMin:2100,priceMax:2400,unit:'kg',pres:'Bulto de 70 kg (Limón Tahití): $150.000 – $170.000'},
+    {name:'Zapote',emoji:'🟤',months:[11,12,1,2],priceMin:null,priceMax:null,unit:'kg',pres:null},
+  ].map(h=>({...h,season:h.months.includes(m)}));
+}
+
+function renderHarvest() {
+  const qRaw = (document.getElementById('harvest-search')?.value||'').trim();
+  const q = normSearch(qRaw);
+  const defaultBox = document.getElementById('harvest-default');
+  const resultsBox = document.getElementById('harvest-search-results');
+  const mNames = ['','Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+  const m = new Date().getMonth()+1;
+  document.getElementById('cosecha-month').textContent = `${mNames[m]} — basado en temporadas colombianas`;
+
+  if(q) {
+    // Búsqueda en el catálogo completo de precios SIPSA-DANE
+    defaultBox.style.display = 'none';
+    resultsBox.style.display = '';
+    const matches = SIPSA_DB.filter(d=>normSearch(d.n).includes(q));
+    if(!matches.length) {
+      resultsBox.innerHTML = `<div class="empty" style="padding:24px 16px"><i class="ti ti-search"></i><p>Sin resultados para "${qRaw}"</p></div>`;
+    } else {
+      resultsBox.innerHTML = `<div class="sec">Resultados (${matches.length})</div>` + matches.map(d=>`
+        <div class="fr" onclick="showSipsaPrice('${d.n.replace(/'/g,"\\'")}')" style="cursor:pointer">
+          <div class="fec"><i class="ti ti-tag"></i></div>
+          <div class="fi">
+            <div class="fn">${d.n}</div>
+            <div class="fm">${d.u==='kg' ? `$${d.min.toLocaleString('es-CO')} – $${d.max.toLocaleString('es-CO')} / kg` : d.p}</div>
+          </div>
+          <i class="ti ti-chevron-right" style="color:var(--tx3)"></i>
+        </div>`).join('');
+    }
+    return;
+  }
+
+  // Sin búsqueda: vista por defecto con los productos en temporada
+  resultsBox.style.display = 'none';
+  resultsBox.innerHTML = '';
+  defaultBox.style.display = '';
+  const data = getHarvestData();
+  const now = data.filter(h=>h.season);
+  const soon = data.filter(h=>!h.season);
+  document.getElementById('harvest-now').innerHTML = now.map(h=>`
+    <div class="hc hcs" onclick="showHarvestPrice('${h.name}')"><div class="he">${h.emoji}</div><div class="hn">${h.name}</div><div class="hs">✅ En cosecha</div></div>`).join('');
+  document.getElementById('harvest-soon').innerHTML = soon.map(h=>`
+    <div class="hc" onclick="showHarvestPrice('${h.name}')"><div class="he">${h.emoji}</div><div class="hn">${h.name}</div><div class="hs">📅 Fuera temporada</div></div>`).join('');
+  const secs = document.querySelectorAll('#p-cosecha .sec');
+  secs[0].style.display = now.length ? '' : 'none';
+  document.getElementById('harvest-now').style.display = now.length ? '' : 'none';
+  secs[1].style.display = soon.length ? '' : 'none';
+  document.getElementById('harvest-soon').style.display = soon.length ? '' : 'none';
+}
+
+function showSipsaPrice(name) {
+  const d = SIPSA_DB.find(x=>x.n===name);
+  if(!d) return;
+  const dt = new Date(HARVEST_PRICES_UPDATED+'T00:00:00');
+  const fecha = dt.toLocaleDateString('es-CO',{day:'numeric',month:'long',year:'numeric'});
+  const priceLabel = d.u==='kg' ? 'Precio mayorista por kilogramo' : 'Precio mayorista por presentación';
+  document.getElementById('m-harvest-content').innerHTML = `
+    <div style="text-align:center;font-size:36px;margin-bottom:4px"><i class="ti ti-tag" style="color:var(--g2)"></i></div>
+    <div class="mt" style="text-align:center">${d.n}</div>
+    <div style="text-align:center;margin-bottom:14px">
+      <div style="font-size:13px;color:var(--tx3);font-weight:700;margin-bottom:6px">${priceLabel}</div>
+      <div style="font-size:30px;font-weight:900;color:var(--g2);font-family:'Fraunces',serif">$${d.min.toLocaleString('es-CO')} – $${d.max.toLocaleString('es-CO')}</div>
+    </div>
+    <div class="al agr" style="margin-bottom:10px">
+      <i class="ti ti-scale"></i>
+      <div class="al-b"><div class="al-t">Presentación de referencia</div><div class="al-s">${d.p}</div></div>
+    </div>
+    <div class="al atl">
+      <i class="ti ti-map-pin"></i>
+      <div class="al-b"><div class="al-t">Fuente: SIPSA-DANE, Corabastos (Bogotá)</div><div class="al-s">Actualizado: ${fecha}. Precios mayoristas de referencia; pueden variar por ciudad y calidad.</div></div>
+    </div>`;
+  openModal('m-harvest');
+}
+
+function showHarvestPrice(name) {
+  const h = getHarvestData().find(x=>x.name===name);
+  if(!h) return;
+  const d = new Date(HARVEST_PRICES_UPDATED+'T00:00:00');
+  const fecha = d.toLocaleDateString('es-CO',{day:'numeric',month:'long',year:'numeric'});
+  let body;
+  if(h.priceMin!=null) {
+    body = `
+      <div style="text-align:center;margin-bottom:14px">
+        <div style="font-size:13px;color:var(--tx3);font-weight:700;margin-bottom:6px">Precio mayorista por ${h.unit}</div>
+        <div style="font-size:30px;font-weight:900;color:var(--g2);font-family:'Fraunces',serif">$${h.priceMin.toLocaleString('es-CO')} – $${h.priceMax.toLocaleString('es-CO')}</div>
+      </div>
+      <div class="al agr" style="margin-bottom:10px">
+        <i class="ti ti-scale"></i>
+        <div class="al-b"><div class="al-t">Presentación de referencia</div><div class="al-s">${h.pres}</div></div>
+      </div>
+      <div class="al atl">
+        <i class="ti ti-map-pin"></i>
+        <div class="al-b"><div class="al-t">Fuente: SIPSA-DANE, Corabastos (Bogotá)</div><div class="al-s">Actualizado: ${fecha}. Precios mayoristas de referencia; pueden variar por ciudad y calidad.</div></div>
+      </div>`;
+  } else {
+    body = `
+      <div class="empty" style="padding:16px">
+        <i class="ti ti-mood-empty"></i>
+        <p>Precio no disponible en el boletín de Corabastos por ahora. Se actualizará automáticamente cada semana.</p>
+      </div>`;
+  }
+  document.getElementById('m-harvest-content').innerHTML = `
+    <div style="text-align:center;font-size:40px;margin-bottom:4px">${h.emoji}</div>
+    <div class="mt" style="text-align:center">${h.name}</div>
+    ${body}`;
+  openModal('m-harvest');
+}
+
+// ===================== SHOPPING =====================
+function renderShopList() {
+  const div = document.getElementById('shop-items');
+  const empty = document.getElementById('shop-empty');
+  if(!S.shopping.length) {
+    div.innerHTML=''; if(empty) empty.style.display='block'; return;
+  }
+  if(empty) empty.style.display='none';
+  div.innerHTML = S.shopping.map(s=>`
+    <div class="sr${s.done?' dn':''}" data-sid="${s.id}">
+      <div class="chk${s.done?' ok':''}" onclick="toggleShop(${s.id})" role="checkbox" aria-checked="${s.done}">
+        ${s.done?'<i class="ti ti-check" style="font-size:13px"></i>':''}
+      </div>
+      <div class="shop-content" style="flex:1;min-width:0;cursor:${s.done?'default':'pointer'}" onclick="${s.done?'':` editShopQty(${s.id})`}">
+        <div class="sn2">${s.urgent&&!s.done?'🔴 ':''}${esc(s.name)}</div>
+        <div style="font-size:11px;color:var(--tx2);font-weight:600">${s.qty||1} ${s.unit||'unidades'}</div>
+      </div>
+      <button class="btn btni" onclick="deleteShop(${s.id})" aria-label="Eliminar" style="color:var(--tx3);padding:7px"><i class="ti ti-x" style="font-size:14px"></i></button>
+    </div>`).join('');
+  const pending = S.shopping.filter(s=>!s.done).length;
+  const nc = document.getElementById('ni-compras');
+  if(nc) {
+    const existDot = nc.querySelector('.ni-dot');
+    if(pending>0&&!existDot){const d=document.createElement('div');d.className='ni-dot';nc.appendChild(d);}
+    else if(pending===0&&existDot) existDot.remove();
+  }
+}
+
+function renderAutoSuggestions() {
+  const div = document.getElementById('auto-sugs');
+  if(!div) return;
+  const low = S.pantry.filter(f=>f.min>0&&f.qty<f.min&&!S.shopping.find(s=>s.name.toLowerCase().includes(f.name.toLowerCase())));
+  const exp = S.pantry.filter(f=>dU(f.exp)<=3&&!S.shopping.find(s=>s.name.toLowerCase().includes(f.name.toLowerCase())));
+  let html = '';
+  if(low.length) low.forEach(f=>{html+=`<div class="remind" onclick="addShopAuto('${f.name.replace(/'/g,"\'")}',true)"><i class="ti ti-package"></i><div><div>${f.em} ${f.name} — poco stock</div><div style="font-size:10px;opacity:.8">Toca para agregar a la lista</div></div></div>`;});
+  if(exp.length) exp.forEach(f=>{html+=`<div class="remind" onclick="addShopAuto('${f.name.replace(/'/g,"\'")}',false)" style="background:var(--rdl);color:var(--rd);border-color:rgba(185,45,45,.15)"><i class="ti ti-alert-triangle"></i><div><div>${f.em} ${f.name} — vence pronto</div><div style="font-size:10px;opacity:.8">Toca para agregar a la lista</div></div></div>`;});
+  if(!html) html = '<div class="empty" style="padding:20px"><i class="ti ti-thumb-up"></i><p>Todo bien abastecido</p></div>';
+  div.innerHTML = html;
+}
+
+function renderHistory() {
+  const div = document.getElementById('hist-list');
+  if(!div) return;
+  const ph = S.purchaseHistory || [];
+  if(!ph.length) {
+    div.innerHTML = '<div class="empty" style="padding:20px"><i class="ti ti-history"></i><p>Sin compras registradas — marca items como comprados y limpía la lista</p></div>';
+    return;
+  }
+  div.innerHTML = ph.map(h=>`
+    <div class="fr" style="flex-direction:column;align-items:flex-start;gap:4px;padding:12px 0">
+      <div style="display:flex;align-items:center;gap:8px;width:100%">
+        <div class="fec">🛒</div>
+        <div class="fi" style="flex:1"><div class="fn">${fDate(h.date)}</div>
+        <div class="fm">${h.items.length} producto(s)</div></div>
+      </div>
+      <div style="margin-left:50px;font-size:11px;color:var(--tx2);line-height:1.8">
+        ${h.items.map(i=>`• ${i.name} — ${i.qty} ${i.unit}`).join('<br>')}
+      </div>
+    </div>`).join('<hr style="border:none;border-top:1px solid var(--bd);margin:0">');
+}
+
+function toggleShop(id) {
+  const s = S.shopping.find(x=>x.id===id);
+  if(s){s.done=!s.done;saveState();renderShopList();vib([5]);}
+}
+function deleteShop(id) {
+  const s = S.shopping.find(x=>x.id===id);
+  S.shopping = S.shopping.filter(x=>x.id!==id);
+  saveState(); renderShopList();
+  if(s) toast(`🗑 "${s.name}" eliminado`);
+}
+function editShopQty(id) {
+  const s = S.shopping.find(x=>x.id===id);
+  if(!s||s.done) return;
+  const row = document.querySelector(`[data-sid="${id}"]`);
+  if(!row) return;
+  const content = row.querySelector('.shop-content');
+  const units = ['unidades','gramos','kg','litros','ml','paquetes','tazas'];
+  content.onclick = null;
+  content.style.cursor = 'default';
+  content.innerHTML = `
+    <div style="font-size:12px;color:var(--tx2);margin-bottom:3px;font-weight:600">${s.name}</div>
+    <div style="display:flex;gap:5px;align-items:center">
+      <input id="eq-qty-${id}" type="number" class="inp" value="${s.qty||1}" min="0.1" step="0.1" style="width:65px;padding:5px 6px;font-size:13px">
+      <select id="eq-unit-${id}" class="inp" style="flex:1;padding:5px 6px;font-size:13px">
+        ${units.map(u=>`<option${(s.unit||'unidades')===u?' selected':''}>${u}</option>`).join('')}
+      </select>
+      <button class="btn" style="padding:5px 10px;font-size:13px;background:var(--g);color:#fff" onclick="saveShopQty(${id})"><i class="ti ti-check"></i></button>
+    </div>`;
+  const qtyEl = document.getElementById(`eq-qty-${id}`);
+  qtyEl.focus(); qtyEl.select();
+  qtyEl.addEventListener('keydown', e=>{ if(e.key==='Enter') saveShopQty(id); });
+}
+function saveShopQty(id) {
+  const s = S.shopping.find(x=>x.id===id);
+  if(!s) return;
+  s.qty = parseFloat(document.getElementById(`eq-qty-${id}`)?.value)||1;
+  s.unit = document.getElementById(`eq-unit-${id}`)?.value||'unidades';
+  saveState(); renderShopList();
+}
+function addShopItem() {
+  const inp = document.getElementById('shop-inp');
+  const name = inp.value.trim(); if(!name) return;
+  const qty = parseFloat(document.getElementById('shop-qty')?.value) || 1;
+  const unit = document.getElementById('shop-unit')?.value || 'unidades';
+  S.shopping.push({id:nid(),name,qty,unit,done:false,urgent:false});
+  saveState(); inp.value=''; renderShopList();
+  toast(`✅ "${name}" agregado`); vib([8]);
+}
+function addShopAuto(name, urgent=false) {
+  if(S.shopping.find(s=>s.name===name)){toast(`ℹ "${name}" ya está en la lista`);return;}
+  S.shopping.push({id:nid(),name,done:false,urgent});
+  saveState(); renderShopList();
+  toast(`🛒 "${name}" agregado${urgent?' con prioridad':''}`);
+}
+function clearDoneShop() {
+  const done = S.shopping.filter(s=>s.done);
+  if(!done.length){toast('ℹ No hay productos marcados como comprados');return;}
+  // Guardar en historial detallado
+  if(!S.purchaseHistory) S.purchaseHistory = [];
+  S.purchaseHistory.unshift({
+    date: new Date().toISOString(),
+    items: done.map(s=>({name:s.name, qty:s.qty||1, unit:s.unit||'unidades'}))
+  });
+  if(S.purchaseHistory.length > 50) S.purchaseHistory = S.purchaseHistory.slice(0,50);
+  S.shopping = S.shopping.filter(s=>!s.done);
+  saveState(); renderShopList(); toast(`✅ ${done.length} compra(s) guardada(s) en historial`);
+}
+function shareShopList() {
+  const items = S.shopping.filter(s=>!s.done).map(s=>(s.urgent?'🔴 ':'')+s.name+` (${s.qty||1} ${s.unit||'unidades'})`);
+  if(!items.length){toast('ℹ La lista está vacía');return;}
+  const text = `🛒 Lista de compras MERI\n${new Date().toLocaleDateString('es-CO')}\n\n${items.join('\n')}`;
+  if(navigator.share) navigator.share({title:'Lista de compras',text});
+  else navigator.clipboard.writeText(text).then(()=>toast('📋 Lista copiada al portapapeles'));
+}
+
+
+// ===================== LISTA CON IA =====================
+async function quickShoppingList() {
+  openModal('m-ai-list');
+  const aiContent = document.getElementById('ai-list-content');
+  const aiItems   = document.getElementById('ai-list-items');
+  const addBtn    = document.getElementById('ai-list-add-btn');
+  addBtn.style.display = 'none';
+  aiItems.innerHTML = '';
+
+  const pantryItems = S.pantry.length
+    ? S.pantry.map(f=>`${f.name} (${f.qty||1} ${f.unit||'und'}${f.exp?', vence '+fDate(f.exp):''})` ).join(', ')
+    : 'vacía';
+
+  const profile = S.profile || {};
+  const people  = profile.people || 2;
+  const city    = profile.city   || 'Colombia';
+
+  const recentHistory = (S.purchaseHistory||[]).slice(0,5)
+    .flatMap(h=>h.items.map(i=>i.name))
+    .filter((v,i,a)=>a.indexOf(v)===i).slice(0,15);
+
+  const prompt = `Eres un asistente de compras inteligente para una familia colombiana de ${people} personas en ${city}.
+
+Despensa actual: ${pantryItems}
+Compras recientes: ${recentHistory.length ? recentHistory.join(', ') : 'ninguna'}
+
+Genera una lista de compras para la semana. Incluye solo lo que necesita reposición o falta.
+Responde ÚNICAMENTE con líneas en este formato exacto (sin viñetas, sin encabezados):
+nombre, cantidad, unidad
+
+Ejemplo:
+Arroz, 2, kg
+Leche, 6, litros
+Huevos, 12, unidades
+
+Máximo 15 productos. No incluyas lo que ya tiene buen stock.`;
+
+  await callAI('ai-list-content', prompt, (text) => {
+    const lines = text.split('\n').map(l=>l.replace(/^[\d\.\-\*\•]\s*/,'').trim()).filter(Boolean);
+    const items = [];
+    lines.forEach(line => {
+      const parts = line.split(',').map(p=>p.trim());
+      const name  = parts[0];
+      const qty   = parseFloat(parts[1]) || 1;
+      const unit  = parts[2] || 'unidades';
+      if(name && name.length > 1) items.push({name, qty, unit});
+    });
+    if(!items.length) {
+      aiContent.innerHTML = '<div class="al aam"><i class="ti ti-alert-circle"></i><div class="al-b"><div class="al-t">No se generaron sugerencias</div><div class="al-s">Intenta de nuevo</div></div></div>';
+      return;
+    }
+    aiItems.innerHTML = items.map(item=>`
+      <label style="display:flex;align-items:center;gap:10px;padding:10px 4px;border-bottom:1px solid var(--bd);cursor:pointer">
+        <input type="checkbox" checked data-name="${esc(item.name)}" data-qty="${item.qty}" data-unit="${esc(item.unit)}"
+          style="width:18px;height:18px;accent-color:var(--g);flex-shrink:0;cursor:pointer">
+        <span style="flex:1;font-size:14px;font-weight:600;color:var(--tx)">${esc(item.name)}</span>
+        <span style="font-size:12px;color:var(--tx2);white-space:nowrap">${item.qty} ${esc(item.unit)}</span>
+      </label>`).join('');
+    addBtn.style.display = 'flex';
+  });
+}
+
+function addAIListToShopping() {
+  const checkboxes = document.querySelectorAll('#ai-list-items input[type="checkbox"]:checked');
+  if(!checkboxes.length) { toast('ℹ Selecciona al menos un producto'); return; }
+  let added = 0;
+  checkboxes.forEach(cb => {
+    const name = cb.dataset.name;
+    const qty  = parseFloat(cb.dataset.qty) || 1;
+    const unit = cb.dataset.unit || 'unidades';
+    if(!S.shopping.find(s=>s.name.toLowerCase()===name.toLowerCase())) {
+      S.shopping.push({id:nid(), name, qty, unit, done:false, urgent:false});
+      added++;
+    }
+  });
+  saveState(); renderShopList(); closeModal('m-ai-list');
+  if(added) toast(`✅ ${added} producto(s) agregado(s) a la lista`);
+  else toast('ℹ Los productos ya estaban en tu lista');
+  vib([10,5,20]);
+}
+
+// ===================== USO DIARIO =====================
+function abrirUso() {
+  const div = document.getElementById('uso-items');
+  if(!div) return;
+  if(!S.pantry.length) { toast('ℹ Tu despensa está vacía'); return; }
+  div.innerHTML = S.pantry.map(f=>`
+    <div class="fr" style="gap:8px;padding:8px 0;border-bottom:1px solid var(--bd)">
+      <div class="chk" id="uso-chk-${f.id}" onclick="toggleUsoItem(${f.id})" style="flex-shrink:0"></div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:13px;font-weight:700;color:var(--tx)">${f.em} ${f.name}</div>
+        <div style="font-size:11px;color:var(--tx2)">Stock: ${f.qty} ${f.unit}</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:4px;flex-shrink:0">
+        <input type="number" id="uso-qty-${f.id}" value="1" min="0.1" step="0.1"
+          style="width:55px;padding:4px 6px;border:1.5px solid var(--bd);border-radius:8px;background:var(--card);color:var(--tx);font-size:12px;font-family:inherit">
+        <span style="font-size:10px;color:var(--tx2)">${f.unit}</span>
+      </div>
+    </div>`).join('');
+  openModal('m-uso');
+}
+let _usoSeleccionados = new Set();
+function toggleUsoItem(id) {
+  const chk = document.getElementById('uso-chk-'+id);
+  if(_usoSeleccionados.has(id)) {
+    _usoSeleccionados.delete(id);
+    chk.classList.remove('ok'); chk.innerHTML='';
+  } else {
+    _usoSeleccionados.add(id);
+    chk.classList.add('ok'); chk.innerHTML='<i class="ti ti-check" style="font-size:13px"></i>';
+  }
+}
+function registrarUso() {
+  if(!_usoSeleccionados.size){toast('ℹ Selecciona al menos un alimento');return;}
+  let actualizados=0;
+  _usoSeleccionados.forEach(id=>{
+    const f = S.pantry.find(x=>x.id===id);
+    const used = parseFloat(document.getElementById('uso-qty-'+id)?.value)||1;
+    if(f){
+      f.qty = Math.max(0, parseFloat((f.qty-used).toFixed(2)));
+      actualizados++;
+    }
+  });
+  saveState(); renderPantry(); renderHome();
+  _usoSeleccionados.clear();
+  closeModal('m-uso');
+  toast(`✅ ${actualizados} alimento(s) descontado(s) de tu despensa`);
+  checkAndNotify();
+}
+
+// ===================== PROFILE =====================
+function saveProfile() {
+  S.profile = {
+    name: document.getElementById('prof-name').value.trim(),
+    city: document.getElementById('prof-city').value,
+    people: parseInt(document.getElementById('prof-people').value)||2,
+    diet: document.getElementById('prof-diet').value
+  };
+  saveState(); closeModal('m-profile'); renderHome();
+  toast(`✅ Perfil guardado${S.profile.name?' — Hola, '+S.profile.name+'!':''}`);
+}
+
+function loadProfile() {
+  const p = S.profile;
+  const pn = document.getElementById('prof-name'); if(pn) pn.value = p.name||'';
+  const pc = document.getElementById('prof-city'); if(pc) pc.value = p.city||'Bogotá';
+  const pp = document.getElementById('prof-people'); if(pp) pp.value = p.people||2;
+  const pd = document.getElementById('prof-diet'); if(pd) pd.value = p.diet||'';
+}
+
+function confirmClearData() {
+  if(confirm('¿Seguro que quieres borrar TODOS tus datos de MERI? Esta acción no se puede deshacer.')) {
+    const user = auth.currentUser;
+    if (user && !user.isAnonymous) {
+      db.collection('users').doc(user.uid).collection('data').doc('state').delete().catch(()=>{});
+    }
+    localStorage.removeItem('meri_guest_state');
+    localStorage.removeItem(DB);
+    S = defaultState();
+    toast('🗑 Datos eliminados — recargando...');
+    setTimeout(()=>location.reload(), 1500);
+  }
+}
+
+// ===================== NOTIFICATIONS =====================
+async function requestNotifications() {
+  if(!('Notification' in window)) return;
+  const perm = await Notification.requestPermission();
+  if(perm === 'granted') {
+    renderNotifPrompt();
+    scheduleDaily();
+    toast('🔔 Notificaciones activadas');
+    // Suscribir a Web Push real
+    const user = auth.currentUser;
+    if (user && !user.isAnonymous) await subscribePush(user.uid);
+    else if (user) await subscribePush(null); // invitado: suscripción sin uid
+  }
+}
+
+function checkAndNotify() {
+  if(Notification.permission !== 'granted') return;
+  const icon = '/despensaia/icons/icon-192.png';
+  const notify = (title, body, tag) => {
+    try {
+      if(_swRegistration?.showNotification) {
+        _swRegistration.showNotification(title, {body, icon, badge:icon, tag, vibrate:[200,100,200]});
+      } else {
+        new Notification(title, {body, icon, badge:icon, tag});
+      }
+    } catch(e) {}
+  };
+  // 1. Por vencer hoy/mañana
+  const hoyManana = S.pantry.filter(f=>dU(f.exp)<=1&&dU(f.exp)>=0);
+  if(hoyManana.length) notify('MERI ⚠️ Vence pronto',
+    hoyManana.map(f=>f.name).join(', ')+' vence'+(hoyManana.length>1?'n':'')+' hoy o mañana', 'expiry-1');
+  // 2. Por vencer en 3 días
+  const en3 = S.pantry.filter(f=>dU(f.exp)>1&&dU(f.exp)<=3);
+  if(en3.length) notify('MERI 📅 Alerta de vencimiento',
+    en3.map(f=>f.name).join(', ')+' vence'+(en3.length>1?'n':'')+' en menos de 3 días', 'expiry-3');
+  // 3. Stock bajo
+  const stockBajo = S.pantry.filter(f=>f.min>0&&f.qty<=f.min);
+  if(stockBajo.length) notify('MERI 📦 Stock bajo',
+    stockBajo.map(f=>`${f.name} (${f.qty} ${f.unit})`).join(', ')+' está'+(stockBajo.length>1?'n':'')+' por acabarse', 'stock-low');
+  // 4. Despensa casi vacía (menos de 3 alimentos)
+  if(S.pantry.length>0 && S.pantry.length<=3) notify('MERI 🛒 Tu despensa está casi vacía',
+    'Solo tienes '+S.pantry.length+' alimento(s). ¿Quieres crear una lista de compras?', 'pantry-empty');
+  // 5. Sugerencia de lista rápida si hay historial
+  const ph = S.purchaseHistory||[];
+  if(ph.length>=2 && S.shopping.length===0) notify('MERI 💡 ¿Es hora de hacer mercado?',
+    'Basado en tus compras anteriores, abre MERI y genera tu lista con IA', 'shop-suggest');
+}
+
+// Programar revisión diaria de notificaciones
+async function scheduleDaily() {
+  syncToSWCache();
+  checkAndNotify();
+  setInterval(checkAndNotify, 12*60*60*1000);
+  // Registrar periodic sync para notificaciones en background
+  if(_swRegistration && 'periodicSync' in _swRegistration) {
+    try {
+      await _swRegistration.periodicSync.register('check-expiry', {minInterval: 12*60*60*1000});
+    } catch(e) {}
+  }
+}
+
+// ===================== SEARCH =====================
+function globalSearch(q) {
+  const div = document.getElementById('search-results');
+  if(!q.trim()){div.innerHTML='';return;}
+  const results = S.pantry.filter(f=>f.name.toLowerCase().includes(q.toLowerCase()));
+  div.innerHTML = results.length
+    ? `<div class="card">${results.map(f=>`<div class="fr" onclick="openEditModal(${f.id});closeModal('m-search')" style="cursor:pointer"><div class="fec">${f.em||catEm(f.cat)}</div><div class="fi"><div class="fn">${f.name}</div><div class="fm">${f.qty} ${f.unit} · Vence: ${fDate(f.exp)}</div></div><span class="badge ${dU(f.exp)<=5?'br':'bg'}">${dU(f.exp)<=5?dU(f.exp)+'d':'OK'}</span></div>`).join('')}</div>`
+    : `<div class="empty"><i class="ti ti-search"></i><p>Sin resultados para "${q}"</p></div>`;
+}
+
+// ===================== EXPIRY DATE CAMERA =====================
+let expCamStream = null;
+let expTargetField = 'm-exp';
+
+async function openExpiryCamera(fieldId) {
+  expTargetField = fieldId;
+  openModal('m-exp-cam');
+  document.getElementById('exp-cam-result').innerHTML = '';
+  document.getElementById('exp-cam-wrap').style.display = 'none';
+  try {
+    expCamStream = await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment',width:{ideal:1920},height:{ideal:1080}}});
+    const video = document.getElementById('exp-cam-video');
+    video.srcObject = expCamStream;
+    document.getElementById('exp-cam-wrap').style.display = 'block';
+    toast('📷 Cámara lista — centra la fecha y captura');
+  } catch(e) {
+    document.getElementById('exp-cam-result').innerHTML = '<div class="al ard" style="margin-top:0"><i class="ti ti-camera-off"></i><div class="al-b"><div class="al-t">No se pudo acceder a la cámara</div><div class="al-s">Ingresa la fecha manualmente</div></div></div>';
+  }
+}
+
+function closeExpiryCam() {
+  if(expCamStream) { expCamStream.getTracks().forEach(t=>t.stop()); expCamStream=null; }
+  const w = document.getElementById('exp-cam-wrap');
+  if(w) w.style.display = 'none';
+  document.getElementById('exp-cam-result').innerHTML = '';
+  closeModal('m-exp-cam');
+}
+
+async function captureExpiry() {
+  const video = document.getElementById('exp-cam-video');
+  const canvas = document.getElementById('exp-capture-canvas');
+  canvas.width = video.videoWidth || 640;
+  canvas.height = video.videoHeight || 480;
+  canvas.getContext('2d').drawImage(video, 0, 0);
+  if(expCamStream) { expCamStream.getTracks().forEach(t=>t.stop()); expCamStream=null; }
+  const w = document.getElementById('exp-cam-wrap');
+  if(w) w.style.display = 'none';
+  const b64 = canvas.toDataURL('image/jpeg', 0.85).split(',')[1];
+  const resDiv = document.getElementById('exp-cam-result');
+  resDiv.innerHTML = '<div class="al agr" style="margin-top:0"><i class="ti ti-robot"></i><div class="al-b"><div class="al-t">Detectando fecha con IA...</div></div></div><div class="loading-bar"><div class="loading-bar-fill"></div></div>';
+  try {
+    const res = await fetch('https://meri-proxy.giovanniagc92.workers.dev', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({contents:[{parts:[
+        {inline_data:{mime_type:'image/jpeg',data:b64}},
+        {text:'Analiza esta imagen de un producto alimenticio. Busca la fecha de vencimiento, expiración o caducidad (VEN, EXP, CAD, VENCE, BEST BEFORE, USE BY, etc.). Responde SOLO con la fecha en formato YYYY-MM-DD. Si el año no está claro, asume el año más próximo futuro. Ejemplo de respuesta: 2026-08-15. Si no encuentras ninguna fecha, responde exactamente: NO_FECHA'}
+      ]}]})
+    });
+    const data = await res.json();
+    const text = ((data.candidates?.[0]?.content?.parts?.[0]?.text)||'').trim();
+    if(!text || text==='NO_FECHA') {
+      resDiv.innerHTML = '<div class="al aam" style="margin-top:0"><i class="ti ti-calendar-x"></i><div class="al-b"><div class="al-t">No se detectó fecha</div><div class="al-s">Intenta de nuevo o ingresa manualmente</div></div></div>';
+    } else {
+      const dateMatch = text.match(/\d{4}-\d{2}-\d{2}/);
+      if(dateMatch) {
+        document.getElementById(expTargetField).value = dateMatch[0];
+        resDiv.innerHTML = `<div class="al agr" style="margin-top:0"><i class="ti ti-check"></i><div class="al-b"><div class="al-t">✅ Fecha: ${dateMatch[0]}</div><div class="al-s">Aplicada — cerrando...</div></div></div>`;
+        vib([10,5,10]);
+        setTimeout(()=>closeExpiryCam(), 2000);
+      } else {
+        resDiv.innerHTML = `<div class="al aam" style="margin-top:0"><i class="ti ti-info-circle"></i><div class="al-b"><div class="al-t">Resultado: ${text}</div><div class="al-s">Verifica e ingresa manualmente si necesario</div></div></div>`;
+      }
+    }
+  } catch(e) {
+    resDiv.innerHTML = '<div class="al ard" style="margin-top:0"><i class="ti ti-wifi-off"></i><div class="al-b"><div class="al-t">Error de conexión</div><div class="al-s">Ingresa la fecha manualmente</div></div></div>';
+  }
+}
+
+// ===================== AUTH (Firebase) =====================
+function getUser() {
+  const u = auth.currentUser;
+  if (!u) return null;
+  return { email: u.email||null, name: u.displayName||(u.isAnonymous?'Invitado':u.email), guest: u.isAnonymous, uid: u.uid };
+}
+function setUser() {} // no-op: Firebase maneja la sesión
+function clearUser() {} // no-op: usa logout()
+
+function authTab(tab) {
+  ['login','register'].forEach(t => {
+    document.getElementById('tab-'+t).classList.toggle('on', t===tab);
+    document.getElementById('auth-form-'+t).style.display = t===tab ? 'flex' : 'none';
+  });
+  document.getElementById('auth-err-login').classList.remove('on');
+  document.getElementById('auth-err-register').classList.remove('on');
+}
+
+function showAuthErr(id, msg) {
+  const el = document.getElementById(id);
+  el.textContent = msg;
+  el.classList.add('on');
+}
+
+async function doLogin() {
+  const email = (document.getElementById('auth-email').value||'').trim().toLowerCase();
+  const pw = document.getElementById('auth-pw').value||'';
+  if(!email || !pw) return showAuthErr('auth-err-login','Completa todos los campos');
+  try {
+    await auth.signInWithEmailAndPassword(email, pw);
+    // onAuthStateChanged maneja el resto
+  } catch(e) {
+    const msg = e.code==='auth/user-not-found'||e.code==='auth/invalid-credential' ? 'Correo o contraseña incorrectos' :
+                e.code==='auth/wrong-password' ? 'Contraseña incorrecta' :
+                e.code==='auth/too-many-requests' ? 'Demasiados intentos. Espera un momento.' :
+                'Error al iniciar sesión';
+    showAuthErr('auth-err-login', msg);
+  }
+}
+
+async function doRegister() {
+  const name = (document.getElementById('auth-reg-name').value||'').trim();
+  const email = (document.getElementById('auth-reg-email').value||'').trim().toLowerCase();
+  const pw = document.getElementById('auth-reg-pw').value||'';
+  if(!name || !email || !pw) return showAuthErr('auth-err-register','Completa todos los campos');
+  if(pw.length < 6) return showAuthErr('auth-err-register','La contraseña debe tener mínimo 6 caracteres');
+  try {
+    const cred = await auth.createUserWithEmailAndPassword(email, pw);
+    await cred.user.updateProfile({ displayName: name });
+    // onAuthStateChanged maneja el resto
+  } catch(e) {
+    const msg = e.code==='auth/email-already-in-use' ? 'Ya existe una cuenta con este correo' :
+                e.code==='auth/invalid-email' ? 'Correo inválido' :
+                'Error al registrarse';
+    showAuthErr('auth-err-register', msg);
+  }
+}
+
+async function doGoogleLogin() {
+  try {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    await auth.signInWithPopup(provider);
+    // onAuthStateChanged maneja el resto
+  } catch(e) {
+    toast('Error al iniciar con Google: ' + (e.message||''));
+  }
+}
+
+async function authGuest() {
+  try {
+    await auth.signInAnonymously();
+  } catch(e) {
+    // Fallback si anónimo falla
+    updateHeaderUser();
+    nav('home');
+  }
+}
+
+function afterLogin(name) {
+  if(name && name !== 'Invitado') {
+    S.profile.name = name;
+    saveState();
+    loadProfile();
+  }
+  updateHeaderUser();
+  nav('home');
+}
+
+async function logout() {
+  await auth.signOut();
+  S = defaultState();
+  nav('splash');
+  setTimeout(() => nav('auth'), 100);
+}
+
+function updateHeaderUser() {
+  const u = getUser();
+  const sub = document.getElementById('hdr-sub');
+  if(sub && u && u.name) sub.textContent = u.name === 'Invitado' ? 'Modo invitado' : 'Hola, ' + u.name + ' 👋';
+}
+
+// ===================== INIT =====================
+// ── VAPID Public Key ──
+const VAPID_PUBLIC_KEY = 'BHgUq1jUdI01hBUrAhuPs6FHSx_dxUcPQg3Ur3i5OpuFqNbwf3qPJaHFiXupfLzcSYoTQJ664CNyPn3mHsu2jlA';
+let _swRegistration = null;
+
+function urlBase64ToUint8Array(base64String) {
+  const padding = '='.repeat((4 - base64String.length % 4) % 4);
+  const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+  const raw = atob(base64);
+  return new Uint8Array([...raw].map(c => c.charCodeAt(0)));
+}
+
+// ── Registrar Service Worker ──
+async function registerSW() {
+  if (!('serviceWorker' in navigator)) return;
+  try {
+    _swRegistration = await navigator.serviceWorker.register('/despensaia/sw.js');
+    console.log('SW registrado:', _swRegistration.scope);
+    // Registrar Periodic Background Sync (Chrome Android)
+    if ('periodicSync' in _swRegistration) {
+      try {
+        await _swRegistration.periodicSync.register('check-expiry', { minInterval: 24 * 60 * 60 * 1000 });
+      } catch(e) { /* periódico sync no disponible */ }
+    }
+  } catch(e) { console.warn('SW registration failed:', e); }
+}
+
+// ── Solicitar permiso y suscribir a Web Push ──
+async function subscribePush(uid) {
+  if (!_swRegistration) return;
+  if (!('PushManager' in window)) return;
+  try {
+    let sub = await _swRegistration.pushManager.getSubscription();
+    if (!sub) {
+      sub = await _swRegistration.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
+      });
+    }
+    // Enviar suscripción + pantry al Worker
+    await fetch('https://meri-proxy.giovanniagc92.workers.dev/push-subscribe', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ subscription: sub.toJSON(), uid, pantry: S.pantry })
+    });
+  } catch(e) { console.warn('Push subscribe error:', e); }
+}
+
+// ── Pedir permiso de notificaciones ──
+async function requestNotificationPermission(uid) {
+  if (!('Notification' in window)) return;
+  if (Notification.permission === 'granted') {
+    await subscribePush(uid);
+    return;
+  }
+  if (Notification.permission === 'default') {
+    const perm = await Notification.requestPermission();
+    if (perm === 'granted') await subscribePush(uid);
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelector('.hdr').style.display = 'none';
+  document.getElementById('p-splash').classList.add('on');
+
+  // Registrar SW inmediatamente
+  registerSW();
+
+  auth.onAuthStateChanged(async (user) => {
+    if (user) {
+      if (!user.isAnonymous) {
+        await loadUserState(user.uid);
+      } else {
+        // Invitado: cargar estado local temporal
+        try {
+          const gs = localStorage.getItem('meri_guest_state');
+          if (gs) S = { ...defaultState(), ...JSON.parse(gs) };
+        } catch(e) {}
+      }
+      updateHeaderUser();
+      loadProfile();
+      if(Notification.permission === 'granted') {
+        checkAndNotify();
+        // Re-suscribir si ya tenía permiso
+        if (!user.isAnonymous) subscribePush(user.uid);
+      } else if (!user.isAnonymous) {
+        // Pedir permiso a usuarios registrados después de 3 seg
+        setTimeout(() => requestNotificationPermission(user.uid), 3000);
+      }
+      // Actualizar cache para SW
+      updatePantryCache();
+      document.getElementById('p-splash').classList.remove('on');
+      nav('home');
+    } else {
+      // Sin sesión: login anónimo automático — sin pantalla de login
+      auth.signInAnonymously().catch(() => {
+        document.getElementById('p-splash').classList.remove('on');
+        nav('home');
+      });
+    }
+  });
+});
+
+// ── Foto mode switcher ──
+function showFotoMode(mode) {
+  document.getElementById('foto-mode-selector').style.display = mode ? 'none' : 'block';
+  document.getElementById('foto-invoice').style.display = mode==='invoice' ? 'block' : 'none';
+  document.getElementById('foto-expiry').style.display = mode==='expiry' ? 'block' : 'none';
+  if(!mode) { stopCamera(); stopExpiryMain(); }
+}
+
+// ── Expiry tab switcher ──
+function expTab(btn, tabId) {
+  stopExpiryMain();
+  document.getElementById('exp-main-result').innerHTML = '';
+  document.querySelectorAll('#exp-tabs .tab').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  document.getElementById('exp-tab-cam').style.display = tabId === 'exp-tab-cam' ? 'block' : 'none';
+  document.getElementById('exp-tab-gal').style.display = tabId === 'exp-tab-gal' ? 'block' : 'none';
+}
+
+// ── Expiry main camera ──
+let expMainStream = null;
+async function startExpiryMain() {
+  try {
+    expMainStream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: 'environment', width: { ideal: 1920 }, height: { ideal: 1080 } }
+    });
+    const video = document.getElementById('exp-main-video');
+    video.srcObject = expMainStream;
+    await video.play();
+    document.getElementById('exp-main-wrap').style.display = 'block';
+    document.getElementById('exp-main-start').style.display = 'none';
+    document.getElementById('exp-main-controls').style.display = 'block';
+  } catch(e) {
+    toast('⚠ No se pudo acceder a la cámara: ' + e.message);
+  }
+}
+function stopExpiryMain() {
+  if (expMainStream) { expMainStream.getTracks().forEach(t => t.stop()); expMainStream = null; }
+  const wrap = document.getElementById('exp-main-wrap');
+  const start = document.getElementById('exp-main-start');
+  const ctrl = document.getElementById('exp-main-controls');
+  if (wrap) wrap.style.display = 'none';
+  if (start) start.style.display = 'block';
+  if (ctrl) ctrl.style.display = 'none';
+}
+async function captureExpiryMain() {
+  const video = document.getElementById('exp-main-video');
+  const canvas = document.getElementById('exp-main-canvas');
+  canvas.width = video.videoWidth; canvas.height = video.videoHeight;
+  canvas.getContext('2d').drawImage(video, 0, 0);
+  stopExpiryMain();
+  const b64 = canvas.toDataURL('image/jpeg', 0.92).split(',')[1];
+  // Show preview
+  const res = document.getElementById('exp-main-result');
+  res.innerHTML = `<div class="card" style="text-align:center">
+    <img src="data:image/jpeg;base64,${b64}" style="width:100%;border-radius:10px;margin-bottom:10px;max-height:220px;object-fit:cover">
+    <div class="al agr" style="margin-bottom:0"><i class="ti ti-robot"></i><div class="al-b"><div class="al-t">Analizando con IA...</div><div class="al-s">Detectando producto y fecha</div></div></div>
+    <div class="loading-bar" style="margin-top:8px"><div class="loading-bar-fill"></div></div>
+  </div>`;
+  await analyzeExpiryImage(b64);
+}
+
+// ── Galería ──
+async function handleExpiryGallery(event) {
+  const file = event.target.files?.[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = async (e) => {
+    const dataUrl = e.target.result;
+    const preview = document.getElementById('exp-gal-preview');
+    preview.src = dataUrl;
+    preview.style.display = 'block';
+    const b64 = dataUrl.split(',')[1];
+    const mime = file.type || 'image/jpeg';
+    const res = document.getElementById('exp-main-result');
+    res.innerHTML = `<div class="card" style="text-align:center">
+      <div class="al agr" style="margin-bottom:0"><i class="ti ti-robot"></i><div class="al-b"><div class="al-t">Analizando con IA...</div><div class="al-s">Detectando producto y fecha</div></div></div>
+      <div class="loading-bar" style="margin-top:8px"><div class="loading-bar-fill"></div></div>
+    </div>`;
+    await analyzeExpiryImage(b64, mime);
+  };
+  reader.readAsDataURL(file);
+}
+
+// ── Núcleo de análisis IA ──
+async function analyzeExpiryImage(b64, mime = 'image/jpeg') {
+  const res = document.getElementById('exp-main-result');
+  try {
+    const body = {
+      contents: [{
+        parts: [
+          { text: `Analiza esta imagen de un producto alimenticio. Tu tarea es extraer DOS datos:
+
+1. NOMBRE del producto: máximo 3 palabras en español (ej: "Leche Entera", "Yogur Natural", "Atún en Lata"). Si no hay nombre visible, usa "Producto".
+2. FECHA DE VENCIMIENTO: busca etiquetas como VENCE, VENCIMIENTO, EXP, EXPIRA, CAD, CADUCIDAD, BEST BEFORE, USE BY, BB, MFD, CONSUME ANTES. Acepta formatos como DD/MM/AA, MM/AAAA, DD-MM-YYYY, mes abreviado, etc. Conviértela a YYYY-MM-DD. Si solo hay mes y año, usa el último día del mes. Si no hay fecha, usa null.
+
+Responde ÚNICAMENTE con este JSON, sin markdown, sin explicaciones:
+{"nombre":"Nombre producto","fecha":"YYYY-MM-DD"}` },
+          { inline_data: { mime_type: mime, data: b64 } }
+        ]
+      }]
+    };
+    const r = await fetch('https://meri-proxy.giovanniagc92.workers.dev',
+      { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+    if (!r.ok) throw new Error('Error del servidor: ' + r.status);
+    const data = await r.json();
+    const txt = (data.candidates?.[0]?.content?.parts?.[0]?.text || '').trim();
+    let parsed = {};
+    try { parsed = JSON.parse(txt); }
+    catch {
+      const m = txt.match(/\{[\s\S]*?\}/);
+      if (m) try { parsed = JSON.parse(m[0]); } catch {}
+    }
+    const nombre = (parsed.nombre && parsed.nombre !== 'null') ? parsed.nombre : 'Producto';
+    const fecha = (parsed.fecha && parsed.fecha !== 'null' && parsed.fecha !== 'undefined') ? parsed.fecha : '';
+
+    res.innerHTML = `<div class="card">
+      <div class="ct" style="color:var(--g)"><i class="ti ti-check"></i> Producto detectado</div>
+      <div class="ig" style="margin-bottom:10px">
+        <label class="il">Nombre del producto</label>
+        <input class="inp" id="exp-r-name" value="${nombre.replace(/"/g,'&quot;')}" placeholder="Nombre del producto">
+      </div>
+      <div class="ig" style="margin-bottom:6px">
+        <label class="il">Fecha de vencimiento</label>
+        <input class="inp" id="exp-r-date" type="date" value="${fecha}">
+      </div>
+      ${!fecha ? '<div class="al aam" style="margin-bottom:10px;margin-top:4px"><i class="ti ti-calendar-x"></i><div class="al-b"><div class="al-t">No se detectó la fecha</div><div class="al-s">Ingresa la fecha manualmente o escanea de nuevo</div></div></div>' : ''}
+      <div style="display:flex;gap:8px;margin-top:8px">
+        <button class="btn btnp" style="flex:1" onclick="saveScannedExpiry()"><i class="ti ti-plus"></i> Agregar a despensa</button>
+        <button class="btn" onclick="retryExpiryScanner()"><i class="ti ti-refresh"></i> Reintentar</button>
+      </div>
+    </div>`;
+  } catch(e) {
+    res.innerHTML = `<div class="card">
+      <div class="al ard" style="margin-bottom:10px"><i class="ti ti-alert-circle"></i><div class="al-b"><div class="al-t">Error al analizar</div><div class="al-s">${e.message}</div></div></div>
+      <button class="btn btnp btnf" onclick="retryExpiryScanner()"><i class="ti ti-refresh"></i> Intentar de nuevo</button>
+    </div>`;
+  }
+}
+
+function retryExpiryScanner() {
+  document.getElementById('exp-main-result').innerHTML = '';
+  // Check active tab
+  const camTab = document.getElementById('exp-tab-cam');
+  if (camTab && camTab.style.display !== 'none') {
+    startExpiryMain();
+  } else {
+    // Reset gallery
+    const inp = document.getElementById('exp-gal-input');
+    const prev = document.getElementById('exp-gal-preview');
+    if (inp) inp.value = '';
+    if (prev) prev.style.display = 'none';
+  }
+}
+function saveScannedExpiry() {
+  const name = document.getElementById('exp-r-name')?.value?.trim();
+  const date = document.getElementById('exp-r-date')?.value;
+  if(!name) { toast('⚠ Ingresa el nombre del producto'); return; }
+  const emoji = guessEmoji(name) || '🛒';
+  const food = {
+    id: Date.now(),
+    name, em: emoji,
+    qty: 1, unit: 'unidades',
+    cat: 'Otros',
+    exp: date || '',
+    min: 0, fav: false,
+    note: ''
+  };
+  S.pantry.push(food);
+  saveState();
+  renderHome();
+  toast(`✅ ${emoji} ${name} agregado a tu despensa`);
+  document.getElementById('exp-main-result').innerHTML='';
+  showFotoMode(null);
+  nav('despensa');
+}
+function guessEmoji(name) {
+  const n = name.toLowerCase();
+  const map = [
+    [/leche|lácteo/,'🥛'],[/yogur/,'🍦'],[/queso/,'🧀'],[/huevo/,'🥚'],
+    [/pollo/,'🍗'],[/carne|res|cerdo/,'🥩'],[/pescado|atún/,'🐟'],
+    [/tomate/,'🍅'],[/cebolla/,'🧅'],[/ajo/,'🧄'],[/papa|patata/,'🥔'],
+    [/arroz/,'🍚'],[/frijol|fríjol/,'🫘'],[/pan/,'🍞'],[/mantequilla/,'🧈'],
+    [/aceite/,'🫙'],[/sal|azúcar/,'🧂'],[/agua/,'💧'],[/jugo|zumo/,'🧃'],
+    [/naranja/,'🍊'],[/mango/,'🥭'],[/aguacate/,'🥑'],[/plátano|banano/,'🍌'],
+    [/limón/,'🍋'],[/manzana/,'🍎'],[/fresa/,'🍓'],[/uva/,'🍇'],
+  ];
+  for(const [r,e] of map) { if(r.test(n)) return e; }
+  return '🛒';
+}
+</script>
+</body>
+</html>
