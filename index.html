@@ -433,6 +433,12 @@ textarea.inp{resize:none}
         <button class="qb" onclick="nav(&#39;cosecha&#39;)"><i class="ti ti-plant"></i>Cosecha</button>
       </div>
       <button class="btn btn-am btnf" style="margin-top:8px" onclick="abrirUso()"><i class="ti ti-minus"></i> ¿Qué usaste hoy?</button>
+      <div id="notif-prompt"></div>
+      <div id="home-alerts"></div>
+      <div class="sec" id="favs-sec" style="display:none">Favoritos</div>
+      <div id="favs-row" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:4px"></div>
+      <div class="sec" id="harvest-sec" style="display:none">En cosecha ahora</div>
+      <div class="hg" id="home-harvest"></div>
     </div>
 
     <!-- FACTURA -->
@@ -1201,10 +1207,10 @@ function toast(msg, dur=2400) {
 function renderHome() {
   updateHeader();
   renderStats();
+  renderAlerts();
   renderFavs();
   renderHomeHarvest();
   renderNotifPrompt();
-  setTimeout(initFreqSelect, 50);
 }
 
 function updateHeader() {
@@ -1255,17 +1261,29 @@ function renderFavs() {
   const favs = S.pantry.filter(f=>f.fav);
   const div = document.getElementById('favs-row');
   if(!div) return;
-  div.innerHTML = favs.length
-    ? favs.map(f=>`<span class="badge bg" style="cursor:pointer" onclick="nav('despensa')">${f.em} ${f.name}</span>`).join('')
-    : '<span style="font-size:12px;color:var(--tx3)">Marca favoritos en tu despensa ⭐</span>';
+  const sec = document.getElementById('favs-sec');
+  if(favs.length) {
+    if(sec) sec.style.display = '';
+    div.innerHTML = favs.map(f=>`<span class="badge bg" style="cursor:pointer" onclick="nav('despensa')">${f.em} ${f.name}</span>`).join('');
+  } else {
+    if(sec) sec.style.display = 'none';
+    div.innerHTML = '';
+  }
 }
 
 function renderHomeHarvest() {
   const div = document.getElementById('home-harvest');
   if(!div) return;
+  const sec = document.getElementById('harvest-sec');
   const inSeason = getHarvestData().filter(h=>h.season).slice(0,6);
-  div.innerHTML = inSeason.map(h=>`
+  if(inSeason.length) {
+    if(sec) sec.style.display = '';
+    div.innerHTML = inSeason.map(h=>`
     <div class="hc hcs"><div class="he">${h.emoji}</div><div class="hn">${h.name}</div><div class="hs">✅ En cosecha</div></div>`).join('');
+  } else {
+    if(sec) sec.style.display = 'none';
+    div.innerHTML = '';
+  }
 }
 
 function renderNotifPrompt() {
@@ -1969,6 +1987,88 @@ function shareShopList() {
   const text = `🛒 Lista de compras MERI\n${new Date().toLocaleDateString('es-CO')}\n\n${items.join('\n')}`;
   if(navigator.share) navigator.share({title:'Lista de compras',text});
   else navigator.clipboard.writeText(text).then(()=>toast('📋 Lista copiada al portapapeles'));
+}
+
+
+// ===================== LISTA CON IA =====================
+async function quickShoppingList() {
+  openModal('m-ai-list');
+  const aiContent = document.getElementById('ai-list-content');
+  const aiItems   = document.getElementById('ai-list-items');
+  const addBtn    = document.getElementById('ai-list-add-btn');
+  addBtn.style.display = 'none';
+  aiItems.innerHTML = '';
+
+  const pantryItems = S.pantry.length
+    ? S.pantry.map(f=>`${f.name} (${f.qty||1} ${f.unit||'und'}${f.exp?', vence '+fDate(f.exp):''})` ).join(', ')
+    : 'vacía';
+
+  const profile = S.profile || {};
+  const people  = profile.people || 2;
+  const city    = profile.city   || 'Colombia';
+
+  const recentHistory = (S.purchaseHistory||[]).slice(0,5)
+    .flatMap(h=>h.items.map(i=>i.name))
+    .filter((v,i,a)=>a.indexOf(v)===i).slice(0,15);
+
+  const prompt = `Eres un asistente de compras inteligente para una familia colombiana de ${people} personas en ${city}.
+
+Despensa actual: ${pantryItems}
+Compras recientes: ${recentHistory.length ? recentHistory.join(', ') : 'ninguna'}
+
+Genera una lista de compras para la semana. Incluye solo lo que necesita reposición o falta.
+Responde ÚNICAMENTE con líneas en este formato exacto (sin viñetas, sin encabezados):
+nombre, cantidad, unidad
+
+Ejemplo:
+Arroz, 2, kg
+Leche, 6, litros
+Huevos, 12, unidades
+
+Máximo 15 productos. No incluyas lo que ya tiene buen stock.`;
+
+  await callAI('ai-list-content', prompt, (text) => {
+    const lines = text.split('\n').map(l=>l.replace(/^[\d\.\-\*\•]\s*/,'').trim()).filter(Boolean);
+    const items = [];
+    lines.forEach(line => {
+      const parts = line.split(',').map(p=>p.trim());
+      const name  = parts[0];
+      const qty   = parseFloat(parts[1]) || 1;
+      const unit  = parts[2] || 'unidades';
+      if(name && name.length > 1) items.push({name, qty, unit});
+    });
+    if(!items.length) {
+      aiContent.innerHTML = '<div class="al aam"><i class="ti ti-alert-circle"></i><div class="al-b"><div class="al-t">No se generaron sugerencias</div><div class="al-s">Intenta de nuevo</div></div></div>';
+      return;
+    }
+    aiItems.innerHTML = items.map(item=>`
+      <label style="display:flex;align-items:center;gap:10px;padding:10px 4px;border-bottom:1px solid var(--bd);cursor:pointer">
+        <input type="checkbox" checked data-name="${esc(item.name)}" data-qty="${item.qty}" data-unit="${esc(item.unit)}"
+          style="width:18px;height:18px;accent-color:var(--g);flex-shrink:0;cursor:pointer">
+        <span style="flex:1;font-size:14px;font-weight:600;color:var(--tx)">${esc(item.name)}</span>
+        <span style="font-size:12px;color:var(--tx2);white-space:nowrap">${item.qty} ${esc(item.unit)}</span>
+      </label>`).join('');
+    addBtn.style.display = 'flex';
+  });
+}
+
+function addAIListToShopping() {
+  const checkboxes = document.querySelectorAll('#ai-list-items input[type="checkbox"]:checked');
+  if(!checkboxes.length) { toast('ℹ Selecciona al menos un producto'); return; }
+  let added = 0;
+  checkboxes.forEach(cb => {
+    const name = cb.dataset.name;
+    const qty  = parseFloat(cb.dataset.qty) || 1;
+    const unit = cb.dataset.unit || 'unidades';
+    if(!S.shopping.find(s=>s.name.toLowerCase()===name.toLowerCase())) {
+      S.shopping.push({id:nid(), name, qty, unit, done:false, urgent:false});
+      added++;
+    }
+  });
+  saveState(); renderShopList(); closeModal('m-ai-list');
+  if(added) toast(`✅ ${added} producto(s) agregado(s) a la lista`);
+  else toast('ℹ Los productos ya estaban en tu lista');
+  vib([10,5,20]);
 }
 
 // ===================== USO DIARIO =====================
